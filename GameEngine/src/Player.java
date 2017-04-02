@@ -1,8 +1,11 @@
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class Player {
 
-    private String mName;
-    private float mScore;
-
-
-}
+    private String name;
+    private float score;
+    private Map <String, String> numOfWords = new HashMap <String, String>();
+    }
