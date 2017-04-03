@@ -3,8 +3,8 @@ import java.util.Map;
 
 public class GameDataFromXml {
 
-    Map <String,String> frequencyLetter = new HashMap <String, String>();
-    Map <String,String> frequencyWord = new HashMap <String, String>();
+    Map <Character,Float> frequencyLetter = new HashMap <Character, Float>();
+    Map <String,Float> frequencyWord = new HashMap <String, Float>();
     private int boardSize;
     private int numOfCubeWigs;
     private int numOfTries;
