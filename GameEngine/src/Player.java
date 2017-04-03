@@ -7,5 +7,5 @@ public class Player {
 
     private String name;
     private float score;
-    private Map <String, String> numOfWords = new HashMap <String, String>();
-    }
+    private Map <String, Integer> numOfWords = new HashMap <String, Integer>();
+}
