@@ -1,3 +1,4 @@
+package consoleui;
 
 public class ViewScreen {
 
