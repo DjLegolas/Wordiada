@@ -1,3 +1,6 @@
+package engine;
+
+
 import java.util.List;
 
 public class Statistic {
@@ -6,7 +9,7 @@ public class Statistic {
     private int numOfTurns;
     private int leftBoxTiles;
     private float time; //TODO: calculate
-    private  GameDataFromXml gameData;
+    private GameDataFromXml gameData;
 
 
     Statistic(List <Player> input_Player){
