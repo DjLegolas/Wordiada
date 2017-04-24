@@ -1,16 +1,23 @@
 package engine;
+
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+
+import java.io.*;
+//import java.io.FileNotFoundException;
+import java.lang.*;
+//import java.io.InputStream;
 import java.sql.Struct;
 import java.util.*;
 import java.lang.Character;
 import java.lang.String;
 import  java.math.RoundingMode;
 import  java.math.BigDecimal;
+import java.lang.Exception;
+import engine.exceptions.*;
 
 
-
+import com.sun.org.apache.xpath.internal.SourceTree;
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import engine.jabx.schema.generated.GameDescriptor;
 import engine.jabx.schema.generated.Letter;
 import engine.jabx.schema.generated.Letters;
@@ -35,7 +42,8 @@ public class GameDataFromXml {
     private int numOfTries;
     private int totalTiles;
     private int leftBoxTiles;
-    String dictFileName;
+    private String dictFileName;
+    private short targerDeckSize; //כמות אריחים
 
     private final static String JAXB_XML_GAME_PACKAGE_NAME = "engine.jabx.schema.generated";
 
@@ -58,37 +66,33 @@ public class GameDataFromXml {
 
     }
 
+    // get and set funcs:
 
+    public short getTargerDeckSize() { return targerDeckSize; }
     public Map<String, Integer> getRatiofrequencyLetter() {
         return ratiofrequencyLetter;
     }
-
     public int getBoardSize() {
         return boardSize;
     }
-
     public int getNumOfCubeWigs() {
         return numOfCubeWigs;
     }
-
     public int getNumOfTries() {
         return numOfTries;
     }
-
     public List<Letter> getLetters() {
         return letters;
     }
-
     public Map<String, Double> getFrequencyLetter() {
         return frequencyLetter;
     }
+    public String getDictFileName() { return dictFileName; }
 
 
     public void initializingDataFromXml(String pathToXml) {
-
         GameDescriptor gd;
         InputStream inputStream = null;
-
         // TODO: delete note after tests
         /*
         try {
@@ -116,17 +120,17 @@ public class GameDataFromXml {
             this.numOfCubeWigs = struct.getCubeFacets();
             //init num of tries
             this.numOfTries = struct.getRetriesNumber();
+            //init dictionart file name
             dictFileName = struct.getDictionaryFileName();
             calcRatiofrequencyLetter(frequencyLetter);
+            //init targer deck size
+            this.targerDeckSize = struct.getLetters().getTargetDeckSize();
 
         } catch (JAXBException e) {
             e.printStackTrace();
         }
     }
 
-    public String getDictFileName() {
-        return dictFileName;
-    }
 
     public void calcRatiofrequencyLetter(Map<String, Double> frequencyletter){
 
@@ -145,8 +149,58 @@ public class GameDataFromXml {
         JAXBContext jc = JAXBContext.newInstance(JAXB_XML_GAME_PACKAGE_NAME);
         Unmarshaller u = jc.createUnmarshaller();
         return (GameDescriptor) u.unmarshal(in);
-
     }
+
+    // check Validation functions:
+
+    public boolean isValidXml(String pathToXml) throws  NotXmlFileException {
+
+            String extension = pathToXml.substring(pathToXml.lastIndexOf(".") + 1, pathToXml.length());
+            if ((extension != "xml") || (extension != ".xml")){
+                throw new NotXmlFileException("ITS NOT XML FILE!");
+            }
+            else
+            return true;
+    }
+
+
+    // call this func after calling the one above
+
+    public boolean isDictionaryInRightPos(String pathToDictFile, String pathToXml) throws WrongPathException{
+
+            pathToXml = pathToXml.substring(0, pathToXml.length() - 4); // minus 4 for ".xml"
+            while (!pathToXml.endsWith("\\")) {
+                pathToXml = pathToXml.substring(0, pathToXml.length() - 1);
+            }
+             if (pathToDictFile == pathToXml + "dictionary\\" + this.getDictFileName() + ".txt")
+                   return true;
+             else {
+                 throw new WrongPathException("THE PATH: " + pathToDictFile + " IS NOT THE VALID PATH TO DICTIONARY FILE!");
+             }
+    }
+
+    public boolean isValidBoardSize(int size) throws  InvalidInputException{
+        if((size >= 5) && (size <= 50))
+            return true;
+        else
+            throw new InvalidInputException("BOARD SIZE" + size + " IS OUT OF RANGE!");
+    }
+
+    public boolean isAllLettersApperOne() throws InvalidInputException{
+        boolean isMoreThanOnce = false;
+        for(int i = 0; i < this.getLetters().size(); i++){
+            Letter l = this.getLetters().get(i);
+            String c = this.getLetters().get(i).getSign().get(0);
+            this.getLetters().remove(i);
+            isMoreThanOnce = this.getLetters().contains(c);
+            this.getLetters().add(i,l);
+            //appears more than once
+            if(isMoreThanOnce)
+                throw new InvalidInputException("THE SIGN: " + c + "APPEARS MORE THAN ONCE!");
+        }
+        return true;
+    }
+
 }
 
 
