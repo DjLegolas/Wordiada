@@ -15,7 +15,7 @@ public class Statistic {
     Statistic(List <Player> input_Player){
         players.addAll(input_Player) ;
         numOfTurns = 0;
-        leftBoxTiles = gameData.getLeftBoxTiles();
+        //leftBoxTiles = gameData.getLeftBoxTiles();
     }
 
 }
