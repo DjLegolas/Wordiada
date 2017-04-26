@@ -1,5 +1,5 @@
 
-package engine.jabx.schema.generated;
+package engine.jaxb.schema.generated;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;

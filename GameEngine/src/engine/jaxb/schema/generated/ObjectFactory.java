@@ -1,10 +1,7 @@
-package engine.jabx.schema.generated;
-
-import engine.GameEngine;
+package engine.jaxb.schema.generated;
 
 import java.util.List;
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBContext;
 
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
@@ -37,7 +34,7 @@ public class ObjectFactory {
 
 
 
-    //engine.jabx.schema.generated.ObjectFactory objectFactory = new   engine.jabx.schema.generated.ObjectFactory();
+    //engine.jaxb.schema.generated.ObjectFactory objectFactory = new   engine.jaxb.schema.generated.ObjectFactory();
   //  JAXBContext jaxbContext tring());
     /**
      *

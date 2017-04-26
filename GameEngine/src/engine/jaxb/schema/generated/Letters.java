@@ -1,5 +1,5 @@
 
-package engine.jabx.schema.generated;
+package engine.jaxb.schema.generated;
 
 import java.util.ArrayList;
 import java.util.List;
