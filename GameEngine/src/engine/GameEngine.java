@@ -2,25 +2,31 @@ package  engine;
 
 import java.lang.String;
 import engine.exceptions.*;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class GameEngine {
 
     // private GameInformation info;
     private Player player;
-    private GameDataFromXml gdfx;
+    private List<GameDataFromXml> gdfx = new ArrayList<>();
+    private GameDataFromXml currentGameData;
+    private boolean isGameStarted = false;
+    private int diceValue;
 
     //Cto'r
     GameEngine(String pathToXml){
 
-        gdfx.initializingDataFromXml(pathToXml);
-
+        GameDataFromXml gd = new GameDataFromXml();
+        gd.initializingDataFromXml(pathToXml);
         //check validation:
         try{
-            gdfx.isAllLettersApperOne();
-            gdfx.isDictionaryInRightPos(gdfx.getDictFileName(), pathToXml);
-            gdfx.isValidBoardSize(gdfx.getBoardSize());
-            gdfx.isValidXml(pathToXml);
+            gd.isAllLettersApperOne();
+            gd.isDictionaryInRightPos(gd.getDictFileName(), pathToXml);
+            gd.isValidBoardSize(gd.getBoardSize());
+            gd.isValidXml(pathToXml);
         }
         catch(InvalidInputException e){
             //TODO: ask ido
@@ -31,21 +37,23 @@ public class GameEngine {
         catch(NotXmlFileException e){
             //TODO: ask ido
         }
-
+        gdfx.add(gd);
     }
 
     public void loadXml(String pathToXml) {
     }
 
     public boolean isXmlLoaded() {
-        return true;
+        return !gdfx.isEmpty();
     }
 
     public boolean isStarted() {
-        return false;
+        return isGameStarted;
     }
 
     public void startGame() {
+        currentGameData =  gdfx.get(0);
+        isGameStarted = true;
     }
 
     public Object getStat() {
@@ -53,7 +61,9 @@ public class GameEngine {
     }
 
     public int getDiceValue() {
-        return 0;
+        Random random = new Random();
+        diceValue = random.nextInt(currentGameData.getNumOfCubeWigs() - 2) + 2;
+        return diceValue;
     }
 
     public void updateBoard(List<int[]> points) {
@@ -68,7 +78,14 @@ public class GameEngine {
     }
 
     public boolean isWordValid(String word, int tries) {
-        return true;
+        if (tries <= currentGameData.getNumOfTries()) {
+            if (true) { //TODO: check in dictionary
+                //TODO: update user
+                return true;
+            }
+            return false;
+        }
+        return false; //TODO: throw NumOfRetriesException
     }
 
     public Statistics getStatistics() {
