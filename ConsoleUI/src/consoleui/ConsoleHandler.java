@@ -3,7 +3,9 @@ package consoleui;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import engine.Statistics;
 
+//TODO: fix access permissions
 public class ConsoleHandler {
 
     public static int showMainMenu() {
@@ -118,12 +120,12 @@ public class ConsoleHandler {
         return word.toUpperCase();
     }
 
-    public static void showStatistics(Object o) {
-        //TODO: fix object and data
+    public static void showStatistics(Statistics stat) {
         System.out.println("Game Statistics:\n");
-        System.out.println("Turns played: " + 12);
-        System.out.println("Time passed from game start: " + "12:40");
-        System.out.println("Number of cards left: " + 30);
+        System.out.println("Turns played: " + stat.getNumOfTurns());
+        long time = stat.getTime();
+        System.out.println("Time passed from game start: " + time / 60 + ":" + time % 60);
+        System.out.println("Number of cards left: " + stat.getLeftBoxTiles());
         for (int i = 0; i < 12; i++) {
             //TODO: fix for
             System.out.println("\t" + ('A' + i) + " - " + 4 + "/" + 30);
