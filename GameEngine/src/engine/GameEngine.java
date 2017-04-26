@@ -4,30 +4,49 @@ package  engine;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.lang.Character;
+
+import java.lang.String;
+import engine.exceptions.*;
+
 
 public class GameEngine {
 
-    private GameDataFromXml data;
     // private GameInformation info;
     private Player player;
+    private GameDataFromXml gdfx;
 
+    //Cto'r
+    GameEngine(String pathToXml){
 
+        gdfx.initializingDataFromXml(pathToXml);
 
+        //check validation:
+        try{
+            gdfx.isAllLettersApperOne();
+            gdfx.isDictionaryInRightPos(gdfx.getDictFileName(), pathToXml);
+            gdfx.isValidBoardSize(gdfx.getBoardSize());
+            gdfx.isValidXml(pathToXml);
+        }
+        catch(InvalidInputException e){
+            //TODO: ask ido
+        }
+        catch(WrongPathException e){
+            //TODO: ask ido
+        }
+        catch(NotXmlFileException e){
+            //TODO: ask ido
+        }
+
+    }
 
     public void loadXml(String pathToXml) {
         // TODO
     }
 
 
-    public boolean isValidXml(String pathToXml) {
-        String extension = pathToXml.substring(pathToXml.lastIndexOf(".") + 1, pathToXml.length());
-        if ((extension != "xml") || (extension != ".xml"))
-            return false;
-        return true;
-    }
-    public boolean isDictionaryInRightPos(){
-        return true;
-    }
+
+
 
 
 }
