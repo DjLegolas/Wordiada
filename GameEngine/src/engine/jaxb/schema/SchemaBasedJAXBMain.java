@@ -1,13 +1,12 @@
 
-package engine.jabx.schema;
+package engine.jaxb.schema;
 
 
 //import examples.jaxb.schema.generated.Countries;
 
-import engine.jabx.schema.generated.GameDescriptor;
-import engine.jabx.schema.generated.Letters;
-import engine.jabx.schema.generated.Letter;
-import engine.jabx.schema.generated.Structure;
+import engine.jaxb.schema.generated.GameDescriptor;
+import engine.jaxb.schema.generated.Letters;
+import engine.jaxb.schema.generated.Structure;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -16,7 +15,7 @@ import java.io.InputStream;
 
 public class SchemaBasedJAXBMain {
 
-    private final static String JAXB_XML_GAME_PACKAGE_NAME = "engine.jabx.schema.generated";
+    private final static String JAXB_XML_GAME_PACKAGE_NAME = "engine.jaxb.schema.generated";
 
     public static void main(String[] args) {
         InputStream inputStream = SchemaBasedJAXBMain.class.getResourceAsStream("/resources/master.xml");

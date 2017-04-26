@@ -1,27 +1,19 @@
 package engine;
 
-import java.io.FileInputStream;
-
 import java.io.*;
 //import java.io.FileNotFoundException;
 import java.lang.*;
 //import java.io.InputStream;
-import java.sql.Struct;
 import java.util.*;
-import java.lang.Character;
 import java.lang.String;
-import  java.math.RoundingMode;
-import  java.math.BigDecimal;
-import java.lang.Exception;
+
 import engine.exceptions.*;
 
 
-import com.sun.org.apache.xpath.internal.SourceTree;
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
-import engine.jabx.schema.generated.GameDescriptor;
-import engine.jabx.schema.generated.Letter;
-import engine.jabx.schema.generated.Letters;
-import engine.jabx.schema.generated.Structure;
+import engine.jaxb.schema.generated.GameDescriptor;
+import engine.jaxb.schema.generated.Letter;
+import engine.jaxb.schema.generated.Letters;
+import engine.jaxb.schema.generated.Structure;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -43,9 +35,9 @@ public class GameDataFromXml {
     private int totalTiles;
     private int leftBoxTiles;
     private String dictFileName;
-    private short targerDeckSize; //כמות אריחים
+    private short targetDeckSize; //כמות אריחים
 
-    private final static String JAXB_XML_GAME_PACKAGE_NAME = "engine.jabx.schema.generated";
+    private final static String JAXB_XML_GAME_PACKAGE_NAME = "engine.jaxb.schema.generated";
 
     // test:
 
@@ -68,7 +60,7 @@ public class GameDataFromXml {
 
     // get and set funcs:
 
-    public short getTargerDeckSize() { return targerDeckSize; }
+    public short getTargetDeckSize() { return targetDeckSize; }
     public Map<String, Integer> getRatiofrequencyLetter() {
         return ratiofrequencyLetter;
     }
@@ -124,7 +116,7 @@ public class GameDataFromXml {
             dictFileName = struct.getDictionaryFileName();
             calcRatiofrequencyLetter(frequencyLetter);
             //init targer deck size
-            this.targerDeckSize = struct.getLetters().getTargetDeckSize();
+            this.targetDeckSize = struct.getLetters().getTargetDeckSize();
 
         } catch (JAXBException e) {
             e.printStackTrace();
