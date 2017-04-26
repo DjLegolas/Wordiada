@@ -18,7 +18,14 @@ public class Dictionary {
             return;
         }
 
-        dic.getNumberOfWords();
+        Map<String, Long> words = dic.getWords();
+        long totalWords = dic.getNumberOfWords(), myCount = 0;
+        for (String word: words.keySet()) {
+            long val = words.get(word);
+            myCount += val;
+            System.out.println(word + ": " + val);
+        }
+        System.out.println("Total: " + totalWords + "\nMy count: " + myCount);
     }
 
     private long numberOfWords = 0;
@@ -36,7 +43,7 @@ public class Dictionary {
         String toRemove = " !?,.:;\\-_=+*\"'\\(\\)\\{\\}\\[\\]%$";
         while (scanner.hasNext()) {
             currentWord = scanner.next();
-            currentWord = currentWord.replaceAll("[" + toRemove +"]", "");
+            currentWord = currentWord.replaceAll("[" + toRemove +"]", "").toUpperCase();
             if (currentWord.length() >= 2) {
                 if (!words.containsKey(currentWord)){
                     words.put(currentWord, 0L);
@@ -57,5 +64,9 @@ public class Dictionary {
 
     public long getWordAmount(String word) {
         return words.get(word);
+    }
+
+    public Map<String, Long> getWords() {
+        return words;
     }
 }
