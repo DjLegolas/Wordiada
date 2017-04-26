@@ -1,14 +1,8 @@
 package  engine;
 
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.lang.Character;
-
 import java.lang.String;
 import engine.exceptions.*;
-
+import java.util.List;
 
 public class GameEngine {
 
@@ -41,12 +35,43 @@ public class GameEngine {
     }
 
     public void loadXml(String pathToXml) {
-        // TODO
     }
 
+    public boolean isXmlLoaded() {
+        return true;
+    }
 
+    public boolean isStarted() {
+        return false;
+    }
 
+    public void startGame() {
+    }
 
+    public Object getStat() {
+        return new Integer(1);
+    }
 
+    public int getDiceValue() {
+        return 0;
+    }
 
+    public void updateBoard(List<int[]> points) {
+    }
+
+    public Object getBoard() {
+        return new Integer(1);
+    }
+
+    public int getMaxRetries() {
+        return 1;
+    }
+
+    public boolean isWordValid(String word, int tries) {
+        return true;
+    }
+
+    public Statistics getStatistics() {
+        return new Statistics(null, System.currentTimeMillis(), 0, 0);
+    }
 }
