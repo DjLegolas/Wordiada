@@ -120,21 +120,28 @@ public class ConsoleHandler {
         return word.toUpperCase();
     }
 
-    public static void showStatistics(Statistics stat) {
+    public static void showStatistics(Statistics stats) {
         System.out.println("Game Statistics:\n");
-        System.out.println("Turns played: " + stat.getNumOfTurns());
-        long time = stat.getTime();
+        // number of turns
+        System.out.println("Turns played: " + stats.getNumOfTurns());
+        // total time played
+        long time = stats.getTime();
         System.out.println("Time passed from game start: " + time / 60 + ":" + time % 60);
-        System.out.println("Number of cards left: " + stat.getLeftBoxTiles());
+        // cards left
+        int cardsLeft = stats.getLeftBoxTiles();
+        System.out.println("Number of cards left: " + cardsLeft);
         for (int i = 0; i < 12; i++) {
             //TODO: fix for
             System.out.println("\t" + ('A' + i) + " - " + 4 + "/" + 30);
         }
-        for (int i = 0; i < 2; i++) {
-            System.out.println("Player " + "Ido");
-            System.out.println(" Score: " + 5000);
-            for (int j = 0; j < 3; j++) {
-                System.out.println("umbrella" + ": " + 34 + "/" + 12398);
+        // players
+        long totalWords = stats.getTotalWords();
+        for (Statistics.PlayerData player: stats.getPlayers()) {
+            System.out.println("Player " + player.getName());
+            System.out.println(" Score: " + player.getScore());
+            System.out.println(" Words:");
+            for (String word: player.getWords()) {
+                System.out.println("\t" + word + ": " + stats.getWordCount(word) + "/" + totalWords);
             }
         }
     }
