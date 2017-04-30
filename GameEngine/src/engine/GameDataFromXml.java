@@ -12,7 +12,6 @@ import engine.exceptions.*;
 
 import engine.jaxb.schema.generated.GameDescriptor;
 import engine.jaxb.schema.generated.Letter;
-import engine.jaxb.schema.generated.Letters;
 import engine.jaxb.schema.generated.Structure;
 
 import javax.xml.bind.JAXBContext;
@@ -129,7 +128,7 @@ public class GameDataFromXml {
         return board;
     }
 
-    public void updateBoard(List<int[]> points) {
+    public void updateBoard(List<int[]> points) throws OutOfBoardBoundariesException {
         board.update(points);
     }
 

@@ -18,24 +18,19 @@ public class GameEngine {
     private boolean isGameStarted = false;
     private int diceValue;
 
-    public void loadXml(String pathToXml) throws WrongPathException, DictionaryNotFoundException {
+    public void loadXml(String pathToXml)
+            throws WrongPathException, DictionaryNotFoundException, BoardSizeException, NotXmlFileException {
         GameDataFromXml gd = new GameDataFromXml();
         gd.initializingDataFromXml(pathToXml);
         //check validation:
+        gd.isValidXml(pathToXml);
+        gd.isDictionaryInRightPos(gd.getDictFileName(), pathToXml);
+        gd.isValidBoardSize(gd.getBoardSize());
         try{
             gd.isAllLettersApperOne();
-            gd.isDictionaryInRightPos(gd.getDictFileName(), pathToXml);
-            gd.isValidBoardSize(gd.getBoardSize());
-            gd.isValidXml(pathToXml);
-        }
-        catch (InvalidBoardSizeException e){
-            e.getWrongSize();
         }
         catch(InvalidInputException e){
             throw new DictionaryNotFoundException(gd.getDictFileName());
-        }
-        catch(NotXmlFileException e){
-            //TODO: ask ido
         }
         gdfx.add(gd);
     }
@@ -78,12 +73,12 @@ public class GameEngine {
             return false;
         }
         try {
-            board.update(points);
+            currentGameData.updateBoard(points);
             return true;
         }
-        catch (OutOfBoardBoandriesException e){
+        catch (OutOfBoardBoundariesException e){
             System.out.println("Some of the points you chose are out of boandries!\n Try again.");
-               return  false;
+            return false;
         }
     }
 
