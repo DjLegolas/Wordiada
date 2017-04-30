@@ -104,9 +104,12 @@ class ConsoleHandler {
         System.out.println(line);
     }
 
-    static List<int[]> getPoints(int numOfValues) {
+    static List<int[]> getPoints(int numOfValues, boolean sizeWasTooShort) {
         Scanner scanner = new Scanner(System.in);
         List<int[]> points = new ArrayList<>();
+        if (sizeWasTooShort) {
+            System.out.println("The number of coordinates is too short! Try again...\n");
+        }
         System.out.println("Please enter "+ numOfValues + "coordinates.");
         System.out.println("The format is: row col. example: 5 5\n");
         for (int i = 0; i < numOfValues; i++) {

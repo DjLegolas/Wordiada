@@ -3,7 +3,6 @@ package consoleui;
 import java.util.List;
 import engine.GameEngine;
 import engine.Statistics;
-import engine.Status;
 import engine.exceptions.BoardSizeException;
 
 public class ConsoleUI {
@@ -20,7 +19,7 @@ public class ConsoleUI {
                     startGame();
                     break;
                 case 3:
-                    ConsoleHandler.showGameStatus(engine.getStatus());
+                    ConsoleHandler.showGameStatus(engine.getStatus(), true);
                     break;
                 case 4:
                     playTurn();
@@ -51,6 +50,7 @@ public class ConsoleUI {
                 System.out.println("Error, " + e.getMessage());
             }
         }
+        ConsoleHandler.showGameStatus(engine.getStatus(), false);
         System.out.println("XML file " + pathToXml + " loaded successfully!");
     }
 
@@ -75,9 +75,13 @@ public class ConsoleUI {
     }
 
     private static void playTurn() {
+        boolean listSizeTooShort = false;
+        List<int[]> points;
         int diceValue = engine.getDiceValue(), tries;
-        List<int[]> points = ConsoleHandler.getPoints(diceValue);
-        engine.updateBoard(points);
+        do {
+            points = ConsoleHandler.getPoints(diceValue, listSizeTooShort);
+            listSizeTooShort = !engine.updateBoard(points);
+        } while(listSizeTooShort);
         char[][] board = engine.getBoard();
         ConsoleHandler.printBoard(board);
         int maxTries = engine.getMaxRetries();
@@ -93,6 +97,6 @@ public class ConsoleUI {
             System.out.println("\nNo more retries!");
         }
         System.out.println("Changing to next player...");
-        ConsoleHandler.showGameStatus(engine.getStatus());
+        ConsoleHandler.showGameStatus(engine.getStatus(), true);
     }
 }
