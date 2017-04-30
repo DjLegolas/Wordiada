@@ -3,12 +3,14 @@ package engine.exceptions;
 import java.io.FileNotFoundException;
 
 public class DictionaryNotFoundException extends FileNotFoundException {
+    String fileName;
 
-    public DictionaryNotFoundException () {
-        super();
+    public DictionaryNotFoundException (String fileName) {
+        super ();
+        fileName = fileName;
     }
 
-    public DictionaryNotFoundException (String message) {
-        super (message);
+    public String getFileName() {
+        return fileName;
     }
 }
