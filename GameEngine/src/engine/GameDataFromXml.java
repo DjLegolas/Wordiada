@@ -27,6 +27,7 @@ public class GameDataFromXml {
 
         DataLetter(Letter l){
            letter = l;
+           amount = 0;
        }
         public Letter getLetter() {
             return letter;
@@ -162,9 +163,7 @@ public class GameDataFromXml {
     // check Validation functions:
 
     public boolean isValidXml(String pathToXml) throws NotXmlFileException {
-
-        String extension = pathToXml.substring(pathToXml.lastIndexOf(".") + 1, pathToXml.length());
-        if ((extension != "xml") || (extension != ".xml")) {
+        if (!pathToXml.toLowerCase().endsWith(".xml")) {
             throw new NotXmlFileException("ITS NOT XML FILE!");
         } else
             return true;
@@ -172,16 +171,18 @@ public class GameDataFromXml {
 
     // call this func after calling the one above
 
-    public boolean isDictionaryInRightPos(String pathToDictFile, String pathToXml) throws DictionaryNotFoundException {
+    public boolean isDictionaryInRightPos(String pathToXml) throws DictionaryNotFoundException {
 
         pathToXml = pathToXml.substring(0, pathToXml.length() - 4); // minus 4 for ".xml"
         while (!pathToXml.endsWith("\\")) {
             pathToXml = pathToXml.substring(0, pathToXml.length() - 1);
         }
-        if (pathToDictFile == pathToXml + "dictionary\\" + this.getDictFileName() + ".txt")
+        String pathToDict = pathToXml + "dictionary\\" + dictFileName;
+        File f = new File(pathToDict);
+        if (f.exists() && f.isFile())
             return true;
         else {
-            throw new DictionaryNotFoundException("THE PATH: " + pathToDictFile + " IS NOT THE VALID PATH TO DICTIONARY FILE!");
+            throw new DictionaryNotFoundException(pathToDict);
         }
     }
 

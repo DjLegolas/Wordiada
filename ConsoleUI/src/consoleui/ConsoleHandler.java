@@ -33,13 +33,7 @@ class ConsoleHandler {
         String pathToXml;
 
         System.out.println("Please enter the path to the XML file:");
-        do {
-            pathToXml = scanner.nextLine();
-            if (!pathToXml.toLowerCase().endsWith(".xml")) {
-                System.out.println("The path entered is not to a XML file!\nPlease try again:");
-            }
-        } while (!pathToXml.toLowerCase().endsWith(".xml"));
-        return pathToXml;
+        return scanner.nextLine();
     }
 
     static void showGameStatus(Status status, boolean needFullPrint) {
