@@ -3,10 +3,7 @@ package consoleui;
 import java.util.List;
 import engine.GameEngine;
 import engine.Statistics;
-import engine.exceptions.BoardSizeException;
-import engine.exceptions.DictionaryNotFoundException;
-import engine.exceptions.NotXmlFileException;
-import engine.exceptions.WrongPathException;
+import engine.exceptions.*;
 
 public class ConsoleUI {
     // TODO: fix exceptions
@@ -56,6 +53,8 @@ public class ConsoleUI {
                 System.out.println("Unable to use dictionary file\n" + e.getFileName() + "\n");
             } catch (NotXmlFileException e) {
                 System.out.println("The file " + pathToXml + " is not a valid XML.\n");
+            } catch (DuplicateLetterException e) {
+                System.out.println("The letter " + e.getLetter() + " appears more than once.\n");
             } catch (Exception e) {
                 System.out.println("Error, " + e.getMessage());
             }

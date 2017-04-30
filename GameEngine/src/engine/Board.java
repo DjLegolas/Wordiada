@@ -98,6 +98,7 @@ public class Board {
                     GameDataFromXml.DataLetter letter = letters.get(i);
                     if(numOfInsertions <= size*size){
                         if(letter.getAmount()>0){
+                            boolean toContinue = false;
                             toAdd = letter.getLetter();
                             List<Point> empty = new ArrayList<>();
                             initLettrs.put(toAdd, empty );
@@ -105,7 +106,11 @@ public class Board {
                                 x = xy.nextInt(size);
                                 y = xy.nextInt(size);
                                 p = new Point(x,y);
-                            } while (initLettrs.containsValue(p));
+                                for (List<Point> listPoints : initLettrs.values()){
+                                    if (listPoints.contains(p))
+                                        toContinue = true;
+                                }
+                            } while (toContinue);
                             initLettrs.get(toAdd).add(p);
                             board[y][x] = new Cell(toAdd.getSign().get(0),false);
                             numOfInsertions ++;

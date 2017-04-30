@@ -19,19 +19,14 @@ public class GameEngine {
     private int diceValue;
 
     public void loadXml(String pathToXml)
-            throws WrongPathException, DictionaryNotFoundException, BoardSizeException, NotXmlFileException {
+            throws WrongPathException, DictionaryNotFoundException, BoardSizeException, NotXmlFileException, DuplicateLetterException {
         GameDataFromXml gd = new GameDataFromXml();
         gd.initializingDataFromXml(pathToXml);
         //check validation:
         gd.isValidXml(pathToXml);
         gd.isDictionaryInRightPos(pathToXml);
         gd.isValidBoardSize(gd.getBoardSize());
-        try{
-            gd.isAllLettersApperOne();
-        }
-        catch(InvalidInputException e){
-            throw new DictionaryNotFoundException(gd.getDictFileName());
-        }
+        gd.isAllLettersAppearOnce();
         gdfx.add(gd);
     }
 
