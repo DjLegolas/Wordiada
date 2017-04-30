@@ -16,7 +16,7 @@ public class Status {
     }
 
     public String getPlayerName() {
-        return playerName;
+        return playerName != null ? playerName : "";
     }
 
     public char[][] getBoard() {

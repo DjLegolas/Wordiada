@@ -17,15 +17,8 @@ public class GameEngine {
     private GameDataFromXml currentGameData;
     private boolean isGameStarted = false;
     private int diceValue;
-    private Board board;
 
-    //Cto'r
-    GameEngine(String pathToXml){
-
-       //TODO: check with ido if there is a need for ctor
-    }
-
-    public void loadXml(String pathToXml) {
+    public void loadXml(String pathToXml) throws WrongPathException, DictionaryNotFoundException {
         GameDataFromXml gd = new GameDataFromXml();
         gd.initializingDataFromXml(pathToXml);
         //check validation:
@@ -39,10 +32,7 @@ public class GameEngine {
             e.getWrongSize();
         }
         catch(InvalidInputException e){
-            //TODO: ask ido
-        }
-        catch(WrongPathException e){
-            //TODO: ask ido
+            throw new DictionaryNotFoundException(gd.getDictFileName());
         }
         catch(NotXmlFileException e){
             //TODO: ask ido
@@ -66,16 +56,15 @@ public class GameEngine {
             players.add(new Player(p.getName().get(0)));
         }*/
         currentPlayer = players.get(0);
-        board = new Board(currentGameData.getBoardSize(),
-                currentGameData.getLetters(),
-                currentGameData.getTotalAmountOfLetters());
         isGameStarted = true;
     }
 
     public Status getStatus() {
-        //TODO: uncomment
-        //return new Status(board.getBoard(), currentPlayer.getName(), currentGameData.getNumOfTries());
-        return new Status(new char[4][4], currentPlayer.getName(), currentGameData.getNumOfTries());
+        return new Status(
+                currentGameData.getBoard().getBoard(),
+                currentPlayer != null ? currentPlayer.getName() : null,
+                currentGameData.getNumOfTries());
+        //return new Status(new char[4][4], currentPlayer.getName(), currentGameData.getNumOfTries());
     }
 
     public int getDiceValue() {
@@ -85,7 +74,7 @@ public class GameEngine {
     }
 
     public boolean updateBoard(List<int[]> points) {
-        if (points.size() != diceValue) {
+        if (points.size() > diceValue) {
             return false;
         }
         try {

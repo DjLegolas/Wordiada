@@ -4,13 +4,16 @@ import java.util.List;
 import engine.GameEngine;
 import engine.Statistics;
 import engine.exceptions.BoardSizeException;
+import engine.exceptions.DictionaryNotFoundException;
+import engine.exceptions.WrongPathException;
 
 public class ConsoleUI {
     // TODO: fix exceptions
-    private static GameEngine engine = new GameEngine("D:\\share\\Wordiada\\GameEngine\\src\\resources\\master.xml");
+    private static GameEngine engine = new GameEngine();
     public static void main(String[] args) {
         int selectedMenu;
         while((selectedMenu= ConsoleHandler.showMainMenu()) != 6){
+            // TODO: handle unloaded xml when choosing options 3-6
             switch (selectedMenu) {
                 case 1:
                     getXml();
@@ -46,6 +49,10 @@ public class ConsoleUI {
             try {
                 engine.loadXml(pathToXml);
                 needInput = false;
+            } catch (WrongPathException e) {
+                System.out.println("Invalid path to XML file.\n");
+            } catch (DictionaryNotFoundException e) {
+                System.out.println("Unable to use dictionary file\n" + e.getFileName() + "\n");
             } catch (Exception e) {
                 System.out.println("Error, " + e.getMessage());
             }

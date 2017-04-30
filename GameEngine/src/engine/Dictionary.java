@@ -90,7 +90,7 @@ public class Dictionary {
         try {
             scanner = new Scanner(new File(pathToDict));
         } catch (FileNotFoundException e) {
-            throw new DictionaryNotFoundException(e.getMessage());
+            throw new DictionaryNotFoundException(pathToDict);
         }
 
         String currentWord;

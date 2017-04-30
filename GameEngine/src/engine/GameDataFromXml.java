@@ -51,6 +51,7 @@ public class GameDataFromXml {
     private String dictFileName;
     private short totalTargetDeckSize; //כמות אריחים
     private final static String JAXB_XML_GAME_PACKAGE_NAME = "engine.jaxb.schema.generated";
+    private Board board;
 
     // get and set funcs:
 
@@ -76,18 +77,16 @@ public class GameDataFromXml {
         return totalAmountOfLetters;
     }
 
-
-    public void initializingDataFromXml(String pathToXml) {
+    public void initializingDataFromXml(String pathToXml) throws WrongPathException {
         GameDescriptor gd;
         InputStream inputStream = null;
-        // TODO: delete note after tests
-        /*
+
         try {
             inputStream = new FileInputStream(pathToXml);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }*/
-        inputStream = GameDataFromXml.class.getResourceAsStream("/resources/master.xml");
+            throw new WrongPathException();
+        }
+        //inputStream = GameDataFromXml.class.getResourceAsStream("/resources/master.xml");
         Structure struct;
 
         try {
@@ -104,7 +103,7 @@ public class GameDataFromXml {
 
             for(int i = 0; i < letters.size(); i++){
                 double freq = letters.get(i).getLetter().getFrequency();
-                letters.get(i).setAmount((int) ((Math.ceil(freq / 100 )) * totalFreq));
+                letters.get(i).setAmount((int) Math.ceil(Math.ceil(freq / totalFreq * 100 ) / 100 * struct.getLetters().getTargetDeckSize()));
                 totalAmountOfLetters += letters.get(i).amount;
             }
 
@@ -119,10 +118,19 @@ public class GameDataFromXml {
             //init targer deck size
             this.totalTargetDeckSize = struct.getLetters().getTargetDeckSize();
             //   this.targetDeckSize = struct.getLetters().getTargetDeckSize();---->  הצפי
+            board = new Board(boardSize, letters, totalAmountOfLetters);
 
         } catch (JAXBException e) {
             e.printStackTrace();
         }
+    }
+
+    public Board getBoard() {
+        return board;
+    }
+
+    public void updateBoard(List<int[]> points) {
+        board.update(points);
     }
 
    // NO NEED:
@@ -165,7 +173,7 @@ public class GameDataFromXml {
 
     // call this func after calling the one above
 
-    public boolean isDictionaryInRightPos(String pathToDictFile, String pathToXml) throws WrongPathException {
+    public boolean isDictionaryInRightPos(String pathToDictFile, String pathToXml) throws DictionaryNotFoundException {
 
         pathToXml = pathToXml.substring(0, pathToXml.length() - 4); // minus 4 for ".xml"
         while (!pathToXml.endsWith("\\")) {
@@ -174,7 +182,7 @@ public class GameDataFromXml {
         if (pathToDictFile == pathToXml + "dictionary\\" + this.getDictFileName() + ".txt")
             return true;
         else {
-            throw new WrongPathException("THE PATH: " + pathToDictFile + " IS NOT THE VALID PATH TO DICTIONARY FILE!");
+            throw new DictionaryNotFoundException("THE PATH: " + pathToDictFile + " IS NOT THE VALID PATH TO DICTIONARY FILE!");
         }
     }
 

@@ -43,7 +43,15 @@ public class Board {
     Cell [][] board; // for priting
     Map <Letter,List<Point>> initLettrs = new HashMap<>(); //for changes during the game
 
-    public Cell [][] getBoard() {return board;}
+    public char[][] getBoard() {
+        char[][] board = new char[size][size];
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
+                board[row][col] = this.board[row][col].sign.toCharArray()[0];
+            }
+        }
+        return board;
+    }
 
 
     //C'tor
