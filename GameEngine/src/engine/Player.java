@@ -1,13 +1,35 @@
 package engine;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Player {
 
     private String name;
     private float score;
-    private Map <String, Integer> numOfWords = new HashMap <String, Integer>();
+    private List<String> words;
+
+    public Player(String name) {
+        this.name = name;
+        score = 0;
+        words = new ArrayList<>();
+    }
+
+    public void updateScore(String word, float score) {
+        this.score += score;
+        words.add(word);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public float getScore() {
+        return score;
+    }
+
+    public List<String> getWords() {
+        List<String> l = new ArrayList<>();
+        l.addAll(words);
+        return l;
+    }
 }

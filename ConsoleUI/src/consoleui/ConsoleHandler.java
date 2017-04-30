@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import engine.Statistics;
+import engine.Status;
 
-//TODO: fix access permissions
-public class ConsoleHandler {
+class ConsoleHandler {
 
-    public static int showMainMenu() {
+    static int showMainMenu() {
         int selectedMenuItem;
         Scanner scanner = new Scanner(System.in);
 
@@ -28,7 +28,7 @@ public class ConsoleHandler {
         return selectedMenuItem;
     }
 
-    public static String getXML() {
+    static String getXML() {
         Scanner scanner = new Scanner(System.in);
         String pathToXml;
 
@@ -41,35 +41,44 @@ public class ConsoleHandler {
         return pathToXml;
     }
 
-    public static void showGameStatus(Object o) {
-        // TODO: change 'Object o' to the correct type
-        System.out.println("Game Stats:\n");
-        printBoard(5,5, null);
-        System.out.println("The number of cards remaining in the pot: " + 5);
-        System.out.println("Current player: " + "Player1");
+    static void showGameStatus(Status status, boolean needFullPrint) {
+        System.out.println("Game Status:\n");
+        printBoard(status.getBoard());
+        String line = "The number of cards ";
+        if (needFullPrint) {
+            line += "remaining ";
+        }
+        line += "in the pot: " + status.getLeftTiles();
+        System.out.println(line);
+        if (needFullPrint) {
+            System.out.println("Current player: " + status.getPlayerName());
+        }
     }
 
-    public static void printBoard(int x, int y, Object o) {
+    static void printBoard(char[][] board) {
         // TODO: change the signature of the function and fill with correct data
-        int numOfRows = y;
-        int numOfCols = x;
+        int numOfRows = board.length;
+        int numOfCols = board.length;
         int col, row;
-        String line;
-        String boarderLine = numOfRows > 9 ? "-----" : "---";
+        StringBuilder line = new StringBuilder();
+        StringBuilder boarderLine = new StringBuilder(numOfRows > 9 ? "-----" : "---");
+        String tmpStr;
         for (col = 0; col < numOfCols; col++) {
-            boarderLine += "--";
+            boarderLine.append("--");
         }
         System.out.println("Current Board:\n");
         boardIndices(numOfCols, numOfRows);
         System.out.println(boarderLine);
         // print board
         for (row = 0; row < numOfRows; row++) {
-            line = numOfRows > 9 && row < 9 ? " " : "";
-            line += (row + 1) + "|";
+            line.append(numOfRows > 9 && row < 9 ? " " : "");
+            tmpStr = (row + 1) + "|";
+            line.append(tmpStr);
             for (col = 0; col < numOfCols; col++) {
-                line += " |";
+                tmpStr = board[row][col] + "|";
+                line.append(tmpStr);
             }
-            line += row + 1;
+            line.append(row + 1);
             System.out.println(line);
             System.out.println(boarderLine);
         }
@@ -78,26 +87,29 @@ public class ConsoleHandler {
 
     private static void boardIndices(int numOfCols, int numOfRows) {
         int col;
-        String line;
-        String lineStart = numOfRows > 9 ? "  |" : " |";
-        // Print top indices
-        line = lineStart;
+        StringBuilder line = new StringBuilder();
+        String tmpStr, lineStart = numOfRows > 9 ? "  |" : " |";
+        line.append(lineStart);
         if (numOfRows > 9) {
             for (col = 1; col <= numOfCols; col++) {
-                line += col % 10 == 0 ? col / 10 + "|" : " |";
+                line.append(col % 10 == 0 ? col / 10 + "|" : " |");
             }
             System.out.println(line);
         }
-        line = lineStart;
+        line.append(lineStart);
         for (col = 0; col < numOfCols; col++) {
-            line += (col + 1) % 10 + "|";
+            tmpStr = (col + 1) % 10 + "|";
+            line.append(tmpStr);
         }
         System.out.println(line);
     }
 
-    public static List<int[]> getPoints(int numOfValues) {
+    static List<int[]> getPoints(int numOfValues, boolean sizeWasTooShort) {
         Scanner scanner = new Scanner(System.in);
         List<int[]> points = new ArrayList<>();
+        if (sizeWasTooShort) {
+            System.out.println("The number of coordinates is too short! Try again...\n");
+        }
         System.out.println("Please enter "+ numOfValues + "coordinates.");
         System.out.println("The format is: row col. example: 5 5\n");
         for (int i = 0; i < numOfValues; i++) {
@@ -110,7 +122,7 @@ public class ConsoleHandler {
         return points;
     }
 
-    public static String getWord(int tryNum, int maxTries) {
+    static String getWord(int tryNum, int maxTries) {
         String word;
         Scanner scanner = new Scanner(System.in);
 
@@ -120,21 +132,28 @@ public class ConsoleHandler {
         return word.toUpperCase();
     }
 
-    public static void showStatistics(Statistics stat) {
+    static void showStatistics(Statistics stats) {
         System.out.println("Game Statistics:\n");
-        System.out.println("Turns played: " + stat.getNumOfTurns());
-        long time = stat.getTime();
+        // number of turns
+        System.out.println("Turns played: " + stats.getNumOfTurns());
+        // total time played
+        long time = stats.getTime();
         System.out.println("Time passed from game start: " + time / 60 + ":" + time % 60);
-        System.out.println("Number of cards left: " + stat.getLeftBoxTiles());
+        // cards left
+        int cardsLeft = stats.getLeftBoxTiles();
+        System.out.println("Number of cards left: " + cardsLeft);
         for (int i = 0; i < 12; i++) {
             //TODO: fix for
             System.out.println("\t" + ('A' + i) + " - " + 4 + "/" + 30);
         }
-        for (int i = 0; i < 2; i++) {
-            System.out.println("Player " + "Ido");
-            System.out.println(" Score: " + 5000);
-            for (int j = 0; j < 3; j++) {
-                System.out.println("umbrella" + ": " + 34 + "/" + 12398);
+        // players
+        long totalWords = stats.getTotalWords();
+        for (Statistics.PlayerData player: stats.getPlayers()) {
+            System.out.println("Player " + player.getName());
+            System.out.println(" Score: " + player.getScore());
+            System.out.println(" Words:");
+            for (String word: player.getWords()) {
+                System.out.println("\t" + word + ": " + stats.getWordCount(word) + "/" + totalWords);
             }
         }
     }
