@@ -1,6 +1,6 @@
 package engine;
 
-import engine.exceptions.OutOfBoardBoandriesException;
+import engine.exceptions.OutOfBoardBoundariesException;
 import engine.jaxb.schema.generated.Letter;
 
 import java.util.Random;
@@ -129,12 +129,12 @@ public class Board {
     }
 
 
-    public void update(List<int[]> points) throws OutOfBoardBoandriesException{
+    public void update(List<int[]> points) throws OutOfBoardBoundariesException {
 
         //check valid point
         for(int[] optionalPoints : points){
             if(optionalPoints[0] > size || optionalPoints[0] < 1 || optionalPoints[1] > size || optionalPoints[1] < 1){
-                throw new OutOfBoardBoandriesException();
+                throw new OutOfBoardBoundariesException();
             }
             else{
                 board[optionalPoints[0]][optionalPoints[1]].isShown = true;
