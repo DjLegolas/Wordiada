@@ -15,10 +15,15 @@ public class GameEngine {
     private GameDataFromXml currentGameData;
     private boolean isGameStarted = false;
     private int diceValue;
+    private Board board;
 
     //Cto'r
     GameEngine(String pathToXml){
 
+       //TODO: check with ido if there is a need for ctor
+    }
+
+    public void loadXml(String pathToXml) {
         GameDataFromXml gd = new GameDataFromXml();
         gd.initializingDataFromXml(pathToXml);
         //check validation:
@@ -40,8 +45,6 @@ public class GameEngine {
         gdfx.add(gd);
     }
 
-    public void loadXml(String pathToXml) {
-    }
 
     public boolean isXmlLoaded() {
         return !gdfx.isEmpty();

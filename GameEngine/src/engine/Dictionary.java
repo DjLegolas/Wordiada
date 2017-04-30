@@ -2,8 +2,10 @@ package engine;
 
 import engine.exceptions.DictionaryNotFoundException;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -31,6 +33,7 @@ public class Dictionary {
     private long numberOfWords = 0;
     private Map<String, Long> words = new HashMap<>();
 
+
     Dictionary(String pathToDict) throws DictionaryNotFoundException {
         Scanner scanner = null;
         try {
@@ -53,6 +56,15 @@ public class Dictionary {
             }
         }
     }
+
+
+    public void calcFrequencyWord(String pathToDictFile){
+
+
+
+
+    }
+
 
     public boolean hasWord(String word) {
         return words.containsKey(word);
