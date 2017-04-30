@@ -112,14 +112,6 @@ public class Dictionary {
     }
 
 
-    public void calcFrequencyWord(String pathToDictFile){
-
-
-
-
-    }
-
-
     public boolean hasWord(String word) {
         return words.containsKey(word);
     }

@@ -28,6 +28,9 @@ public class GameEngine {
             gd.isValidBoardSize(gd.getBoardSize());
             gd.isValidXml(pathToXml);
         }
+        catch (InvalidBoardSizeException e){
+            e.getWrongSize();
+        }
         catch(InvalidInputException e){
             throw new DictionaryNotFoundException(gd.getDictFileName());
         }
@@ -71,11 +74,17 @@ public class GameEngine {
     }
 
     public boolean updateBoard(List<int[]> points) {
-        if (points.size() != diceValue) {
+        if (points.size() > diceValue) {
             return false;
         }
-        currentGameData.updateBoard(points);
-        return true;
+        try {
+            board.update(points);
+            return true;
+        }
+        catch (OutOfBoardBoandriesException e){
+            System.out.println("Some of the points you chose are out of boandries!\n Try again.");
+               return  false;
+        }
     }
 
     public char[][] getBoard() {
