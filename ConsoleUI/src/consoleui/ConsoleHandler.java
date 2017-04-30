@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import engine.Statistics;
+import engine.Status;
 
 //TODO: fix access permissions
 public class ConsoleHandler {
@@ -41,18 +42,17 @@ public class ConsoleHandler {
         return pathToXml;
     }
 
-    public static void showGameStatus(Object o) {
-        // TODO: change 'Object o' to the correct type
-        System.out.println("Game Stats:\n");
-        printBoard(5,5, null);
-        System.out.println("The number of cards remaining in the pot: " + 5);
-        System.out.println("Current player: " + "Player1");
+    public static void showGameStatus(Status status) {
+        System.out.println("Game Status:\n");
+        printBoard(status.getBoard());
+        System.out.println("The number of cards remaining in the pot: " + status.getLeftTiles());
+        System.out.println("Current player: " + status.getPlayerName());
     }
 
-    public static void printBoard(int x, int y, Object o) {
+    public static void printBoard(char[][] board) {
         // TODO: change the signature of the function and fill with correct data
-        int numOfRows = y;
-        int numOfCols = x;
+        int numOfRows = board.length;
+        int numOfCols = board.length;
         int col, row;
         String line;
         String boarderLine = numOfRows > 9 ? "-----" : "---";
@@ -67,7 +67,7 @@ public class ConsoleHandler {
             line = numOfRows > 9 && row < 9 ? " " : "";
             line += (row + 1) + "|";
             for (col = 0; col < numOfCols; col++) {
-                line += " |";
+                line += board[row][col] + "|";
             }
             line += row + 1;
             System.out.println(line);
@@ -80,7 +80,6 @@ public class ConsoleHandler {
         int col;
         String line;
         String lineStart = numOfRows > 9 ? "  |" : " |";
-        // Print top indices
         line = lineStart;
         if (numOfRows > 9) {
             for (col = 1; col <= numOfCols; col++) {

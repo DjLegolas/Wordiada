@@ -8,9 +8,11 @@ public class Statistics {
     private List<PlayerData> players ;
     private int numOfTurns;
     private int leftBoxTiles;
-    private long playTime; //TODO: calculate
+    private long playTime;
     private GameDataFromXml gameData;
     private Dictionary dict;
+
+    //TODO: add letters left in box of cards
 
     public class PlayerData {
         private Player player;

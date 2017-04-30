@@ -3,9 +3,12 @@ package consoleui;
 import java.util.List;
 import engine.GameEngine;
 import engine.Statistics;
+import engine.Status;
+import engine.exceptions.BoardSizeException;
 
 public class ConsoleUI {
-    private static GameEngine engine = new GameEngine();
+    // TODO: fix exceptions
+    private static GameEngine engine = new GameEngine("D:\\share\\Wordiada\\GameEngine\\src\\resources\\master.xml");
     public static void main(String[] args) {
         int selectedMenu;
         while((selectedMenu= ConsoleHandler.showMainMenu()) != 6){
@@ -17,7 +20,7 @@ public class ConsoleUI {
                     startGame();
                     break;
                 case 3:
-                    ConsoleHandler.showGameStatus(engine.getStat());
+                    ConsoleHandler.showGameStatus(engine.getStatus());
                     break;
                 case 4:
                     playTurn();
@@ -29,9 +32,9 @@ public class ConsoleUI {
             }
         }
 
-        System.out.println("Game ended.");
-        Object o = engine.getBoard();
-        ConsoleHandler.printBoard(5, 7, o);
+        System.out.println("---- Game ended ----");
+        char[][] board = engine.getBoard();
+        ConsoleHandler.printBoard(board);
         Statistics stat = engine.getStatistics();
         ConsoleHandler.showStatistics(stat);
     }
@@ -61,7 +64,13 @@ public class ConsoleUI {
                     "Please DON'T use this option again.");
         }
         else {
-            engine.startGame();
+            try {
+                engine.startGame();
+            } catch (BoardSizeException e) {
+                System.out.println("XML not valid!");
+                System.out.println("Expected size is between " + e.getMinSize() + " to " + e.getMaxSize());
+                System.out.println("Got: " + e.getSize());
+            }
         }
     }
 
@@ -69,8 +78,8 @@ public class ConsoleUI {
         int diceValue = engine.getDiceValue(), tries;
         List<int[]> points = ConsoleHandler.getPoints(diceValue);
         engine.updateBoard(points);
-        Object o = engine.getBoard();
-        ConsoleHandler.printBoard(5, 7, o);
+        char[][] board = engine.getBoard();
+        ConsoleHandler.printBoard(board);
         int maxTries = engine.getMaxRetries();
         for (tries = 0; tries < maxTries; tries++) {
             String word = ConsoleHandler.getWord(tries + 1, maxTries);
@@ -84,6 +93,6 @@ public class ConsoleUI {
             System.out.println("\nNo more retries!");
         }
         System.out.println("Changing to next player...");
-        ConsoleHandler.showGameStatus(engine.getStat());
+        ConsoleHandler.showGameStatus(engine.getStatus());
     }
 }
