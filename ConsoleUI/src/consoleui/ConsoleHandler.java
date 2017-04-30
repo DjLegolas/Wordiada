@@ -60,22 +60,25 @@ class ConsoleHandler {
         int numOfRows = board.length;
         int numOfCols = board.length;
         int col, row;
-        String line;
-        String boarderLine = numOfRows > 9 ? "-----" : "---";
+        StringBuilder line = new StringBuilder();
+        StringBuilder boarderLine = new StringBuilder(numOfRows > 9 ? "-----" : "---");
+        String tmpStr;
         for (col = 0; col < numOfCols; col++) {
-            boarderLine += "--";
+            boarderLine.append("--");
         }
         System.out.println("Current Board:\n");
         boardIndices(numOfCols, numOfRows);
         System.out.println(boarderLine);
         // print board
         for (row = 0; row < numOfRows; row++) {
-            line = numOfRows > 9 && row < 9 ? " " : "";
-            line += (row + 1) + "|";
+            line.append(numOfRows > 9 && row < 9 ? " " : "");
+            tmpStr = (row + 1) + "|";
+            line.append(tmpStr);
             for (col = 0; col < numOfCols; col++) {
-                line += board[row][col] + "|";
+                tmpStr = board[row][col] + "|";
+                line.append(tmpStr);
             }
-            line += row + 1;
+            line.append(row + 1);
             System.out.println(line);
             System.out.println(boarderLine);
         }
@@ -84,18 +87,19 @@ class ConsoleHandler {
 
     private static void boardIndices(int numOfCols, int numOfRows) {
         int col;
-        String line;
-        String lineStart = numOfRows > 9 ? "  |" : " |";
-        line = lineStart;
+        StringBuilder line = new StringBuilder();
+        String tmpStr, lineStart = numOfRows > 9 ? "  |" : " |";
+        line.append(lineStart);
         if (numOfRows > 9) {
             for (col = 1; col <= numOfCols; col++) {
-                line += col % 10 == 0 ? col / 10 + "|" : " |";
+                line.append(col % 10 == 0 ? col / 10 + "|" : " |");
             }
             System.out.println(line);
         }
-        line = lineStart;
+        line.append(lineStart);
         for (col = 0; col < numOfCols; col++) {
-            line += (col + 1) % 10 + "|";
+            tmpStr = (col + 1) % 10 + "|";
+            line.append(tmpStr);
         }
         System.out.println(line);
     }
