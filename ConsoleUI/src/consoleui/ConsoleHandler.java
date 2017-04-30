@@ -6,10 +6,9 @@ import java.util.Scanner;
 import engine.Statistics;
 import engine.Status;
 
-//TODO: fix access permissions
-public class ConsoleHandler {
+class ConsoleHandler {
 
-    public static int showMainMenu() {
+    static int showMainMenu() {
         int selectedMenuItem;
         Scanner scanner = new Scanner(System.in);
 
@@ -29,7 +28,7 @@ public class ConsoleHandler {
         return selectedMenuItem;
     }
 
-    public static String getXML() {
+    static String getXML() {
         Scanner scanner = new Scanner(System.in);
         String pathToXml;
 
@@ -42,14 +41,14 @@ public class ConsoleHandler {
         return pathToXml;
     }
 
-    public static void showGameStatus(Status status) {
+    static void showGameStatus(Status status) {
         System.out.println("Game Status:\n");
         printBoard(status.getBoard());
         System.out.println("The number of cards remaining in the pot: " + status.getLeftTiles());
         System.out.println("Current player: " + status.getPlayerName());
     }
 
-    public static void printBoard(char[][] board) {
+    static void printBoard(char[][] board) {
         // TODO: change the signature of the function and fill with correct data
         int numOfRows = board.length;
         int numOfCols = board.length;
@@ -94,7 +93,7 @@ public class ConsoleHandler {
         System.out.println(line);
     }
 
-    public static List<int[]> getPoints(int numOfValues) {
+    static List<int[]> getPoints(int numOfValues) {
         Scanner scanner = new Scanner(System.in);
         List<int[]> points = new ArrayList<>();
         System.out.println("Please enter "+ numOfValues + "coordinates.");
@@ -109,7 +108,7 @@ public class ConsoleHandler {
         return points;
     }
 
-    public static String getWord(int tryNum, int maxTries) {
+    static String getWord(int tryNum, int maxTries) {
         String word;
         Scanner scanner = new Scanner(System.in);
 
@@ -119,7 +118,7 @@ public class ConsoleHandler {
         return word.toUpperCase();
     }
 
-    public static void showStatistics(Statistics stats) {
+    static void showStatistics(Statistics stats) {
         System.out.println("Game Statistics:\n");
         // number of turns
         System.out.println("Turns played: " + stats.getNumOfTurns());
