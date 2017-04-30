@@ -193,7 +193,7 @@ public class GameDataFromXml {
             throw new BoardSizeException(size, (short)5, (short) 50);
     }
 
-    public boolean isAllLettersApperOne() throws InvalidInputException {
+    public boolean isAllLettersAppearOnce() throws DuplicateLetterException {
         boolean isMoreThanOnce = false;
         for (int i = 0; i < this.getLetters().size(); i++) {
             DataLetter l = this.getLetters().get(i);
@@ -206,7 +206,7 @@ public class GameDataFromXml {
             this.getLetters().add(i, l);
             //appears more than once
             if (isMoreThanOnce)
-                throw new InvalidInputException("THE SIGN: " + c + "APPEARS MORE THAN ONCE!");
+                throw new DuplicateLetterException("THE SIGN: " + c + "APPEARS MORE THAN ONCE!");
         }
         return true;
     }
