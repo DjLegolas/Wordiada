@@ -1,16 +1,12 @@
 package engine;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
-import engine.exceptions.BoardSizeException;
+import engine.exceptions.OutOfBoardBoandriesException;
 import engine.jaxb.schema.generated.Letter;
 
 import java.util.Random;
-import engine.jaxb.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.*;
-import engine.jaxb.sdf;
 
 public class Board {
 
@@ -45,7 +41,7 @@ public class Board {
     private short size;
     List<GameDataFromXml.DataLetter> kupa = new ArrayList<>();
     Cell [][] board; // for priting
-    Map <Letter,List<Point>> initLettrs = new HashMap<>();
+    Map <Letter,List<Point>> initLettrs = new HashMap<>(); //for changes during the game
 
     public Cell [][] getBoard() {return board;}
 
@@ -125,8 +121,17 @@ public class Board {
     }
 
 
-    public void update(List<int[]> points) {
+    public void update(List<int[]> points) throws OutOfBoardBoandriesException{
 
+        //check valid point
+        for(int[] optionalPoints : points){
+            if(optionalPoints[0] > size || optionalPoints[0] < 1 || optionalPoints[1] > size || optionalPoints[1] < 1){
+                throw new OutOfBoardBoandriesException();
+            }
+            else{
+                board[optionalPoints[0]][optionalPoints[1]].isShown = true;
+            }
+        }
     }
 
 

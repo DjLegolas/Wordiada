@@ -32,88 +32,50 @@ public class GameDataFromXml {
         public Letter getLetter() {
             return letter;
         }
-
         public void setAmount(int amount) {
             this.amount = amount;
         }
-
         public int getAmount() {
             return amount;
         }
-
         public void setLetter(Letter letter) {
             this.letter = letter;
         }
     }
 
     List<DataLetter> letters = new ArrayList<>();
-
     private int totalAmountOfLetters = 0;
     private short boardSize;
     private int numOfCubeWigs;
     private int numOfTries;
-    private int leftTargetDeckSize;  //בקופה
     private String dictFileName;
     private short totalTargetDeckSize; //כמות אריחים
-    //private int totalWordsInDict;----> moved to dictionary class
     private final static String JAXB_XML_GAME_PACKAGE_NAME = "engine.jaxb.schema.generated";
-
-    // test:
-/*
-    public static void main(String[] argv) {
-        int freqratio = 0;
-        GameDataFromXml g = new GameDataFromXml();
-        g.initializingDataFromXml("ABC");
-        System.out.println("board size: " + g.getBoardSize());
-        System.out.println("num of cubs: " + g.getNumOfCubeWigs());
-        for (int i : g.getRatiofrequencyLetter().values())
-            System.out.println(i);
-
-        for (int i = 0; i < g.getLetters().size(); i++) {
-            freqratio = g.getRatiofrequencyLetter().get(g.getLetters().get(i).getSign().get(0));
-            System.out.println("letter " + (i + 1) + ": " + g.getLetters().get(i).getSign().get(0) + " frequency: " + g.getFrequencyLetter().get(g.getLetters().get(i).getSign().get(0)) +
-                    " Ratio frequency: " + freqratio);
-        }
-
-    }*/
 
     // get and set funcs:
 
     public short getTargetDeckSize() {
         return totalTargetDeckSize;
     }
-
-   // public Map<String, Integer> getRatiofrequencyLetter() {
-   //     return ratiofrequencyLetter;
-   // }
-
     public short getBoardSize() {
         return boardSize;
     }
-
     public int getNumOfCubeWigs() {
         return numOfCubeWigs;
     }
-
     public int getNumOfTries() {
         return numOfTries;
     }
-
     public List<DataLetter> getLetters() {
         return letters;
     }
-
-   // public Map<String, Double> getFrequencyLetter() {
-     //   return frequencyLetter;
-    //}
-
     public String getDictFileName() {
         return dictFileName;
     }
-
     public int getTotalAmountOfLetters() {
         return totalAmountOfLetters;
     }
+
 
     public void initializingDataFromXml(String pathToXml) {
         GameDescriptor gd;
@@ -201,7 +163,6 @@ public class GameDataFromXml {
             return true;
     }
 
-
     // call this func after calling the one above
 
     public boolean isDictionaryInRightPos(String pathToDictFile, String pathToXml) throws WrongPathException {
@@ -217,11 +178,11 @@ public class GameDataFromXml {
         }
     }
 
-    public boolean isValidBoardSize(int size) throws InvalidInputException {
+    public boolean isValidBoardSize(short size) throws BoardSizeException {
         if ((size >= 5) && (size <= 50))
             return true;
         else
-            throw new InvalidInputException("BOARD SIZE" + size + " IS OUT OF RANGE!");
+            throw new BoardSizeException(size, (short)5, (short) 50);
     }
 
     public boolean isAllLettersApperOne() throws InvalidInputException {

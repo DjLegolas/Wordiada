@@ -35,6 +35,9 @@ public class GameEngine {
             gd.isValidBoardSize(gd.getBoardSize());
             gd.isValidXml(pathToXml);
         }
+        catch (InvalidBoardSizeException e){
+            e.getWrongSize();
+        }
         catch(InvalidInputException e){
             //TODO: ask ido
         }
@@ -85,8 +88,14 @@ public class GameEngine {
         if (points.size() != diceValue) {
             return false;
         }
-        board.update(points);
-        return true;
+        try {
+            board.update(points);
+            return true;
+        }
+        catch (OutOfBoardBoandriesException e){
+            System.out.println("Some of the points you chose are out of boandries!\n Try again.");
+               return  false;
+        }
     }
 
     public char[][] getBoard() {
