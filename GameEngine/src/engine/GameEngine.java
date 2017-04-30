@@ -24,7 +24,7 @@ public class GameEngine {
         gd.initializingDataFromXml(pathToXml);
         //check validation:
         gd.isValidXml(pathToXml);
-        gd.isDictionaryInRightPos(gd.getDictFileName(), pathToXml);
+        gd.isDictionaryInRightPos(pathToXml);
         gd.isValidBoardSize(gd.getBoardSize());
         try{
             gd.isAllLettersApperOne();
@@ -55,6 +55,12 @@ public class GameEngine {
     }
 
     public Status getStatus() {
+        if (currentGameData == null) {
+            GameDataFromXml gd = gdfx.get(gdfx.size() - 1);
+            return new Status(gd.getBoard().getBoard(),
+                    currentPlayer != null ? currentPlayer.getName() : null,
+                    gd.getNumOfTries());
+        }
         return new Status(
                 currentGameData.getBoard().getBoard(),
                 currentPlayer != null ? currentPlayer.getName() : null,

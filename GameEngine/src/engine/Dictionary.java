@@ -9,28 +9,6 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class Dictionary {
-    /* TODO: remove
-    public static void main(String[] args) {
-        Dictionary dic;
-        try {
-            dic = new Dictionary("C:\\Users\\Ido\\Downloads\\war and piece.txt");
-        } catch (DictionaryNotFoundException e) {
-            System.out.println("Dictionary not found...");
-            return;
-        }
-
-        Map<String, Word> words = dic.getWords();
-        long totalWords = dic.getNumberOfWords(), myCount = 0;
-        for (String word: words.keySet()) {
-            Word word1 = words.get(word);
-            long count = word1.getCount();
-            myCount += count;
-            System.out.println(word + ": " + count + ", " + word1.getFrequency());
-        }
-        System.out.println("Total: " + totalWords + "\nMy count: " + myCount);
-    }
-    */
-
     private long numberOfWords = 0;
     private Map<String, Word> words = new HashMap<>();
 

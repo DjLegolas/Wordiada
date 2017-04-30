@@ -5,6 +5,7 @@ import engine.GameEngine;
 import engine.Statistics;
 import engine.exceptions.BoardSizeException;
 import engine.exceptions.DictionaryNotFoundException;
+import engine.exceptions.NotXmlFileException;
 import engine.exceptions.WrongPathException;
 
 public class ConsoleUI {
@@ -53,6 +54,8 @@ public class ConsoleUI {
                 System.out.println("Invalid path to XML file.\n");
             } catch (DictionaryNotFoundException e) {
                 System.out.println("Unable to use dictionary file\n" + e.getFileName() + "\n");
+            } catch (NotXmlFileException e) {
+                System.out.println("The file " + pathToXml + " is not a valid XML.\n");
             } catch (Exception e) {
                 System.out.println("Error, " + e.getMessage());
             }
