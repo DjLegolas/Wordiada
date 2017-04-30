@@ -43,6 +43,7 @@ public class Board {
     }
 
     private short size;
+    List<GameDataFromXml.DataLetter> kupa = new ArrayList<>();
     Cell [][] board; // for priting
     Map <Letter,List<Point>> initLettrs = new HashMap<>();
 
@@ -69,49 +70,63 @@ public class Board {
                 initLettrs.put(toAdd, empty );
 
                 for(int i = 0 ; i < letter.getAmount(); i++){
+                    boolean toContinue = false;
                     do {
                         x = xy.nextInt(size);
                         y = xy.nextInt(size);
                         p = new Point(x,y);
-                    } while (initLettrs.containsValue(p));
+                        for (List<Point> listPoints : initLettrs.values()){
+                            if (listPoints.contains(p))
+                                toContinue = true;
+                        }
+                    } while (toContinue);
                     initLettrs.get(toAdd).add(p);
                     board[y][x] = new Cell(toAdd.getSign().get(0),false);
+                    letter.setAmount(letter.getAmount() - 1);
                 }
             }
         }
-        //more letters than board size
+        //more letters than board size - need for kupa
         else{
             int numOfInsertions = 0;
             while (numOfInsertions <= size*size){
                 for(int i =0; i< letters.size(); i++){
                     GameDataFromXml.DataLetter letter = letters.get(i);
                     if(numOfInsertions <= size*size){
-                        toAdd = letter.getLetter();
-                        List<Point> empty = new ArrayList<>();
-                        initLettrs.put(toAdd, empty );
-                        do {
-                            x = xy.nextInt(size);
-                            y = xy.nextInt(size);
-                            p = new Point(x,y);
-                        } while (initLettrs.containsValue(p));
-                        initLettrs.get(toAdd).add(p);
-                        board[y][x] = new Cell(toAdd.getSign().get(0),false);
-                        numOfInsertions ++;
+                        if(letter.getAmount()>0){
+                            toAdd = letter.getLetter();
+                            List<Point> empty = new ArrayList<>();
+                            initLettrs.put(toAdd, empty );
+                            do {
+                                x = xy.nextInt(size);
+                                y = xy.nextInt(size);
+                                p = new Point(x,y);
+                            } while (initLettrs.containsValue(p));
+                            initLettrs.get(toAdd).add(p);
+                            board[y][x] = new Cell(toAdd.getSign().get(0),false);
+                            numOfInsertions ++;
+                            letter.setAmount(letter.getAmount() - 1);
+                        }
                     }
-
                 }
-
             }
 
-
-
+            //build the kupa
+            for(GameDataFromXml.DataLetter letter : letters){
+                for(int i =0; i< letter.getAmount(); i++){
+                    kupa.add(i, letter);
+                }
+            }
         }
-
     }
 
     public void setBoard(Cell[][] board) {
         this.board = board;
     }
+
+
+
+
 
 
 

@@ -48,7 +48,7 @@ public class GameDataFromXml {
 
     List<DataLetter> letters = new ArrayList<>();
 
-    public int totalAmountOfLetters = 0;
+    private int totalAmountOfLetters = 0;
     private int boardSize;
     private int numOfCubeWigs;
     private int numOfTries;
@@ -59,7 +59,7 @@ public class GameDataFromXml {
     private final static String JAXB_XML_GAME_PACKAGE_NAME = "engine.jaxb.schema.generated";
 
     // test:
-
+/*
     public static void main(String[] argv) {
         int freqratio = 0;
         GameDataFromXml g = new GameDataFromXml();
@@ -75,7 +75,7 @@ public class GameDataFromXml {
                     " Ratio frequency: " + freqratio);
         }
 
-    }
+    }*/
 
     // get and set funcs:
 
@@ -111,6 +111,9 @@ public class GameDataFromXml {
         return dictFileName;
     }
 
+    public int getTotalAmountOfLetters() {
+        return totalAmountOfLetters;
+    }
 
     public void initializingDataFromXml(String pathToXml) {
         GameDescriptor gd;
@@ -224,8 +227,8 @@ public class GameDataFromXml {
     public boolean isAllLettersApperOne() throws InvalidInputException {
         boolean isMoreThanOnce = false;
         for (int i = 0; i < this.getLetters().size(); i++) {
-            Letter l = this.getLetters().get(i);
-            String c = this.getLetters().get(i).getSign().get(0);
+            DataLetter l = this.getLetters().get(i);
+            String c = this.getLetters().get(i).getLetter().getSign().get(0);
             this.getLetters().remove(i);
             isMoreThanOnce = this.getLetters().contains(c);
             this.getLetters().add(i, l);
