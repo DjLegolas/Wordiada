@@ -198,7 +198,10 @@ public class GameDataFromXml {
             DataLetter l = this.getLetters().get(i);
             String c = this.getLetters().get(i).getLetter().getSign().get(0);
             this.getLetters().remove(i);
-            isMoreThanOnce = this.getLetters().contains(c);
+            for(DataLetter toCompare : this.getLetters()){
+               if(toCompare.getLetter().getSign().get(0) == c)
+                   isMoreThanOnce = true;
+            }
             this.getLetters().add(i, l);
             //appears more than once
             if (isMoreThanOnce)
