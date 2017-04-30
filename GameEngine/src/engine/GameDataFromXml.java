@@ -87,7 +87,7 @@ public class GameDataFromXml {
    //     return ratiofrequencyLetter;
    // }
 
-    public int getBoardSize() {
+    public short getBoardSize() {
         return boardSize;
     }
 

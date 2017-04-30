@@ -65,7 +65,7 @@ public class GameEngine {
         currentPlayer = players.get(0);
         board = new Board(currentGameData.getBoardSize(),
                 currentGameData.getLetters(),
-                currentGameData.getToalAmountOfLetters());
+                currentGameData.getTotalAmountOfLetters());
         isGameStarted = true;
     }
 
