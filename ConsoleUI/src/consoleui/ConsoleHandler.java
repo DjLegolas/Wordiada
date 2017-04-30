@@ -41,11 +41,18 @@ class ConsoleHandler {
         return pathToXml;
     }
 
-    static void showGameStatus(Status status) {
+    static void showGameStatus(Status status, boolean needFullPrint) {
         System.out.println("Game Status:\n");
         printBoard(status.getBoard());
-        System.out.println("The number of cards remaining in the pot: " + status.getLeftTiles());
-        System.out.println("Current player: " + status.getPlayerName());
+        String line = "The number of cards ";
+        if (needFullPrint) {
+            line += "remaining ";
+        }
+        line += "in the pot: " + status.getLeftTiles();
+        System.out.println(line);
+        if (needFullPrint) {
+            System.out.println("Current player: " + status.getPlayerName());
+        }
     }
 
     static void printBoard(char[][] board) {
