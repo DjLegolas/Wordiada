@@ -125,7 +125,9 @@ public class Board {
     }
 
 
+    public void update(List<int[]> points) {
 
+    }
 
 
 

@@ -49,7 +49,7 @@ public class GameDataFromXml {
     List<DataLetter> letters = new ArrayList<>();
 
     private int totalAmountOfLetters = 0;
-    private int boardSize;
+    private short boardSize;
     private int numOfCubeWigs;
     private int numOfTries;
     private int leftTargetDeckSize;  //בקופה
@@ -87,7 +87,7 @@ public class GameDataFromXml {
    //     return ratiofrequencyLetter;
    // }
 
-    public int getBoardSize() {
+    public short getBoardSize() {
         return boardSize;
     }
 
