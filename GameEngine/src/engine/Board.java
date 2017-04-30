@@ -43,39 +43,28 @@ public class Board {
     }
 
     private short size;
-    Cell [][] board;
-  //  Map <String,Point> ShownLetters = new HashMap<>();
-    Map <Cell,List<Point>> initLettrs = new HashMap<>();
+    Cell [][] board; // for priting
+    Map <Letter,List<Point>> initLettrs = new HashMap<>();
 
     public Cell [][] getBoard() {return board;}
-
-
-    //test:
-    public static void main(String [] argv){
-     Board b = new Board((short)6);
-     b.printBoard(b.getBoard());
-        System.out.print('\r');
-
-     }
 
 
     //C'tor
     Board(short _size, List<GameDataFromXml.DataLetter> letters, int totalAmountLetters){
 
         int x,y;
-        Cell toAdd;
+        Letter toAdd;
         Point p;
-        List<Point> usedPoints =new ArrayList<>();
         this.board = new Cell[_size][_size];
         size = _size;
 
         //(x,y) point in the board
         Random xy = new Random();
-        //if less or equal amount letters than board
-        if(totalAmountLetters <= _size * _size)
+        //if  equal amount letters to board size
+        if(totalAmountLetters == _size * _size)
         {
             for(GameDataFromXml.DataLetter letter : letters){
-                toAdd =new Cell(letter.getLetter().getSign().get(0), false);
+                toAdd = letter.getLetter();
                 List<Point> empty = new ArrayList<>();
                 initLettrs.put(toAdd, empty );
 
@@ -86,11 +75,34 @@ public class Board {
                         p = new Point(x,y);
                     } while (initLettrs.containsValue(p));
                     initLettrs.get(toAdd).add(p);
-                    }
+                    board[y][x] = new Cell(toAdd.getSign().get(0),false);
+                }
             }
         }
         //more letters than board size
         else{
+            int numOfInsertions = 0;
+            while (numOfInsertions <= size*size){
+                for(int i =0; i< letters.size(); i++){
+                    GameDataFromXml.DataLetter letter = letters.get(i);
+                    if(numOfInsertions <= size*size){
+                        toAdd = letter.getLetter();
+                        List<Point> empty = new ArrayList<>();
+                        initLettrs.put(toAdd, empty );
+                        do {
+                            x = xy.nextInt(size);
+                            y = xy.nextInt(size);
+                            p = new Point(x,y);
+                        } while (initLettrs.containsValue(p));
+                        initLettrs.get(toAdd).add(p);
+                        board[y][x] = new Cell(toAdd.getSign().get(0),false);
+                        numOfInsertions ++;
+                    }
+
+                }
+
+            }
+
 
 
         }
@@ -100,12 +112,20 @@ public class Board {
     public void setBoard(Cell[][] board) {
         this.board = board;
     }
+
+
+
+
+
+
+
+    //TODO: remove
 /*
     public void printLetterInBoard(char sign){
         System.out.println(String.format("%-30s","h"));
     }*/
 
-
+/*
     public void printBoard(char[][] board)
     {
         //התקרה
@@ -141,4 +161,5 @@ public class Board {
 
 
     }
+    */
 }
