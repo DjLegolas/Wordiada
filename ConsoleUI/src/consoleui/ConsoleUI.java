@@ -49,36 +49,43 @@ public class ConsoleUI {
                 needInput = false;
             } catch (WrongPathException e) {
                 System.out.println("Invalid path to XML file.\n");
-            } catch (DictionaryNotFoundException e) {
-                System.out.println("Unable to use dictionary file\n" + e.getFileName() + "\n");
             } catch (NotXmlFileException e) {
-                System.out.println("The file " + pathToXml + " is not a valid XML.\n");
+                System.out.println("The file \"" + pathToXml + "\" is not an XML file.\n");
+            } catch (DictionaryNotFoundException e) {
+                System.out.println("Unable to use dictionary file \"" + e.getFileName() + "\"\n");
             } catch (DuplicateLetterException e) {
                 System.out.println("The letter " + e.getLetter() + " appears more than once.\n");
+            } catch (BoardSizeException e) {
+                System.out.println("XML not valid!");
+                System.out.println("Expected size is between " + e.getMinSize() + " to " + e.getMaxSize());
+                System.out.println("Got: " + e.getSize());
+            } catch (NotValidXmlFileException e) {
+                System.out.println("The XML file \"" + pathToXml +"\"\n" +
+                        "does not contains the information for Wordiada game.\n");
             } catch (Exception e) {
                 System.out.println("Error, " + e.getMessage());
             }
         }
         ConsoleHandler.showGameStatus(engine.getStatus(), false);
-        System.out.println("XML file " + pathToXml + " loaded successfully!");
+        System.out.println("XML file \"" + pathToXml + "\" loaded successfully!\n");
     }
 
     private static void startGame(){
         if (!engine.isXmlLoaded()) {
             System.out.println("No xml game file was loaded.\n" +
-                    "Please select 1 first to load at least one xml file.");
+                    "Please select 1 first to load at least one xml file.\n");
         }
         else if (engine.isStarted()) {
             System.out.println("The game was already started...\n" +
-                    "Please DON'T use this option again.");
+                    "Please DON'T use this option again.\n");
         }
         else {
             try {
                 engine.startGame();
-            } catch (BoardSizeException e) {
-                System.out.println("XML not valid!");
-                System.out.println("Expected size is between " + e.getMinSize() + " to " + e.getMaxSize());
-                System.out.println("Got: " + e.getSize());
+            } catch (NumberOfPlayersException e) {
+                System.out.println("The number of players is incorrect.\n" +
+                        "The minimum is " + e.getMinPlayers() + ", the maximum is " + e.getMaxPlayers() +
+                        ", but got " + e.getActualNumOfPlayers() + " players.\n");
             }
         }
     }
