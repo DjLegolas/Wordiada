@@ -26,6 +26,29 @@ public class Board {
         public int getY() {
             return y;
         }
+
+        @Override
+        public int hashCode() {
+            int hash = 17;
+            hash = 13 * hash + x + y;
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (obj == this){
+                return true;
+            }
+            if (!(obj instanceof Point)) {
+                return false;
+            }
+
+            final Point other = (Point) obj;
+            return this.x == other.x && this.y == other.y;
+        }
     }
     private class Cell{
         boolean isShown;
@@ -39,9 +62,11 @@ public class Board {
     }
 
     private short size;
-    List<GameDataFromXml.DataLetter> kupa = new ArrayList<>();
-    Cell [][] board; // for priting
-    Map <Letter,List<Point>> initLettrs = new HashMap<>(); //for changes during the game
+    private List<GameDataFromXml.DataLetter> kupa = new ArrayList<>();
+    private Cell [][] board; // for priting
+    private Map <Letter,List<Point>> initLettrs = new HashMap<>(); //for changes during the game
+    static final short MAX_SIZE = 50;
+    static final short MIN_SIZE = 5;
 
     public char[][] getBoard() {
         char[][] board = new char[size][size];
@@ -70,12 +95,13 @@ public class Board {
         {
             for(GameDataFromXml.DataLetter letter : letters){
                 toAdd = letter.getLetter();
-                List<Point> empty = new ArrayList<>();
-                initLettrs.put(toAdd, empty );
-
+                if (!initLettrs.containsKey(toAdd)) {
+                    initLettrs.put(toAdd, new ArrayList<>());
+                }
                 for(int i = 0 ; i < letter.getAmount(); i++){
-                    boolean toContinue = false;
+                    boolean toContinue;
                     do {
+                        toContinue = false;
                         x = xy.nextInt(size);
                         y = xy.nextInt(size);
                         p = new Point(x,y);
@@ -93,16 +119,18 @@ public class Board {
         //more letters than board size - need for kupa
         else{
             int numOfInsertions = 0;
-            while (numOfInsertions <= size*size){
+            while (numOfInsertions < size*size){
                 for(int i =0; i< letters.size(); i++){
                     GameDataFromXml.DataLetter letter = letters.get(i);
-                    if(numOfInsertions <= size*size){
+                    if(numOfInsertions < size*size){
                         if(letter.getAmount()>0){
-                            boolean toContinue = false;
+                            boolean toContinue;
                             toAdd = letter.getLetter();
-                            List<Point> empty = new ArrayList<>();
-                            initLettrs.put(toAdd, empty );
+                            if (!initLettrs.containsKey(toAdd)) {
+                                initLettrs.put(toAdd, new ArrayList<>());
+                            }
                             do {
+                                toContinue = false;
                                 x = xy.nextInt(size);
                                 y = xy.nextInt(size);
                                 p = new Point(x,y);
