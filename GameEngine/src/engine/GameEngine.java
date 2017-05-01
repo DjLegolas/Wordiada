@@ -17,9 +17,12 @@ public class GameEngine {
     private GameDataFromXml currentGameData;
     private boolean isGameStarted = false;
     private int diceValue;
+    private long startTime;
+    private int numberOfTurns = 0;
 
     public void loadXml(String pathToXml)
-            throws WrongPathException, DictionaryNotFoundException, BoardSizeException, NotXmlFileException, DuplicateLetterException {
+            throws WrongPathException, DictionaryNotFoundException, BoardSizeException, NotXmlFileException,
+            DuplicateLetterException, NotValidXmlFileException {
         GameDataFromXml gd = new GameDataFromXml();
         gd.initializingDataFromXml(pathToXml);
         //check validation:
@@ -39,28 +42,31 @@ public class GameEngine {
         return isGameStarted;
     }
 
-    public void startGame() throws BoardSizeException {
+    public void startGame() throws NumberOfPlayersException {
         currentGameData =  gdfx.get(0);
         players = new ArrayList<>();
-        /*for (engine.jaxb.schema.generated.Player p: currentGameData.getPlayers()) { //TODO: add function
+        for (engine.jaxb.schema.generated.Player p: currentGameData.getPlayers()) { //TODO: add function
             players.add(new Player(p.getName().get(0)));
-        }*/
+        }
         currentPlayer = players.get(0);
         isGameStarted = true;
+        startTime = System.currentTimeMillis();
     }
 
     public Status getStatus() {
         if (currentGameData == null) {
             GameDataFromXml gd = gdfx.get(gdfx.size() - 1);
-            return new Status(gd.getBoard().getBoard(),
+            return new Status(
+                    gd.getBoard().getBoard(),
                     currentPlayer != null ? currentPlayer.getName() : null,
-                    gd.getNumOfTries());
+                    gd.getNumOfTries()
+            );
         }
         return new Status(
                 currentGameData.getBoard().getBoard(),
                 currentPlayer != null ? currentPlayer.getName() : null,
-                currentGameData.getNumOfTries());
-        //return new Status(new char[4][4], currentPlayer.getName(), currentGameData.getNumOfTries());
+                currentGameData.getNumOfTries()
+        );
     }
 
     public int getDiceValue() {
@@ -84,9 +90,7 @@ public class GameEngine {
     }
 
     public char[][] getBoard() {
-        //TODO: uncomment
-        //return board.getBoard();
-        return new char[4][4];
+        return currentGameData.getBoard().getBoard();
 
     }
 
@@ -114,9 +118,10 @@ public class GameEngine {
     private void nextPlayer() {
         currentPlayer = players.get(nextPlayerNumber);
         nextPlayerNumber = (nextPlayerNumber + 1) & players.size();
+        numberOfTurns++;
     }
 
     public Statistics getStatistics() {
-        return new Statistics(null, System.currentTimeMillis(), 0, 0, null, null);
+        return new Statistics(players, System.currentTimeMillis() - startTime, numberOfTurns, 0, currentGameData, null);
     }
 }
