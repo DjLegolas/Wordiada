@@ -7,6 +7,8 @@ public class Player {
     private String name;
     private float score;
     private List<String> words;
+    static final short MAX_PLAYERS = 6;
+    static final short MIN_PLAYERS = 2;
 
     public Player(String name) {
         this.name = name;
