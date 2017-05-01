@@ -106,7 +106,7 @@ public class GameEngine {
 
     public WordCheck isWordValid(String word, int tries) {
         if (tries == tryNumber && tries <= currentGameData.getNumOfTries()) {
-            if (true) { //TODO: check in dictionary
+            if (currentGameData.getDictionary().hasWord(word)) {
                 //TODO: update user
                 int score = 0;
                 // TODO: calculate score
