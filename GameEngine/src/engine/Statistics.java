@@ -41,7 +41,7 @@ public class Statistics {
         for (Player player: inputPlayer) {
             players.add(new PlayerData(player));
         }
-        this.playTime = playTime;
+        this.playTime = playTime / 1000;
         numOfTurns = turnsPlayed;
         leftBoxTiles = cardsLeft;
         gameData = gd;

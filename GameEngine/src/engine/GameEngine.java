@@ -19,6 +19,10 @@ public class GameEngine {
     private int diceValue;
     private long startTime;
     private int numberOfTurns = 0;
+    private int tryNumber;
+    public enum WordCheck {
+            CORRECT, WRONG, TRIES_DEPLITED
+    }
 
     public void loadXml(String pathToXml)
             throws WrongPathException, DictionaryNotFoundException, BoardSizeException, NotXmlFileException,
@@ -45,12 +49,13 @@ public class GameEngine {
     public void startGame() throws NumberOfPlayersException {
         currentGameData =  gdfx.get(0);
         players = new ArrayList<>();
-        for (engine.jaxb.schema.generated.Player p: currentGameData.getPlayers()) { //TODO: add function
+        for (engine.jaxb.schema.generated.Player p: currentGameData.getPlayers()) {
             players.add(new Player(p.getName().get(0)));
         }
         currentPlayer = players.get(0);
         isGameStarted = true;
         startTime = System.currentTimeMillis();
+        tryNumber = 0;
     }
 
     public Status getStatus() {
@@ -84,6 +89,7 @@ public class GameEngine {
             return true;
         }
         catch (OutOfBoardBoundariesException e){
+            // TODO: handel correctly
             System.out.println("Some of the points you chose are out of boandries!\n Try again.");
             return false;
         }
@@ -96,29 +102,30 @@ public class GameEngine {
 
     public int getMaxRetries() {
         return currentGameData.getNumOfTries();
-
     }
 
-    public boolean isWordValid(String word, int tries) {
-        if (tries <= currentGameData.getNumOfTries()) {
+    public WordCheck isWordValid(String word, int tries) {
+        if (tries == tryNumber && tries <= currentGameData.getNumOfTries()) {
             if (true) { //TODO: check in dictionary
                 //TODO: update user
                 int score = 0;
                 // TODO: calculate score
                 currentPlayer.updateScore(word, score);
                 nextPlayer();
-                return true;
+                return WordCheck.CORRECT;
             }
-            return false;
+            tryNumber++;
+            return WordCheck.WRONG;
         }
         nextPlayer();
-        return false; //TODO: throw NumOfRetriesException
+        return WordCheck.TRIES_DEPLITED;
     }
 
     private void nextPlayer() {
         currentPlayer = players.get(nextPlayerNumber);
         nextPlayerNumber = (nextPlayerNumber + 1) & players.size();
         numberOfTurns++;
+        tryNumber = 1;
     }
 
     public Statistics getStatistics() {
