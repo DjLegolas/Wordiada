@@ -15,7 +15,7 @@ class ConsoleHandler {
         System.out.println("Please select an option:");
         System.out.println("1. Load game from xml.");
         System.out.println("2. Start game.");
-        System.out.println("3. Show board.");
+        System.out.println("3. Show status.");
         System.out.println("4. Make a move.");
         System.out.println("5. Show statistics.");
         System.out.println("6. Exit game.");
@@ -37,7 +37,9 @@ class ConsoleHandler {
     }
 
     static void showGameStatus(Status status, boolean needFullPrint) {
-        System.out.println("Game Status:\n");
+        if (needFullPrint){
+            System.out.println("Game Status:\n");
+        }
         printBoard(status.getBoard());
         String line = "The number of cards ";
         if (needFullPrint) {
@@ -46,7 +48,7 @@ class ConsoleHandler {
         line += "in the pot: " + status.getLeftTiles();
         System.out.println(line);
         if (needFullPrint) {
-            System.out.println("Current player: " + status.getPlayerName());
+            System.out.println("Current player: " + status.getPlayerName() + "\n");
         }
     }
 
@@ -105,10 +107,9 @@ class ConsoleHandler {
         if (sizeWasTooShort) {
             System.out.println("The number of coordinates is too short! Try again...\n");
         }
-        System.out.println("Please enter "+ numOfValues + "coordinates.");
-        System.out.println("The format is: row col. example: 5 5\n");
+        System.out.println("Please enter "+ numOfValues + " coordinates.");
+        System.out.println("The format is: row col. example: 5 5");
         for (int i = 0; i < numOfValues; i++) {
-            System.out.println();
             int point[] = {-1,-1};
             point[0] = scanner.nextInt();
             point[1] = scanner.nextInt();
@@ -139,7 +140,7 @@ class ConsoleHandler {
         System.out.println("Number of cards left: " + cardsLeft);
         for (int i = 0; i < 12; i++) {
             //TODO: fix for
-            System.out.println("\t" + ('A' + i) + " - " + 4 + "/" + 30);
+            System.out.println("\t" + (char)('A' + i) + " - " + 4 + "/" + 30);
         }
         // players
         long totalWords = stats.getTotalWords();

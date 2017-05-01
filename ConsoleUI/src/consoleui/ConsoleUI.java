@@ -20,26 +20,40 @@ public class ConsoleUI {
                     startGame();
                     break;
                 case 3:
-                    ConsoleHandler.showGameStatus(engine.getStatus(), true);
+                    if (isGameStarted()) {
+                        ConsoleHandler.showGameStatus(engine.getStatus(), true);
+                    }
                     break;
                 case 4:
-                    playTurn();
+                    if (isGameStarted()) {
+                        playTurn();
+                    }
                     break;
                 case 5:
-                    Statistics stat = engine.getStatistics();
-                    ConsoleHandler.showStatistics(stat);
+                    if (isGameStarted()) {
+                        Statistics stat = engine.getStatistics();
+                        ConsoleHandler.showStatistics(stat);
+                    }
                     break;
             }
         }
 
         System.out.println("---- Game ended ----");
-        char[][] board = engine.getBoard();
-        ConsoleHandler.printBoard(board);
-        Statistics stat = engine.getStatistics();
-        ConsoleHandler.showStatistics(stat);
+        if (engine.isStarted()) {
+            char[][] board = engine.getBoard();
+            ConsoleHandler.printBoard(board);
+            Statistics stat = engine.getStatistics();
+            ConsoleHandler.showStatistics(stat);
+        }
     }
 
     private static void getXml() {
+        if (engine.isStarted()) {
+            System.out.println("The game was already started...\n" +
+                    "Unable to load more XML files.\n");
+            return;
+        }
+
         boolean needInput = true;
         String pathToXml = null;
         while (needInput) {
@@ -86,14 +100,17 @@ public class ConsoleUI {
                 System.out.println("The number of players is incorrect.\n" +
                         "The minimum is " + e.getMinPlayers() + ", the maximum is " + e.getMaxPlayers() +
                         ", but got " + e.getActualNumOfPlayers() + " players.\n");
+                return;
             }
+            System.out.println("Game started! Have fun :>\n");
         }
     }
 
     private static void playTurn() {
-        boolean listSizeTooShort = false;
+        boolean listSizeTooShort = false, continueTrying = true;
         List<int[]> points;
-        int diceValue = engine.getDiceValue(), tries;
+        int diceValue = engine.getDiceValue(), tryNumber;
+        System.out.println("Dice value is " + diceValue);
         do {
             points = ConsoleHandler.getPoints(diceValue, listSizeTooShort);
             listSizeTooShort = !engine.updateBoard(points);
@@ -101,18 +118,34 @@ public class ConsoleUI {
         char[][] board = engine.getBoard();
         ConsoleHandler.printBoard(board);
         int maxTries = engine.getMaxRetries();
-        for (tries = 0; tries < maxTries; tries++) {
-            String word = ConsoleHandler.getWord(tries + 1, maxTries);
-            if (engine.isWordValid(word, tries)) {
-                System.out.println("The word " + word + " is correct!\n");
-                break;
+        for (tryNumber = 1; continueTrying && tryNumber <= maxTries; tryNumber++) {
+            String word = ConsoleHandler.getWord(tryNumber, maxTries);
+            switch (engine.isWordValid(word, tryNumber)) {
+                case CORRECT:
+                    System.out.println("The word " + word + " is correct!\n");
+                    continueTrying = false;
+                    break;
+                case WRONG:
+                    System.out.println("Incorrect word!\n");
+                    break;
+                case TRIES_DEPLITED:
+                    System.out.println("\nNo more retries!");
+                    continueTrying = false;
+                    break;
             }
-            System.out.println("Incorrect word!\n");
-        }
-        if (tries == maxTries) {
-            System.out.println("\nNo more retries!");
         }
         System.out.println("Changing to next player...");
         ConsoleHandler.showGameStatus(engine.getStatus(), true);
+    }
+
+    private static boolean isGameStarted() {
+        if (engine.isStarted()) {
+            return true;
+        }
+        System.out.println("The game wasn't started.\n" +
+                "Please select option 2 to start it" +
+                (!engine.isXmlLoaded() ? ", after loading at least one xml" : "") +
+                ".\n");
+        return false;
     }
 }
