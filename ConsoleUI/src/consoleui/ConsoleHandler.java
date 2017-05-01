@@ -123,7 +123,7 @@ class ConsoleHandler {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Try #" + tryNum + " out of " + maxTries + ":");
-        System.out.println("Please enter a word built from the letters above:");
+        System.out.println("If you can build a word from the letters above please write it. If not, press -1:");
         word = scanner.next();
         return word.toUpperCase();
     }
