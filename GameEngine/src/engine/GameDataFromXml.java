@@ -42,16 +42,18 @@ public class GameDataFromXml {
         }
     }
 
-    List<DataLetter> letters = new ArrayList<>();
+    private List<DataLetter> letters = new ArrayList<>();
     private int totalAmountOfLetters = 0;
     private short boardSize;
     private int numOfCubeWigs;
     private int numOfTries;
     private String dictFileName;
+    private String dictFilePath;
     private short totalTargetDeckSize; //כמות אריחים
     private final static String JAXB_XML_GAME_PACKAGE_NAME = "engine.jaxb.schema.generated";
     private Board board;
     private Players players;
+    private Dictionary dictionary;
 
     // get and set funcs:
 
@@ -77,7 +79,7 @@ public class GameDataFromXml {
         return totalAmountOfLetters;
     }
 
-    public void initializingDataFromXml(String pathToXml) throws WrongPathException, NotValidXmlFileException {
+    public void initializingDataFromXml(String pathToXml) throws WrongPathException, NotValidXmlFileException, DictionaryNotFoundException {
         GameDescriptor gd;
         InputStream inputStream = null;
 
@@ -90,44 +92,50 @@ public class GameDataFromXml {
         Structure struct;
 
         try {
-            double totalFreq = 0;
-            gd = deserializeFrom(inputStream);
-            struct = gd.getStructure();
-
-            // creates list of data letters
-
-            for (int i = 0; i < struct.getLetters().getLetter().size(); i++) {
-                this.letters.add(i,new DataLetter(struct.getLetters().getLetter().get(i)));
-                totalFreq += this.letters.get(i).getLetter().getFrequency();
-            }
-
-            for(int i = 0; i < letters.size(); i++){
-                double freq = letters.get(i).getLetter().getFrequency();
-                letters.get(i).setAmount((int) Math.ceil(Math.ceil(freq / totalFreq * 100 ) / 100 * struct.getLetters().getTargetDeckSize()));
-                totalAmountOfLetters += letters.get(i).amount;
-            }
-
-            //init board size
-            boardSize = struct.getBoardSize();
-            //init num of wings
-            this.numOfCubeWigs = struct.getCubeFacets();
-            //init num of tries
-            this.numOfTries = struct.getRetriesNumber();
-            //init dictionart file name
-            dictFileName = struct.getDictionaryFileName();
-            //init targer deck size
-            this.totalTargetDeckSize = struct.getLetters().getTargetDeckSize();
-            //   this.targetDeckSize = struct.getLetters().getTargetDeckSize();---->  הצפי
-            board = new Board(boardSize, letters, totalAmountOfLetters);
-            players = gd.getPlayers();
-
-        } catch (JAXBException e) {
+            gd = deserializeFrom(inputStream);} catch (JAXBException e) {
             throw new NotValidXmlFileException();
         }
+        double totalFreq = 0;
+        struct = gd.getStructure();
+
+        // creates list of data letters
+
+        for (int i = 0; i < struct.getLetters().getLetter().size(); i++) {
+            this.letters.add(i,new DataLetter(struct.getLetters().getLetter().get(i)));
+            totalFreq += this.letters.get(i).getLetter().getFrequency();
+        }
+
+        for(int i = 0; i < letters.size(); i++){
+            double freq = letters.get(i).getLetter().getFrequency();
+            letters.get(i).setAmount((int) Math.ceil(Math.ceil(freq / totalFreq * 100 ) / 100 * struct.getLetters().getTargetDeckSize()));
+            totalAmountOfLetters += letters.get(i).amount;
+        }
+
+        //init board size
+        boardSize = struct.getBoardSize();
+        //init num of wings
+        this.numOfCubeWigs = struct.getCubeFacets();
+        //init num of tries
+        this.numOfTries = struct.getRetriesNumber();
+        //init dictionary file name
+        dictFileName = struct.getDictionaryFileName();
+        //init target deck size
+        this.totalTargetDeckSize = struct.getLetters().getTargetDeckSize();
+        //   this.targetDeckSize = struct.getLetters().getTargetDeckSize();---->  הצפי
+        //init board
+        board = new Board(boardSize, letters, totalAmountOfLetters);
+        //init players
+        players = gd.getPlayers();
+        //init dictionary
+        dictionary = new Dictionary(dictFilePath);
     }
 
     public Board getBoard() {
         return board;
+    }
+
+    public Dictionary getDictionary() {
+        return dictionary;
     }
 
     public void updateBoard(List<int[]> points) throws OutOfBoardBoundariesException {
@@ -186,12 +194,12 @@ public class GameDataFromXml {
         while (!pathToXml.endsWith("\\")) {
             pathToXml = pathToXml.substring(0, pathToXml.length() - 1);
         }
-        String pathToDict = pathToXml + "dictionary\\" + dictFileName;
-        File f = new File(pathToDict);
+        dictFilePath = pathToXml + "dictionary\\" + dictFileName;
+        File f = new File(dictFilePath);
         if (f.exists() && f.isFile())
             return true;
         else {
-            throw new DictionaryNotFoundException(pathToDict);
+            throw new DictionaryNotFoundException(dictFilePath);
         }
     }
 
@@ -225,6 +233,10 @@ public class GameDataFromXml {
             throw new NotEnoughLettersException(this.boardSize * this.boardSize, this.letters.size());
         }
         return  true;
+    }
+
+    public int calcScore(String word) {
+        return 1;
     }
 }
 
