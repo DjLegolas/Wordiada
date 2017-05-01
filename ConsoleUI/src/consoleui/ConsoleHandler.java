@@ -66,7 +66,7 @@ class ConsoleHandler {
         System.out.println(boarderLine);
         // print board
         for (row = 0; row < numOfRows; row++) {
-            line.append(numOfRows > 9 && row < 9 ? " " : "");
+            line = new StringBuilder(numOfRows > 9 && row < 9 ? " " : "");
             tmpStr = (row + 1) + "|";
             line.append(tmpStr);
             for (col = 0; col < numOfCols; col++) {
@@ -91,7 +91,7 @@ class ConsoleHandler {
             }
             System.out.println(line);
         }
-        line.append(lineStart);
+        line = new StringBuilder(lineStart);
         for (col = 0; col < numOfCols; col++) {
             tmpStr = (col + 1) % 10 + "|";
             line.append(tmpStr);
