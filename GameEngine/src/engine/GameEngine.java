@@ -21,12 +21,12 @@ public class GameEngine {
     private int numberOfTurns = 0;
     private int tryNumber;
     public enum WordCheck {
-            CORRECT, WRONG, TRIES_DEPLITED
+            CORRECT, WRONG, TRIES_DEPLETED
     }
 
     public void loadXml(String pathToXml)
             throws WrongPathException, DictionaryNotFoundException, BoardSizeException, NotXmlFileException,
-            DuplicateLetterException, NotValidXmlFileException {
+            DuplicateLetterException, NotValidXmlFileException, GameTypeException {
         GameDataFromXml gd = new GameDataFromXml();
         gd.initializingDataFromXml(pathToXml);
         //check validation:
@@ -107,10 +107,7 @@ public class GameEngine {
     public WordCheck isWordValid(String word, int tries) {
         if (tries == tryNumber && tries <= currentGameData.getNumOfTries()) {
             if (currentGameData.getDictionary().hasWord(word)) {
-                //TODO: update user
-                int score = 0;
-                // TODO: calculate score
-                currentPlayer.updateScore(word, score);
+                currentPlayer.updateScore(word, currentGameData.calcScore(word));
                 nextPlayer();
                 return WordCheck.CORRECT;
             }
@@ -118,7 +115,7 @@ public class GameEngine {
             return WordCheck.WRONG;
         }
         nextPlayer();
-        return WordCheck.TRIES_DEPLITED;
+        return WordCheck.TRIES_DEPLETED;
     }
 
     private void nextPlayer() {
@@ -129,6 +126,6 @@ public class GameEngine {
     }
 
     public Statistics getStatistics() {
-        return new Statistics(players, System.currentTimeMillis() - startTime, numberOfTurns, 0, currentGameData, null);
+        return new Statistics(players, System.currentTimeMillis() - startTime, numberOfTurns, currentGameData);
     }
 }

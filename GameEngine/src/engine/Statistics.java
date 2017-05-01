@@ -35,17 +35,16 @@ public class Statistics {
         }
     }
 
-    Statistics(List <Player> inputPlayer, long playTime, int turnsPlayed, int cardsLeft, GameDataFromXml gd,
-               Dictionary dic){
+    Statistics(List <Player> inputPlayer, long playTime, int turnsPlayed, GameDataFromXml gd){
         players = new ArrayList<>();
         for (Player player: inputPlayer) {
             players.add(new PlayerData(player));
         }
         this.playTime = playTime / 1000;
         numOfTurns = turnsPlayed;
-        leftBoxTiles = cardsLeft;
+        leftBoxTiles = gd.getKupaAmount();
         gameData = gd;
-        dict = dic;
+        dict = gd.getDictionary();
     }
 
     public long getTime() {
