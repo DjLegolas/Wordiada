@@ -10,9 +10,8 @@ import java.lang.String;
 import engine.exceptions.*;
 
 
-import engine.jaxb.schema.generated.GameDescriptor;
-import engine.jaxb.schema.generated.Letter;
-import engine.jaxb.schema.generated.Structure;
+import engine.jaxb.schema.generated.*;
+import engine.jaxb.schema.generated.Player;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -52,6 +51,7 @@ public class GameDataFromXml {
     private short totalTargetDeckSize; //כמות אריחים
     private final static String JAXB_XML_GAME_PACKAGE_NAME = "engine.jaxb.schema.generated";
     private Board board;
+    private Players players;
 
     // get and set funcs:
 
@@ -77,7 +77,7 @@ public class GameDataFromXml {
         return totalAmountOfLetters;
     }
 
-    public void initializingDataFromXml(String pathToXml) throws WrongPathException {
+    public void initializingDataFromXml(String pathToXml) throws WrongPathException, NotValidXmlFileException {
         GameDescriptor gd;
         InputStream inputStream = null;
 
@@ -119,9 +119,10 @@ public class GameDataFromXml {
             this.totalTargetDeckSize = struct.getLetters().getTargetDeckSize();
             //   this.targetDeckSize = struct.getLetters().getTargetDeckSize();---->  הצפי
             board = new Board(boardSize, letters, totalAmountOfLetters);
+            players = gd.getPlayers();
 
         } catch (JAXBException e) {
-            e.printStackTrace();
+            throw new NotValidXmlFileException();
         }
     }
 
@@ -131,6 +132,14 @@ public class GameDataFromXml {
 
     public void updateBoard(List<int[]> points) throws OutOfBoardBoundariesException {
         board.update(points);
+    }
+
+    public List<engine.jaxb.schema.generated.Player> getPlayers() throws NumberOfPlayersException{
+        List<Player> players = this.players.getPlayer();
+        if (players.size() != 2) {
+            throw new NumberOfPlayersException(players.size(), engine.Player.MIN_PLAYERS, engine.Player.MAX_PLAYERS);
+        }
+        return players;
     }
 
    // NO NEED:
@@ -187,10 +196,10 @@ public class GameDataFromXml {
     }
 
     public boolean isValidBoardSize(short size) throws BoardSizeException {
-        if ((size >= 5) && (size <= 50))
+        if ((size >= Board.MIN_SIZE) && (size <= Board.MAX_SIZE))
             return true;
         else
-            throw new BoardSizeException(size, (short)5, (short) 50);
+            throw new BoardSizeException(size, Board.MIN_SIZE, Board.MAX_SIZE);
     }
 
     public boolean isAllLettersAppearOnce() throws DuplicateLetterException {
