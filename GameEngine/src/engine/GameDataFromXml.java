@@ -92,7 +92,8 @@ public class GameDataFromXml {
         Structure struct;
 
         try {
-            gd = deserializeFrom(inputStream);} catch (JAXBException e) {
+            gd = deserializeFrom(inputStream);
+        } catch (JAXBException e) {
             throw new NotValidXmlFileException();
         }
         double totalFreq = 0;
@@ -119,6 +120,14 @@ public class GameDataFromXml {
         this.numOfTries = struct.getRetriesNumber();
         //init dictionary file name
         dictFileName = struct.getDictionaryFileName();
+        //init dictFilePath variable
+
+        pathToXml = pathToXml.substring(0, pathToXml.length() - 4); // minus 4 for ".xml"
+        while (!pathToXml.endsWith("\\")) {
+            pathToXml = pathToXml.substring(0, pathToXml.length() - 1);
+        }
+        dictFilePath = pathToXml + "dictionary\\" + dictFileName;
+
         //init target deck size
         this.totalTargetDeckSize = struct.getLetters().getTargetDeckSize();
         //   this.targetDeckSize = struct.getLetters().getTargetDeckSize();---->  הצפי
@@ -150,25 +159,6 @@ public class GameDataFromXml {
         return players;
     }
 
-   // NO NEED:
-
-    // calc functions:
-/*
-    public void calcRatiofrequencyLetter(Map<String, Double> frequencyletter) {
-
-        double totalfreq = 0;
-        int ratiofreq;
-        for (Double freq : frequencyletter.values()) {
-            totalfreq += freq;
-        }
-
-        for (Map.Entry<String, Double> item : frequencyletter.entrySet()) {
-            ratiofreq = (int) Math.ceil((item.getValue() / totalfreq) * 100);
-            this.ratiofrequencyLetter.put(item.getKey(), ratiofreq);
-        }
-    }
-*/
-
     //creats the xml details:
 
     private static GameDescriptor deserializeFrom(InputStream in) throws JAXBException {
@@ -188,13 +178,8 @@ public class GameDataFromXml {
 
     // call this func after calling the one above
 
-    public boolean isDictionaryInRightPos(String pathToXml) throws DictionaryNotFoundException {
+    public boolean isDictionaryInRightPos() throws DictionaryNotFoundException {
 
-        pathToXml = pathToXml.substring(0, pathToXml.length() - 4); // minus 4 for ".xml"
-        while (!pathToXml.endsWith("\\")) {
-            pathToXml = pathToXml.substring(0, pathToXml.length() - 1);
-        }
-        dictFilePath = pathToXml + "dictionary\\" + dictFileName;
         File f = new File(dictFilePath);
         if (f.exists() && f.isFile())
             return true;
