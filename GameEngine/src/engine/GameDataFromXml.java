@@ -248,6 +248,10 @@ class GameDataFromXml {
     public int getKupaAmount() {
         return board.getKupaAmount();
     }
+
+    public List<DataLetter> getKupa() {
+        return board.getKupa();
+    }
 }
 
 

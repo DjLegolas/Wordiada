@@ -133,13 +133,12 @@ class ConsoleHandler {
         System.out.println("Turns played: " + stats.getNumOfTurns());
         // total time played
         long time = stats.getTime();
-        System.out.println("Time passed from game start: " + time / 60 + ":" + time % 60);
+        System.out.println("Time passed from game start: " + time / 60 + ":" + String.format("%02d", time % 60));
         // cards left
         int cardsLeft = stats.getLeftBoxTiles();
         System.out.println("Number of cards left: " + cardsLeft);
-        for (int i = 0; i < 12; i++) {
-            //TODO: fix for
-            System.out.println("\t" + (char)('A' + i) + " - " + 4 + "/" + 30);
+        for (Statistics.Letter letter: stats.getLetters()) {
+            System.out.println("\t" + letter.getLetter() + " - " + letter.getAmount() + "/" + cardsLeft);
         }
         // players
         long totalWords = stats.getTotalWords();

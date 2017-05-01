@@ -6,10 +6,10 @@ import java.util.List;
 public class Statistics {
 
     private List<PlayerData> players ;
+    private List<Letter> letters;
     private int numOfTurns;
     private int leftBoxTiles;
     private long playTime;
-    private GameDataFromXml gameData;
     private Dictionary dict;
 
     //TODO: add letters left in box of cards
@@ -35,15 +35,34 @@ public class Statistics {
         }
     }
 
+    public class Letter {
+        private GameDataFromXml.DataLetter letter;
+
+        private Letter(GameDataFromXml.DataLetter l) {
+            letter = l;
+        }
+
+        public String getLetter() {
+            return letter.getLetter().getSign().get(0);
+        }
+
+        public int getAmount() {
+            return letter.getAmount();
+        }
+    }
+
     Statistics(List <Player> inputPlayer, long playTime, int turnsPlayed, GameDataFromXml gd){
         players = new ArrayList<>();
         for (Player player: inputPlayer) {
             players.add(new PlayerData(player));
         }
+        letters = new ArrayList<>();
+        for (GameDataFromXml.DataLetter l: gd.getKupa()) {
+            letters.add(new Letter(l));
+        }
         this.playTime = playTime / 1000;
         numOfTurns = turnsPlayed;
         leftBoxTiles = gd.getKupaAmount();
-        gameData = gd;
         dict = gd.getDictionary();
     }
 
@@ -69,5 +88,9 @@ public class Statistics {
 
     public long getWordCount(String word) {
         return dict.hasWord(word) ? dict.getWordAmount(word) : 0;
+    }
+
+    public List<Letter> getLetters() {
+        return letters;
     }
 }

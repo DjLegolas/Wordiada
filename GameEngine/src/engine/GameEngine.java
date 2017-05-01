@@ -9,7 +9,6 @@ import java.util.Random;
 
 public class GameEngine {
 
-    // private GameInformation info;
     private Player currentPlayer;
     private int nextPlayerNumber = 1;
     private List<Player> players;
