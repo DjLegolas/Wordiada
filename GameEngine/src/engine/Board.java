@@ -143,6 +143,7 @@ public class Board {
                             board[y][x] = new Cell(toAdd.getSign().get(0),false);
                             numOfInsertions ++;
                             letter.setAmount(letter.getAmount() - 1);
+
                         }
                     }
                 }
@@ -150,9 +151,7 @@ public class Board {
 
             //build the kupa
             for(GameDataFromXml.DataLetter letter : letters){
-                for(int i =0; i< letter.getAmount(); i++){
-                    kupa.add(i, letter);
-                }
+                 kupa.add(letter);
             }
         }
     }
@@ -161,6 +160,16 @@ public class Board {
         this.board = board;
     }
 
+    public List<GameDataFromXml.DataLetter> getKupa() {
+        return kupa;
+    }
+    public int getKupaAmount(){
+        int amount = 0;
+        for(GameDataFromXml.DataLetter l : kupa){
+            amount += l.getAmount();
+        }
+        return amount;
+    }
 
     public void update(List<int[]> points) throws OutOfBoardBoundariesException {
 
