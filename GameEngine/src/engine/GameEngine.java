@@ -31,7 +31,7 @@ public class GameEngine {
         gd.initializingDataFromXml(pathToXml);
         //check validation:
         gd.isValidXml(pathToXml);
-        gd.isDictionaryInRightPos(pathToXml);
+        gd.isDictionaryInRightPos();
         gd.isValidBoardSize(gd.getBoardSize());
         gd.isAllLettersAppearOnce();
         gdfx.add(gd);
