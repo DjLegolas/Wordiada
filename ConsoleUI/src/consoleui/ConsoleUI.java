@@ -74,8 +74,10 @@ public class ConsoleUI {
                 System.out.println("Expected size is between " + e.getMinSize() + " to " + e.getMaxSize());
                 System.out.println("Got: " + e.getSize());
             } catch (NotValidXmlFileException e) {
-                System.out.println("The XML file \"" + pathToXml +"\"\n" +
+                System.out.println("The XML file \"" + pathToXml + "\"\n" +
                         "does not contains the information for Wordiada game.\n");
+            } catch (GameTypeException e) {
+                System.out.println("Game type \"" + e.getGameType() + "\" is not currently supported.\n");
             } catch (Exception e) {
                 System.out.println("Error, " + e.getMessage());
             }
@@ -128,7 +130,7 @@ public class ConsoleUI {
                 case WRONG:
                     System.out.println("Incorrect word!\n");
                     break;
-                case TRIES_DEPLITED:
+                case TRIES_DEPLETED:
                     System.out.println("\nNo more retries!");
                     continueTrying = false;
                     break;

@@ -30,7 +30,6 @@ class ConsoleHandler {
 
     static String getXML() {
         Scanner scanner = new Scanner(System.in);
-        String pathToXml;
 
         System.out.println("Please enter the path to the XML file:");
         return scanner.nextLine();
@@ -57,7 +56,7 @@ class ConsoleHandler {
         int numOfRows = board.length;
         int numOfCols = board.length;
         int col, row;
-        StringBuilder line = new StringBuilder();
+        StringBuilder line;
         StringBuilder boarderLine = new StringBuilder(numOfRows > 9 ? "-----" : "---");
         String tmpStr;
         for (col = 0; col < numOfCols; col++) {

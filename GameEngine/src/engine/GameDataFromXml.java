@@ -1,9 +1,7 @@
 package engine;
 
 import java.io.*;
-//import java.io.FileNotFoundException;
 import java.lang.*;
-//import java.io.InputStream;
 import java.util.*;
 import java.lang.String;
 
@@ -18,7 +16,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 
-public class GameDataFromXml {
+class GameDataFromXml {
 
     public class DataLetter{
        private Letter letter; // sign , score, freq
@@ -31,10 +29,10 @@ public class GameDataFromXml {
         public Letter getLetter() {
             return letter;
         }
-        public void setAmount(int amount) {
+        void setAmount(int amount) {
             this.amount = amount;
         }
-        public int getAmount() {
+        int getAmount() {
             return amount;
         }
         public void setLetter(Letter letter) {
@@ -54,6 +52,8 @@ public class GameDataFromXml {
     private Board board;
     private Players players;
     private Dictionary dictionary;
+    private enum GameType {WORD_COUNT, WORD_SCORE}
+    private GameType gameType;
 
     // get and set funcs:
 
@@ -79,9 +79,10 @@ public class GameDataFromXml {
         return totalAmountOfLetters;
     }
 
-    public void initializingDataFromXml(String pathToXml) throws WrongPathException, NotValidXmlFileException, DictionaryNotFoundException {
+    public void initializingDataFromXml(String pathToXml)
+            throws WrongPathException, NotValidXmlFileException, DictionaryNotFoundException, GameTypeException {
         GameDescriptor gd;
-        InputStream inputStream = null;
+        InputStream inputStream;
 
         try {
             inputStream = new FileInputStream(pathToXml);
@@ -137,6 +138,18 @@ public class GameDataFromXml {
         players = gd.getPlayers();
         //init dictionary
         dictionary = new Dictionary(dictFilePath);
+        // init game type
+        String gameType = gd.getGameType().getWinnerAccordingTo();
+        switch (gameType) {
+            case ("WordCount"):
+                this.gameType = GameType.WORD_COUNT;
+                break;
+            case ("WordScore"):
+                this.gameType = GameType.WORD_SCORE;
+                break;
+            default:
+                throw new GameTypeException(gameType);
+        }
     }
 
     public Board getBoard() {
@@ -220,8 +233,20 @@ public class GameDataFromXml {
         return  true;
     }
 
-    public int calcScore(String word) {
-        return 1;
+    public float calcScore(String word) {
+        if (gameType == GameType.WORD_COUNT) {
+            return 1;
+        }
+        else if (gameType == GameType.WORD_SCORE) {
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
+
+    public int getKupaAmount() {
+        return board.getKupaAmount();
     }
 }
 
