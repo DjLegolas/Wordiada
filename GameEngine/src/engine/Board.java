@@ -165,12 +165,15 @@ public class Board {
     public void update(List<int[]> points) throws OutOfBoardBoundariesException {
 
         //check valid point
-        for(int[] optionalPoints : points){
-            if(optionalPoints[0] > size || optionalPoints[0] < 1 || optionalPoints[1] > size || optionalPoints[1] < 1){
+
+        for(int i = 0; i < points.size(); i++){
+            Point point = new Point((points.get(i))[1], (points.get(i))[0]);
+
+            if(point.getX() > size || point.getX() < 1 || point.getY() > size || point.getY() < 1){
                 throw new OutOfBoardBoundariesException();
             }
             else{
-                board[optionalPoints[0]][optionalPoints[1]].isShown = true;
+                board[point.getY()-1][point.getX()-1].isShown = true;
             }
         }
     }
