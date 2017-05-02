@@ -10,8 +10,7 @@ public class ConsoleUI {
     private static GameEngine engine = new GameEngine();
     public static void main(String[] args) {
         int selectedMenu;
-        while((selectedMenu= ConsoleHandler.showMainMenu()) != 6){
-            // TODO: handle unloaded xml when choosing options 3-6
+        while((selectedMenu = ConsoleHandler.showMainMenu()) != 6){
             switch (selectedMenu) {
                 case 1:
                     getXml();
@@ -34,6 +33,9 @@ public class ConsoleUI {
                         Statistics stat = engine.getStatistics();
                         ConsoleHandler.showStatistics(stat);
                     }
+                    break;
+                default:
+                    System.out.println("Wrong menu number (need to bo 1-6).");
                     break;
             }
         }
