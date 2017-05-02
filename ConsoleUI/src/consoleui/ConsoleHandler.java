@@ -1,6 +1,7 @@
 package consoleui;
 
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import engine.Statistics;
@@ -8,9 +9,25 @@ import engine.Status;
 
 class ConsoleHandler {
 
+    static private int getInput() {
+        Scanner scanner = new Scanner(System.in);
+        int input = 0;
+        boolean again;
+        do {
+            try {
+                again = false;
+                input = scanner.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.println("Wrong input value. Expected a number.\nPlease try again:");
+                scanner.next();
+                again = true;
+            }
+        } while (again);
+        return input;
+    }
+
     static int showMainMenu() {
         int selectedMenuItem;
-        Scanner scanner = new Scanner(System.in);
 
         System.out.println("Please select an option:");
         System.out.println("1. Load game from xml.");
@@ -20,11 +37,7 @@ class ConsoleHandler {
         System.out.println("5. Show statistics.");
         System.out.println("6. Exit game.");
 
-        selectedMenuItem = scanner.nextInt();
-        if (selectedMenuItem < 1 && selectedMenuItem > 6) {
-            System.out.println("Wrong menu number (need to bo 1-6).");
-        }
-
+        selectedMenuItem = getInput();
         return selectedMenuItem;
     }
 
@@ -52,7 +65,6 @@ class ConsoleHandler {
     }
 
     static void printBoard(char[][] board) {
-        // TODO: change the signature of the function and fill with correct data
         int numOfRows = board.length;
         int numOfCols = board.length;
         int col, row;
@@ -101,7 +113,6 @@ class ConsoleHandler {
     }
 
     static List<int[]> getPoints(int numOfValues, boolean sizeWasTooShort) {
-        Scanner scanner = new Scanner(System.in);
         List<int[]> points = new ArrayList<>();
         if (sizeWasTooShort) {
             System.out.println("The number of coordinates is too short! Try again...\n");
@@ -110,8 +121,8 @@ class ConsoleHandler {
         System.out.println("The format is: row col. example: 5 5");
         for (int i = 0; i < numOfValues; i++) {
             int point[] = {-1,-1};
-            point[0] = scanner.nextInt();
-            point[1] = scanner.nextInt();
+            point[0] = getInput();
+            point[1] = getInput();
             points.add(point);
         }
         return points;
@@ -133,13 +144,12 @@ class ConsoleHandler {
         System.out.println("Turns played: " + stats.getNumOfTurns());
         // total time played
         long time = stats.getTime();
-        System.out.println("Time passed from game start: " + time / 60 + ":" + time % 60);
+        System.out.println("Time passed from game start: " + time / 60 + ":" + String.format("%02d", time % 60));
         // cards left
         int cardsLeft = stats.getLeftBoxTiles();
         System.out.println("Number of cards left: " + cardsLeft);
-        for (int i = 0; i < 12; i++) {
-            //TODO: fix for
-            System.out.println("\t" + (char)('A' + i) + " - " + 4 + "/" + 30);
+        for (Statistics.Letter letter: stats.getLetters()) {
+            System.out.println("\t" + letter.getLetter() + " - " + letter.getAmount() + "/" + cardsLeft);
         }
         // players
         long totalWords = stats.getTotalWords();
