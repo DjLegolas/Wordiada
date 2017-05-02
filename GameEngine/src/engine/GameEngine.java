@@ -20,7 +20,7 @@ public class GameEngine {
     private int numberOfTurns = 0;
     private int tryNumber;
     public enum WordCheck {
-            CORRECT, WRONG, TRIES_DEPLETED
+            CORRECT, WRONG, CHARS_NOT_PRESENT, TRIES_DEPLETED
     }
 
     public void loadXml(String pathToXml)
@@ -54,7 +54,7 @@ public class GameEngine {
         currentPlayer = players.get(0);
         isGameStarted = true;
         startTime = System.currentTimeMillis();
-        tryNumber = 0;
+        tryNumber = 1;
     }
 
     public Status getStatus() {
@@ -105,6 +105,11 @@ public class GameEngine {
 
     public WordCheck isWordValid(String word, int tries) {
         if (tries == tryNumber && tries <= currentGameData.getNumOfTries()) {
+            //TODO: check if letters are shown in the board
+            //TODO: remove used letters from board and add others
+            if (!currentGameData.getBoard().hasChars(word)) {
+                return WordCheck.CHARS_NOT_PRESENT;
+            }
             if (currentGameData.getDictionary().hasWord(word)) {
                 currentPlayer.updateScore(word, currentGameData.calcScore(word));
                 nextPlayer();
@@ -119,7 +124,7 @@ public class GameEngine {
 
     private void nextPlayer() {
         currentPlayer = players.get(nextPlayerNumber);
-        nextPlayerNumber = (nextPlayerNumber + 1) & players.size();
+        nextPlayerNumber = (nextPlayerNumber + 1) % players.size();
         numberOfTurns++;
         tryNumber = 1;
     }

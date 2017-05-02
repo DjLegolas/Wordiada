@@ -187,7 +187,12 @@ public class Board {
         }
     }
 
-
+    public boolean hasChars(String word) {
+        for (Character c: word.toCharArray()) {
+            c.toString();
+        }
+        return false;
+    }
 
 
 
