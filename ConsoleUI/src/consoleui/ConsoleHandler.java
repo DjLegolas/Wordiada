@@ -27,7 +27,7 @@ class ConsoleHandler {
     }
 
     static int showMainMenu() {
-        int selectedMenuItem = 0;
+        int selectedMenuItem;
 
         System.out.println("Please select an option:");
         System.out.println("1. Load game from xml.");
