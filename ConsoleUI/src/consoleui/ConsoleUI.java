@@ -136,6 +136,16 @@ public class ConsoleUI {
                     System.out.println("\nNo more retries!");
                     continueTrying = false;
                     break;
+                case CHARS_NOT_PRESENT:
+                    System.out.println("You wrote a word with unavailable characters...");
+                    System.out.println("Please try again...\n");
+                    tryNumber--;
+                    break;
+                case WRONG_CANT_RETRY:
+                    System.out.println("Incorrect word!\n");
+                    System.out.println("\nNo more retries!");
+                    continueTrying = false;
+                    break;
             }
         }
         System.out.println("Changing to next player...");
