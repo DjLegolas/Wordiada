@@ -108,11 +108,11 @@ public class GameEngine {
             if (currentGameData.getDictionary().hasWord(word)) {
                 currentGameData.getBoard().removeLettersFromBoard(word);
                 currentPlayer.updateScore(word, currentGameData.calcScore(word));
-                nextPlayer();
+                tryNumber = 1;
                 return WordCheck.CORRECT;
             }
             tryNumber++;
-            if (canRetry()) {
+            if (!canRetry()) {
                 nextPlayer();
                 return WordCheck.WRONG_CANT_RETRY;
             }
