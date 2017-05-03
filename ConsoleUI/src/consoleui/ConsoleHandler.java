@@ -57,7 +57,7 @@ class ConsoleHandler {
         if (needFullPrint) {
             line += "remaining ";
         }
-        line += "in the pot: " + status.getLeftTiles();
+        line += "in the Kupa: " + status.getLeftTiles();
         System.out.println(line);
         if (needFullPrint) {
             System.out.println("Current player: " + status.getPlayerName() + "\n");

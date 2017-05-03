@@ -6,7 +6,6 @@ import engine.Statistics;
 import engine.exceptions.*;
 
 public class ConsoleUI {
-    // TODO: fix exceptions
     private static GameEngine engine = new GameEngine();
     public static void main(String[] args) {
         int selectedMenu;
@@ -94,19 +93,20 @@ public class ConsoleUI {
     }
 
     private static void startGame(){
+        String errTitle = "Starting game failed";
         if (!engine.isXmlLoaded()) {
-            System.out.println("No xml game file was loaded.\n" +
+            ConsoleHandler.printError(errTitle, "No xml game file was loaded.\n" +
                     "Please select 1 first to load at least one xml file.\n");
         }
         else if (engine.isStarted()) {
-            System.out.println("The game was already started...\n" +
+            ConsoleHandler.printError(errTitle, "The game was already started...\n" +
                     "Please DON'T use this option again.\n");
         }
         else {
             try {
                 engine.startGame();
             } catch (NumberOfPlayersException e) {
-                System.out.println("The number of players is incorrect.\n" +
+                ConsoleHandler.printError(errTitle, "The number of players is incorrect.\n" +
                         "The minimum is " + e.getMinPlayers() + ", the maximum is " + e.getMaxPlayers() +
                         ", but got " + e.getActualNumOfPlayers() + " players.\n");
                 return;
