@@ -106,10 +106,10 @@ class GameDataFromXml {
             totalFreq += this.letters.get(i).getLetter().getFrequency();
         }
 
-        for(int i = 0; i < letters.size(); i++){
-            double freq = letters.get(i).getLetter().getFrequency();
-            letters.get(i).setAmount((int) Math.ceil(Math.ceil(freq / totalFreq * 100 ) / 100 * struct.getLetters().getTargetDeckSize()));
-            totalAmountOfLetters += letters.get(i).amount;
+        for(DataLetter letter: letters) {
+            double freq = letter.getLetter().getFrequency();
+            letter.setAmount((int) Math.ceil(Math.ceil(freq / totalFreq * 100 ) / 100 * struct.getLetters().getTargetDeckSize()));
+            totalAmountOfLetters += letter.amount;
         }
 
         //init board size
@@ -186,33 +186,29 @@ class GameDataFromXml {
 
     // check Validation functions:
 
-    public boolean isValidXml(String pathToXml) throws NotXmlFileException {
+    public void isValidXml(String pathToXml) throws NotXmlFileException {
         if (!pathToXml.toLowerCase().endsWith(".xml")) {
-            throw new NotXmlFileException("ITS NOT XML FILE!");
-        } else
-            return true;
+            throw new NotXmlFileException();
+        }
     }
 
     // call this func after calling the one above
 
-    public boolean isDictionaryInRightPos() throws DictionaryNotFoundException {
+    public void isDictionaryInRightPos() throws DictionaryNotFoundException {
 
         File f = new File(dictFilePath);
-        if (f.exists() && f.isFile())
-            return true;
-        else {
+        if (!(f.exists() && f.isFile())) {
             throw new DictionaryNotFoundException(dictFilePath);
         }
     }
 
-    public boolean isValidBoardSize(short size) throws BoardSizeException {
-        if ((size >= Board.MIN_SIZE) && (size <= Board.MAX_SIZE))
-            return true;
-        else
+    public void isValidBoardSize(short size) throws BoardSizeException {
+        if ((size < Board.MIN_SIZE) && (size > Board.MAX_SIZE)) {
             throw new BoardSizeException(size, Board.MIN_SIZE, Board.MAX_SIZE);
+        }
     }
 
-    public boolean isAllLettersAppearOnce() throws DuplicateLetterException {
+    public void isAllLettersAppearOnce() throws DuplicateLetterException {
         for (int i = 0; i < this.getLetters().size(); i++) {
             DataLetter l = this.getLetters().get(i);
             String c = this.getLetters().get(i).getLetter().getSign().get(0);
@@ -224,14 +220,12 @@ class GameDataFromXml {
             }
             this.getLetters().add(i, l);
         }
-        return true;
     }
 
-    public boolean isEnoughLettersForBoard() throws NotEnoughLettersException {
+    public void isEnoughLettersForBoard() throws NotEnoughLettersException {
         if (totalAmountOfLetters < this.boardSize * this.boardSize) {
             throw new NotEnoughLettersException(this.boardSize * this.boardSize, this.letters.size());
         }
-        return true;
     }
 
     public float calcScore(String word) {
