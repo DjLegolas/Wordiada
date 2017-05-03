@@ -28,12 +28,6 @@ public class GameEngine {
             DuplicateLetterException, NotValidXmlFileException, WinTypeException, NotEnoughLettersException {
         GameDataFromXml gd = new GameDataFromXml();
         gd.initializeDataFromXml(pathToXml);
-        //check validation:
-        gd.isValidXml(pathToXml);
-        gd.isDictionaryInRightPos();
-        gd.isValidBoardSize(gd.getBoardSize());
-        gd.isEnoughLettersForBoard();
-        gd.isAllLettersAppearOnce();
         gdfx.add(gd);
     }
 
