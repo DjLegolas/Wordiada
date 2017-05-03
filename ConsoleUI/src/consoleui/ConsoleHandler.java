@@ -162,4 +162,10 @@ class ConsoleHandler {
             }
         }
     }
+
+    static void printError(String title, String message) {
+        System.out.println(title + ":");
+        System.out.println(message);
+        System.out.println();
+    }
 }

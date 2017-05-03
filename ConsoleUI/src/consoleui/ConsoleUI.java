@@ -58,30 +58,35 @@ public class ConsoleUI {
 
         boolean needInput = true;
         String pathToXml = null;
+        String message = "";
         while (needInput) {
             pathToXml = ConsoleHandler.getXML();
             try {
                 engine.loadXml(pathToXml);
                 needInput = false;
             } catch (WrongPathException e) {
-                System.out.println("Invalid path to XML file.\n");
+                message = "Invalid path to XML file.";
             } catch (NotXmlFileException e) {
-                System.out.println("The file \"" + pathToXml + "\" is not an XML file.\n");
+                message = "The file \"" + pathToXml + "\" is not an XML file.";
             } catch (DictionaryNotFoundException e) {
-                System.out.println("Unable to use dictionary file \"" + e.getFileName() + "\"\n");
+                message = "Unable to use dictionary file \"" + e.getFileName() + "\"";
             } catch (DuplicateLetterException e) {
-                System.out.println("The letter " + e.getLetter() + " appears more than once.\n");
+                message = "The letter " + e.getLetter() + " appears more than once.";
             } catch (BoardSizeException e) {
-                System.out.println("XML not valid!");
-                System.out.println("Expected size is between " + e.getMinSize() + " to " + e.getMaxSize());
-                System.out.println("Got: " + e.getSize());
+                message = "Expected size is between " + e.getMinSize() + " to " + e.getMaxSize() + ". Got: " + e.getSize();
             } catch (NotValidXmlFileException e) {
-                System.out.println("The XML file \"" + pathToXml + "\"\n" +
-                        "does not contains the information for Wordiada game.\n");
-            } catch (GameTypeException e) {
-                System.out.println("Game type \"" + e.getGameType() + "\" is not currently supported.\n");
+                message = "The XML file \"" + pathToXml + "\"\n" +
+                        "does not contains the information for Wordiada game.";
+            } catch (WinTypeException e) {
+                message = "Winning type \"" + e.getWinType() + "\" is not currently supported.";
+            } catch (NotEnoughLettersException e) {
+                message = "There of cards is not enough to fill the board.\n" +
+                    "The board needs " + e.getExpectedAmount() + " but there are only " + e.getCurrentAmount();
             } catch (Exception e) {
-                System.out.println("Error, " + e.getMessage());
+                message = "Error, " + e.getMessage();
+            }
+            if (needInput) {
+                ConsoleHandler.printError("XML load failed", message);
             }
         }
         ConsoleHandler.showGameStatus(engine.getStatus(), false);

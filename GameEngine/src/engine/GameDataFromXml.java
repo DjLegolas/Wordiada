@@ -25,7 +25,7 @@ class GameDataFromXml {
         DataLetter(Letter l){
            letter = l;
            amount = 0;
-       }
+        }
         public Letter getLetter() {
             return letter;
         }
@@ -40,6 +40,7 @@ class GameDataFromXml {
         }
     }
 
+    private GameDescriptor gameDescriptor;
     private List<DataLetter> letters = new ArrayList<>();
     private int totalAmountOfLetters = 0;
     private short boardSize;
@@ -52,8 +53,8 @@ class GameDataFromXml {
     private Board board;
     private Players players;
     private Dictionary dictionary;
-    private enum GameType {WORD_COUNT, WORD_SCORE}
-    private GameType gameType;
+    private enum WinAccordingTo {WORD_COUNT, WORD_SCORE}
+    private WinAccordingTo winAccordingTo;
 
     // get and set funcs:
 
@@ -79,9 +80,8 @@ class GameDataFromXml {
         return totalAmountOfLetters;
     }
 
-    public void initializingDataFromXml(String pathToXml)
-            throws WrongPathException, NotValidXmlFileException, DictionaryNotFoundException, GameTypeException {
-        GameDescriptor gd;
+    public void initializeDataFromXml(String pathToXml)
+            throws WrongPathException, NotValidXmlFileException, DictionaryNotFoundException, WinTypeException {
         InputStream inputStream;
 
         try {
@@ -89,16 +89,15 @@ class GameDataFromXml {
         } catch (FileNotFoundException e) {
             throw new WrongPathException();
         }
-        //inputStream = GameDataFromXml.class.getResourceAsStream("/resources/master.xml");
         Structure struct;
 
         try {
-            gd = deserializeFrom(inputStream);
+            gameDescriptor = deserializeFrom(inputStream);
         } catch (JAXBException e) {
             throw new NotValidXmlFileException();
         }
         double totalFreq = 0;
-        struct = gd.getStructure();
+        struct = gameDescriptor.getStructure();
 
         // creates list of data letters
 
@@ -135,20 +134,20 @@ class GameDataFromXml {
         //init board
         board = new Board(boardSize, letters, totalAmountOfLetters);
         //init players
-        players = gd.getPlayers();
+        players = gameDescriptor.getPlayers();
         //init dictionary
         dictionary = new Dictionary(dictFilePath);
         // init game type
-        String gameType = gd.getGameType().getWinnerAccordingTo();
-        switch (gameType) {
+        String winnerAccordingTo = gameDescriptor.getGameType().getWinnerAccordingTo();
+        switch (winnerAccordingTo) {
             case ("WordCount"):
-                this.gameType = GameType.WORD_COUNT;
+                this.winAccordingTo = WinAccordingTo.WORD_COUNT;
                 break;
             case ("WordScore"):
-                this.gameType = GameType.WORD_SCORE;
+                this.winAccordingTo = WinAccordingTo.WORD_SCORE;
                 break;
             default:
-                throw new GameTypeException(gameType);
+                throw new WinTypeException(winnerAccordingTo);
         }
     }
 
@@ -165,14 +164,19 @@ class GameDataFromXml {
     }
 
     public List<engine.jaxb.schema.generated.Player> getPlayers() throws NumberOfPlayersException{
-        List<Player> players = this.players.getPlayer();
-        if (players.size() != 2) {
-            throw new NumberOfPlayersException(players.size(), engine.Player.MIN_PLAYERS, engine.Player.MAX_PLAYERS);
+        List<Player> players;
+        if (this.players == null) {
+            return new ArrayList<>();
+        }
+        players = this.players.getPlayer();
+        if (players.size() > 2) {
+            //TODO: fix when supporting more than 2
+            throw new NumberOfPlayersException(players.size(), engine.Player.MIN_PLAYERS, engine.Player.MIN_PLAYERS);
         }
         return players;
     }
 
-    //creats the xml details:
+    //creates the xml details:
 
     private static GameDescriptor deserializeFrom(InputStream in) throws JAXBException {
         JAXBContext jc = JAXBContext.newInstance(JAXB_XML_GAME_PACKAGE_NAME);
@@ -209,35 +213,32 @@ class GameDataFromXml {
     }
 
     public boolean isAllLettersAppearOnce() throws DuplicateLetterException {
-        boolean isMoreThanOnce = false;
         for (int i = 0; i < this.getLetters().size(); i++) {
             DataLetter l = this.getLetters().get(i);
             String c = this.getLetters().get(i).getLetter().getSign().get(0);
             this.getLetters().remove(i);
             for(DataLetter toCompare : this.getLetters()){
-               if(toCompare.getLetter().getSign().get(0) == c)
-                   isMoreThanOnce = true;
+               if(toCompare.getLetter().getSign().get(0).equals(c)) {
+                   throw new DuplicateLetterException(c);
+               }
             }
             this.getLetters().add(i, l);
-            //appears more than once
-            if (isMoreThanOnce)
-                throw new DuplicateLetterException("THE SIGN: " + c + "APPEARS MORE THAN ONCE!");
         }
         return true;
     }
 
     public boolean isEnoughLettersForBoard() throws NotEnoughLettersException {
-        if (this.letters.size() < this.boardSize * this.boardSize) {
+        if (totalAmountOfLetters < this.boardSize * this.boardSize) {
             throw new NotEnoughLettersException(this.boardSize * this.boardSize, this.letters.size());
         }
-        return  true;
+        return true;
     }
 
     public float calcScore(String word) {
-        if (gameType == GameType.WORD_COUNT) {
+        if (winAccordingTo == WinAccordingTo.WORD_COUNT) {
             return 1;
         }
-        else if (gameType == GameType.WORD_SCORE) {
+        else if (winAccordingTo == WinAccordingTo.WORD_SCORE) {
             return 1;
         }
         else {
