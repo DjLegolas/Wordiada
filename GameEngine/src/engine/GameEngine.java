@@ -63,18 +63,12 @@ public class GameEngine {
     }
 
     public Status getStatus() {
-        if (currentGameData == null) {
-            GameDataFromXml gd = gdfx.get(gdfx.size() - 1);
-            return new Status(
-                    gd.getBoard().getBoard(),
-                    currentPlayer != null ? currentPlayer.getName() : null,
-                    gd.getNumOfTries()
-            );
-        }
+        GameDataFromXml gd = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
+
         return new Status(
-                currentGameData.getBoard().getBoard(),
+                gd.getBoard().getBoard(),
                 currentPlayer != null ? currentPlayer.getName() : null,
-                currentGameData.getNumOfTries()
+                gd.getBoard().getKupaAmount()
         );
     }
 
@@ -114,7 +108,6 @@ public class GameEngine {
 
     public WordCheck isWordValid(String word, int tries) {
         if (tries == tryNumber && canRetry()) {
-            //TODO: remove used letters from board and add others
             if (!currentGameData.getBoard().hasChars(word)) {
                 return WordCheck.CHARS_NOT_PRESENT;
             }

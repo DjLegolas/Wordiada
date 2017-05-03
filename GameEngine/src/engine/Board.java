@@ -61,6 +61,7 @@ public class Board {
 
     }
 
+    private int leftCards;
     private short size;
     private List<GameDataFromXml.DataLetter> kupa = new ArrayList<>();
     private Cell [][] board; // for priting
@@ -103,6 +104,7 @@ public class Board {
                     letter.setAmount(letter.getAmount() - 1);
                 }
             }
+            leftCards = 0;
         }
         //more letters than board size - need for kupa
         else{
@@ -124,6 +126,8 @@ public class Board {
                     }
                 }
             }
+
+            leftCards = totalAmountLetters - numOfInsertions;
 
             //build the kupa
             kupa.addAll(letters);
@@ -232,6 +236,7 @@ public class Board {
                         dataLetter.setAmount(dataLetter.getAmount() - 1);
                         board[row][col].sign = letter.getSign().get(0);
                         board[row][col].isShown = false;
+                        leftCards--;
                     }
                 }
                 else {
