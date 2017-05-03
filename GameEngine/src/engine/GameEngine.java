@@ -28,12 +28,6 @@ public class GameEngine {
             DuplicateLetterException, NotValidXmlFileException, WinTypeException, NotEnoughLettersException {
         GameDataFromXml gd = new GameDataFromXml();
         gd.initializeDataFromXml(pathToXml);
-        //check validation:
-        gd.isValidXml(pathToXml);
-        gd.isDictionaryInRightPos();
-        gd.isValidBoardSize(gd.getBoardSize());
-        gd.isEnoughLettersForBoard();
-        gd.isAllLettersAppearOnce();
         gdfx.add(gd);
     }
 
@@ -63,18 +57,12 @@ public class GameEngine {
     }
 
     public Status getStatus() {
-        if (currentGameData == null) {
-            GameDataFromXml gd = gdfx.get(gdfx.size() - 1);
-            return new Status(
-                    gd.getBoard().getBoard(),
-                    currentPlayer != null ? currentPlayer.getName() : null,
-                    gd.getNumOfTries()
-            );
-        }
+        GameDataFromXml gd = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
+
         return new Status(
-                currentGameData.getBoard().getBoard(),
+                gd.getBoard().getBoard(),
                 currentPlayer != null ? currentPlayer.getName() : null,
-                currentGameData.getNumOfTries()
+                gd.getBoard().getKupaAmount()
         );
     }
 
@@ -114,18 +102,17 @@ public class GameEngine {
 
     public WordCheck isWordValid(String word, int tries) {
         if (tries == tryNumber && canRetry()) {
-            //TODO: remove used letters from board and add others
             if (!currentGameData.getBoard().hasChars(word)) {
                 return WordCheck.CHARS_NOT_PRESENT;
             }
             if (currentGameData.getDictionary().hasWord(word)) {
                 currentGameData.getBoard().removeLettersFromBoard(word);
                 currentPlayer.updateScore(word, currentGameData.calcScore(word));
-                nextPlayer();
+                tryNumber = 1;
                 return WordCheck.CORRECT;
             }
             tryNumber++;
-            if (canRetry()) {
+            if (!canRetry()) {
                 nextPlayer();
                 return WordCheck.WRONG_CANT_RETRY;
             }

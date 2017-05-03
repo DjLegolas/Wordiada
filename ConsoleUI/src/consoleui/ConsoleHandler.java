@@ -57,7 +57,7 @@ class ConsoleHandler {
         if (needFullPrint) {
             line += "remaining ";
         }
-        line += "in the pot: " + status.getLeftTiles();
+        line += "in the Kupa: " + status.getLeftTiles();
         System.out.println(line);
         if (needFullPrint) {
             System.out.println("Current player: " + status.getPlayerName() + "\n");
@@ -161,6 +161,7 @@ class ConsoleHandler {
                 System.out.println("\t" + word + ": " + stats.getWordCount(word) + "/" + totalWords);
             }
         }
+        System.out.println();
     }
 
     static void printError(String title, String message) {

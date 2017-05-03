@@ -61,6 +61,7 @@ public class Board {
 
     }
 
+    private int leftCards;
     private short size;
     private List<GameDataFromXml.DataLetter> kupa = new ArrayList<>();
     private Cell [][] board; // for priting
@@ -89,45 +90,29 @@ public class Board {
 
         //(x,y) point in the board
         //if  equal amount letters to board size
-        if(totalAmountLetters == _size * _size)
-        {
-            for(GameDataFromXml.DataLetter letter : letters){
-                toAdd = letter.getLetter();
-                if (!initLetters.containsKey(toAdd)) {
-                    initLetters.put(toAdd, new ArrayList<>());
+        leftCards = totalAmountLetters;
+        int numOfInsertions = 0;
+        while (numOfInsertions < size * size) {
+            for (GameDataFromXml.DataLetter letter : letters) {
+                if (numOfInsertions >= size * size) {
+                    break;
                 }
-                for(int i = 0 ; i < letter.getAmount(); i++){
+                if (letter.getAmount() > 0) {
+                    toAdd = letter.getLetter();
+                    if (!initLetters.containsKey(toAdd)) {
+                        initLetters.put(toAdd, new ArrayList<>());
+                    }
                     p = getRandomPoint();
                     initLetters.get(toAdd).add(p);
-                    board[p.getY()][p.getX()] = new Cell(toAdd.getSign().get(0),false);
+                    board[p.getY()][p.getX()] = new Cell(toAdd.getSign().get(0), false);
                     letter.setAmount(letter.getAmount() - 1);
+                    leftCards--;
+                    numOfInsertions++;
                 }
             }
         }
-        //more letters than board size - need for kupa
-        else{
-            int numOfInsertions = 0;
-            while (numOfInsertions < size*size){
-                for(GameDataFromXml.DataLetter letter : letters){
-                    if(numOfInsertions < size*size){
-                        if(letter.getAmount()>0){
-                            toAdd = letter.getLetter();
-                            if (!initLetters.containsKey(toAdd)) {
-                                initLetters.put(toAdd, new ArrayList<>());
-                            }
-                            p = getRandomPoint();
-                            initLetters.get(toAdd).add(p);
-                            board[p.getY()][p.getX()] = new Cell(toAdd.getSign().get(0),false);
-                            numOfInsertions ++;
-                            letter.setAmount(letter.getAmount() - 1);
-                        }
-                    }
-                }
-            }
-
-            //build the kupa
-            kupa.addAll(letters);
-        }
+        //build the kupa
+        kupa.addAll(letters);
     }
 
     private Point getRandomPoint() {
@@ -232,6 +217,7 @@ public class Board {
                         dataLetter.setAmount(dataLetter.getAmount() - 1);
                         board[row][col].sign = letter.getSign().get(0);
                         board[row][col].isShown = false;
+                        leftCards--;
                     }
                 }
                 else {
