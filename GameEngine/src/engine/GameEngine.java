@@ -25,13 +25,14 @@ public class GameEngine {
 
     public void loadXml(String pathToXml)
             throws WrongPathException, DictionaryNotFoundException, BoardSizeException, NotXmlFileException,
-            DuplicateLetterException, NotValidXmlFileException, GameTypeException {
+            DuplicateLetterException, NotValidXmlFileException, WinTypeException, NotEnoughLettersException {
         GameDataFromXml gd = new GameDataFromXml();
-        gd.initializingDataFromXml(pathToXml);
+        gd.initializeDataFromXml(pathToXml);
         //check validation:
         gd.isValidXml(pathToXml);
         gd.isDictionaryInRightPos();
         gd.isValidBoardSize(gd.getBoardSize());
+        gd.isEnoughLettersForBoard();
         gd.isAllLettersAppearOnce();
         gdfx.add(gd);
     }
@@ -48,8 +49,12 @@ public class GameEngine {
     public void startGame() throws NumberOfPlayersException {
         currentGameData =  gdfx.get(0);
         players = new ArrayList<>();
-        for (engine.jaxb.schema.generated.Player p: currentGameData.getPlayers()) {
+        List<engine.jaxb.schema.generated.Player> _players = currentGameData.getPlayers();
+        for (engine.jaxb.schema.generated.Player p: _players) {
             players.add(new Player(p.getName().get(0)));
+        }
+        while (players.size() < 2) {
+            players.add(new Player("Player" + players.size()));
         }
         currentPlayer = players.get(0);
         isGameStarted = true;
