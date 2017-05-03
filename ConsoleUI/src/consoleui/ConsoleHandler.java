@@ -161,6 +161,7 @@ class ConsoleHandler {
                 System.out.println("\t" + word + ": " + stats.getWordCount(word) + "/" + totalWords);
             }
         }
+        System.out.println();
     }
 
     static void printError(String title, String message) {

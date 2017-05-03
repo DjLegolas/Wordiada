@@ -147,13 +147,12 @@ public class ConsoleUI {
                     tryNumber--;
                     break;
                 case WRONG_CANT_RETRY:
-                    System.out.println("Incorrect word!\n");
-                    System.out.println("\nNo more retries!");
+                    System.out.println("Incorrect word!\nNo more retries!");
+                    System.out.println("Changing to next player...");
                     continueTrying = false;
                     break;
             }
         }
-        System.out.println("Changing to next player...");
         ConsoleHandler.showGameStatus(engine.getStatus(), true);
     }
 
