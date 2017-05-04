@@ -12,8 +12,6 @@ public class Statistics {
     private long playTime;
     private Dictionary dict;
 
-    //TODO: add letters left in box of cards
-
     public class PlayerData {
         private Player player;
 

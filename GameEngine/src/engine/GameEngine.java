@@ -72,19 +72,12 @@ public class GameEngine {
         return diceValue;
     }
 
-    public boolean updateBoard(List<int[]> points) {
+    public boolean updateBoard(List<int[]> points) throws OutOfBoardBoundariesException {
         if (points.size() > diceValue) {
             return false;
         }
-        try {
-            currentGameData.updateBoard(points);
-            return true;
-        }
-        catch (OutOfBoardBoundariesException e){
-            // TODO: handel correctly
-            System.out.println("Some of the points you chose are out of boandries!\n Try again.");
-            return false;
-        }
+        currentGameData.updateBoard(points);
+        return true;
     }
 
     public char[][] getBoard() {

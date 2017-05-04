@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-public class Dictionary {
+class Dictionary {
     private long numberOfWords = 0;
     private Map<String, Word> words = new HashMap<>();
 
@@ -90,24 +90,16 @@ public class Dictionary {
     }
 
 
-    public boolean hasWord(String word) {
+    boolean hasWord(String word) {
         return words.containsKey(word);
     }
 
-    public long getNumberOfWords() {
+    long getNumberOfWords() {
         return numberOfWords;
     }
 
-    public long getWordAmount(String word) {
+    long getWordAmount(String word) {
         return words.get(word).getCount();
-    }
-
-    public Map<String, Long> getWords() {
-        Map<String, Long> map = new HashMap<>();
-        for (Word word: words.values()) {
-            map.put(word.word, word.getCount());
-        }
-        return map;
     }
 
     private void calcFrequency() {

@@ -57,30 +57,14 @@ class GameDataFromXml {
     private WinAccordingTo winAccordingTo;
 
     // get and set funcs:
-
-    public short getTargetDeckSize() {
-        return totalTargetDeckSize;
-    }
-    public short getBoardSize() {
-        return boardSize;
-    }
-    public int getNumOfCubeWigs() {
+    int getNumOfCubeWigs() {
         return numOfCubeWigs;
     }
-    public int getNumOfTries() {
+    int getNumOfTries() {
         return numOfTries;
     }
-    public List<DataLetter> getLetters() {
-        return letters;
-    }
-    public String getDictFileName() {
-        return dictFileName;
-    }
-    public int getTotalAmountOfLetters() {
-        return totalAmountOfLetters;
-    }
 
-    public void initializeDataFromXml(String pathToXml)
+    void initializeDataFromXml(String pathToXml)
             throws WrongPathException, NotValidXmlFileException, DictionaryNotFoundException, WinTypeException,
             NotXmlFileException, BoardSizeException, DuplicateLetterException, NotEnoughLettersException {
 
@@ -206,19 +190,19 @@ class GameDataFromXml {
         }
     }
 
-    public Board getBoard() {
+    Board getBoard() {
         return board;
     }
 
-    public Dictionary getDictionary() {
+    Dictionary getDictionary() {
         return dictionary;
     }
 
-    public void updateBoard(List<int[]> points) throws OutOfBoardBoundariesException {
+    void updateBoard(List<int[]> points) throws OutOfBoardBoundariesException {
         board.update(points);
     }
 
-    public List<engine.jaxb.schema.generated.Player> getPlayers() throws NumberOfPlayersException{
+    List<engine.jaxb.schema.generated.Player> getPlayers() throws NumberOfPlayersException{
         List<Player> players;
         if (this.players == null) {
             return new ArrayList<>();
@@ -231,7 +215,7 @@ class GameDataFromXml {
         return players;
     }
 
-    public float calcScore(String word) {
+    float calcScore(String word) {
         if (winAccordingTo == WinAccordingTo.WORD_COUNT) {
             return 1;
         }
@@ -243,11 +227,11 @@ class GameDataFromXml {
         }
     }
 
-    public int getKupaAmount() {
+    int getKupaAmount() {
         return board.getKupaAmount();
     }
 
-    public List<DataLetter> getKupa() {
+    List<DataLetter> getKupa() {
         return board.getKupa();
     }
 }
