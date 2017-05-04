@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.*;
 
-public class Board {
+class Board {
 
     public class Point{
         private int x;
@@ -69,7 +69,7 @@ public class Board {
     static final short MAX_SIZE = 50;
     static final short MIN_SIZE = 5;
 
-    public char[][] getBoard() {
+    char[][] getBoard() {
         char[][] board = new char[size][size];
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
@@ -133,22 +133,15 @@ public class Board {
         return p;
     }
 
-    public void setBoard(Cell[][] board) {
-        this.board = board;
-    }
-
-    public List<GameDataFromXml.DataLetter> getKupa() {
+    List<GameDataFromXml.DataLetter> getKupa() {
         return kupa;
     }
-    public int getKupaAmount(){
-        int amount = 0;
-        for(GameDataFromXml.DataLetter l : kupa){
-            amount += l.getAmount();
-        }
-        return amount;
+
+    int getKupaAmount(){
+        return leftCards;
     }
 
-    public void update(List<int[]> points) throws OutOfBoardBoundariesException {
+    void update(List<int[]> points) throws OutOfBoardBoundariesException {
 
         //check valid point
 
@@ -164,7 +157,7 @@ public class Board {
         }
     }
 
-    public boolean hasChars(String word) {
+    boolean hasChars(String word) {
         for (Character c: word.toCharArray()) {
             boolean hasChar = false;
             for (Letter letter: initLetters.keySet()) {
@@ -187,7 +180,7 @@ public class Board {
         return true;
     }
 
-    public void removeLettersFromBoard(String word) {
+    void removeLettersFromBoard(String word) {
         Random random = new Random();
         List<String> chars = new ArrayList<>();
         for (Character c: word.toCharArray()) {
@@ -226,53 +219,4 @@ public class Board {
             }
          }
     }
-
-
-
-
-
-
-    //TODO: remove
-/*
-    public void printLetterInBoard(char sign){
-        System.out.println(String.format("%-30s","h"));
-    }*/
-
-/*
-    public void printBoard(char[][] board)
-    {
-        //התקרה
-        for(int i =0; i < size; i++){
-            System.out.print("-------");
-        }
-        System.out.println();
-
-        for(int j =0; j < size * 2; j++) {
-
-            //colums
-            if(j % 2 == 0) {
-                for (int i = 0; i < size + 1; i++) {
-                    char ch = 'a';
-                    System.out.print("|  " + ch + "   ");
-                }
-                System.out.println();
-                for (int i = 0; i < size + 1; i++) {
-                    System.out.print("|      ");
-                }
-                System.out.println();
-            }
-
-            //rows
-            else{
-                for(int i =0; i < size; i++){
-                    System.out.print("-------");
-                }
-                System.out.println();
-            }
-
-        }
-
-
-    }
-    */
 }

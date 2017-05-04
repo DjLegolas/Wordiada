@@ -8,14 +8,5 @@ import java.lang.Throwable;
 public class NotXmlFileException extends Exception {
 
         public NotXmlFileException () {}
-        public NotXmlFileException (String message) {
-            super (message);
-        }
-        public NotXmlFileException (Throwable cause) {
-            super (cause);
-        }
-        public NotXmlFileException (String message, Throwable cause) {
-            super (message, cause);
-        }
 }
 

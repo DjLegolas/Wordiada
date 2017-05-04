@@ -2,7 +2,7 @@ package engine;
 
 import java.util.*;
 
-public class Player {
+class Player {
 
     private String name;
     private float score;
@@ -10,26 +10,26 @@ public class Player {
     static final short MAX_PLAYERS = 6;
     static final short MIN_PLAYERS = 2;
 
-    public Player(String name) {
+    Player(String name) {
         this.name = name;
         score = 0;
         words = new ArrayList<>();
     }
 
-    public void updateScore(String word, float score) {
+    void updateScore(String word, float score) {
         this.score += score;
         words.add(word);
     }
 
-    public String getName() {
+    String getName() {
         return name;
     }
 
-    public float getScore() {
+    float getScore() {
         return score;
     }
 
-    public List<String> getWords() {
+    List<String> getWords() {
         List<String> l = new ArrayList<>();
         l.addAll(words);
         return l;

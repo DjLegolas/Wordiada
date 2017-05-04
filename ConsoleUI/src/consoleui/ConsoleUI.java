@@ -116,14 +116,20 @@ public class ConsoleUI {
     }
 
     private static void playTurn() {
-        boolean listSizeTooShort = false, continueTrying = true;
+        boolean listSizeTooShort = false, continueTrying = true, outOfBoarder;
         List<int[]> points;
         int diceValue = engine.getDiceValue(), tryNumber;
         System.out.println("Dice value is " + diceValue);
         do {
+            outOfBoarder = false;
             points = ConsoleHandler.getPoints(diceValue, listSizeTooShort);
-            listSizeTooShort = !engine.updateBoard(points);
-        } while(listSizeTooShort);
+            try {
+                listSizeTooShort = !engine.updateBoard(points);
+            } catch (OutOfBoardBoundariesException e) {
+                ConsoleHandler.printError("Error", "Some of the points you chose are out of boundaries!\n Try again.");
+                outOfBoarder = true;
+            }
+        } while(listSizeTooShort && !outOfBoarder);
         char[][] board = engine.getBoard();
         ConsoleHandler.printBoard(board);
         int maxTries = engine.getMaxRetries();
