@@ -8,8 +8,9 @@ import engine.exceptions.*;
 public class ConsoleUI {
     private static GameEngine engine = new GameEngine();
     public static void main(String[] args) {
+        boolean wasEnded = false;
         int selectedMenu;
-        while((selectedMenu = ConsoleHandler.showMainMenu()) != 6){
+        while((selectedMenu = ConsoleHandler.showMainMenu()) != 6 && !wasEnded){
             switch (selectedMenu) {
                 case 1:
                     getXml();
@@ -24,7 +25,7 @@ public class ConsoleUI {
                     break;
                 case 4:
                     if (isGameStarted()) {
-                        playTurn();
+                        wasEnded = playTurn();
                     }
                     break;
                 case 5:
@@ -41,10 +42,19 @@ public class ConsoleUI {
 
         System.out.println("---- Game ended ----");
         if (engine.isStarted()) {
+            String winnerName;
+            if (selectedMenu == 6) {
+                winnerName = engine.getWinnerName(true);
+            }
+            else {
+                winnerName = engine.getWinnerName(false);
+            }
+
             char[][] board = engine.getBoard();
             ConsoleHandler.printBoard(board);
             Statistics stat = engine.getStatistics();
             ConsoleHandler.showStatistics(stat);
+            System.out.println("\n\n----------------------\nTHE WINNER IS: " + winnerName + "!");
         }
     }
 
@@ -115,21 +125,25 @@ public class ConsoleUI {
         }
     }
 
-    private static void playTurn() {
+    private static boolean playTurn() {
+
+        if(engine.isGameEnded()){
+            return true;
+        }
         boolean listSizeTooShort = false, continueTrying = true, outOfBoarder;
         List<int[]> points;
         int diceValue = engine.getDiceValue(), tryNumber;
         System.out.println("Dice value is " + diceValue);
         do {
             outOfBoarder = false;
-            points = ConsoleHandler.getPoints(diceValue, listSizeTooShort);
+            points = ConsoleHandler.getPoints(diceValue, listSizeTooShort, engine.getUnShownPoints());
             try {
                 listSizeTooShort = !engine.updateBoard(points);
             } catch (OutOfBoardBoundariesException e) {
                 ConsoleHandler.printError("Error", "Some of the points you chose are out of boundaries!\n Try again.");
                 outOfBoarder = true;
             }
-        } while(listSizeTooShort && !outOfBoarder);
+        } while(listSizeTooShort || outOfBoarder);
         char[][] board = engine.getBoard();
         ConsoleHandler.printBoard(board);
         int maxTries = engine.getMaxRetries();
@@ -160,6 +174,7 @@ public class ConsoleUI {
             }
         }
         ConsoleHandler.showGameStatus(engine.getStatus(), true);
+        return false;
     }
 
     private static boolean isGameStarted() {
@@ -172,4 +187,6 @@ public class ConsoleUI {
                 ".\n");
         return false;
     }
+
+
 }
