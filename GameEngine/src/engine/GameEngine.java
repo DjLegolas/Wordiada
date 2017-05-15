@@ -1,11 +1,14 @@
 package  engine;
 
 import java.lang.String;
+
+import com.sun.xml.internal.bind.v2.schemagen.xmlschema.Import;
 import engine.exceptions.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import engine.Board.Point;
 
 public class GameEngine {
 
@@ -60,7 +63,7 @@ public class GameEngine {
         GameDataFromXml gd = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
 
         return new Status(
-                gd.getBoard().getBoard(),
+                gd.getBoard().getBoard_onlySigns(),
                 currentPlayer != null ? currentPlayer.getName() : null,
                 gd.getBoard().getKupaAmount()
         );
@@ -81,7 +84,7 @@ public class GameEngine {
     }
 
     public char[][] getBoard() {
-        return currentGameData.getBoard().getBoard();
+        return currentGameData.getBoard().getBoard_onlySigns();
 
     }
 
@@ -124,5 +127,42 @@ public class GameEngine {
 
     public Statistics getStatistics() {
         return new Statistics(players, System.currentTimeMillis() - startTime, numberOfTurns, currentGameData);
+    }
+
+    public List<Board.Point> getUnShownPoints(){
+            List<Board.Point> unShownPoints = new ArrayList<>();
+            for(int row = 0; row <currentGameData.getBoard().getBoardSize(); row++){
+                for(int col = 0; col < currentGameData.getBoard().getBoardSize(); col++){
+                    if(!(currentGameData.getBoard().getFullBoardDetails()[row][col].isShown)) {
+                        Point p = new Board.Point (row+1,col+1);
+                        unShownPoints.add(p);
+                    }
+                }
+            }
+            return unShownPoints;
+    }
+
+    public boolean isGameEnded(){
+        //if no more left cards in kupa and all the tails in the board are shown
+        return (currentGameData.getBoard().getKupaAmount() == 0) || (getUnShownPoints().isEmpty());
+
+    }
+
+    public String getWinnerName(boolean userEnd) {
+        Player winner = null;
+        // TODO: fix when having more than 2 players
+        if (userEnd) {
+            winner = players.get(nextPlayerNumber);
+        }
+        else {
+            for (Player player : players) {
+                if (winner == null) {
+                    winner = player;
+                } else if (winner.getScore() < player.getScore()) {
+                    winner = player;
+                }
+            }
+        }
+        return winner == null ? "" : winner.getName();
     }
 }

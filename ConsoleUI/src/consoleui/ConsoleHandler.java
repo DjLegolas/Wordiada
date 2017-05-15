@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Scanner;
 import engine.Statistics;
 import engine.Status;
+import engine.Board.Point;
 
 class ConsoleHandler {
 
-    static private int getInput() {
-        Scanner scanner = new Scanner(System.in);
+    static private int getInput(Scanner scanner) {
         int input = 0;
         boolean again;
         do {
@@ -27,6 +27,7 @@ class ConsoleHandler {
     }
 
     static int showMainMenu() {
+        Scanner scanner = new Scanner(System.in);
         int selectedMenuItem;
 
         System.out.println("Please select an option:");
@@ -37,7 +38,7 @@ class ConsoleHandler {
         System.out.println("5. Show statistics.");
         System.out.println("6. Exit game.");
 
-        selectedMenuItem = getInput();
+        selectedMenuItem = getInput(scanner);
         return selectedMenuItem;
     }
 
@@ -112,17 +113,25 @@ class ConsoleHandler {
         System.out.println(line);
     }
 
-    static List<int[]> getPoints(int numOfValues, boolean sizeWasTooShort) {
+    static List<int[]> getPoints(int numOfValues, boolean sizeWasTooShort, List<Point> unshown) {
+        Scanner scanner = new Scanner(System.in);
+        int unShownHalfSize = 1;
         List<int[]> points = new ArrayList<>();
         if (sizeWasTooShort) {
             System.out.println("The number of coordinates is too short! Try again...\n");
         }
-        System.out.println("Please enter "+ numOfValues + " coordinates.");
+        System.out.println("Please enter "+ numOfValues + " of the available coordinates:");
+        for (Point p: unshown ){
+            System.out.print(p.printAsStr() + (unShownHalfSize % 10 != 0 ? " " : "\n"));
+            unShownHalfSize++;
+        }
+        System.out.println();
         System.out.println("The format is: row col. example: 5 5");
+        System.out.println("");
         for (int i = 0; i < numOfValues; i++) {
             int point[] = {-1,-1};
-            point[0] = getInput();
-            point[1] = getInput();
+            point[0] = getInput(scanner);
+            point[1] = getInput(scanner);
             points.add(point);
         }
         return points;

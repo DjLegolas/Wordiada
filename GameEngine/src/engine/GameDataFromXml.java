@@ -234,4 +234,7 @@ class GameDataFromXml {
     List<DataLetter> getKupa() {
         return board.getKupa();
     }
+    Board getBoardClass(){
+        return board;
+    }
 }

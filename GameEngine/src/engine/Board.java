@@ -8,15 +8,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.*;
 
-class Board {
+public class Board {
 
-    public class Point{
+    public static class Point{
         private int x;
         private int y;
 
         Point(int _x, int _y){
             x = _x;
             y = _y;
+        }
+
+        public String printAsStr(){
+          return "( " + x + ", " + y + " )";
         }
 
         public int getX() {
@@ -50,7 +54,7 @@ class Board {
             return this.x == other.x && this.y == other.y;
         }
     }
-    private class Cell{
+    public class Cell{
         boolean isShown;
         String sign;
 
@@ -62,14 +66,14 @@ class Board {
     }
 
     private int leftCards;
-    private short size;
+    private short size; // size of board
     private List<GameDataFromXml.DataLetter> kupa = new ArrayList<>();
     private Cell [][] board; // for priting
     private Map <Letter,List<Point>> initLetters = new HashMap<>(); //for changes during the game
     static final short MAX_SIZE = 50;
     static final short MIN_SIZE = 5;
 
-    char[][] getBoard() {
+    char[][] getBoard_onlySigns() {
         char[][] board = new char[size][size];
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
@@ -78,6 +82,8 @@ class Board {
         }
         return board;
     }
+
+    Cell[][] getFullBoardDetails(){return board;}
 
 
     //C'tor
@@ -144,16 +150,17 @@ class Board {
     void update(List<int[]> points) throws OutOfBoardBoundariesException {
 
         //check valid point
+        for(int i = 0; i < points.size(); i++) {
+            Point point = new Point((points.get(i))[1], (points.get(i))[0]);
+            if (point.getX() > size || point.getX() < 1 || point.getY() > size || point.getY() < 1) {
+                throw new OutOfBoardBoundariesException();
+            }
+        }
+
 
         for(int i = 0; i < points.size(); i++){
             Point point = new Point((points.get(i))[1], (points.get(i))[0]);
-
-            if(point.getX() > size || point.getX() < 1 || point.getY() > size || point.getY() < 1){
-                throw new OutOfBoardBoundariesException();
-            }
-            else{
-                board[point.getY()-1][point.getX()-1].isShown = true;
-            }
+            board[point.getY()-1][point.getX()-1].isShown = true;
         }
     }
 
@@ -179,6 +186,8 @@ class Board {
         }
         return true;
     }
+
+    short getBoardSize(){return size;}
 
     void removeLettersFromBoard(String word) {
         Random random = new Random();
