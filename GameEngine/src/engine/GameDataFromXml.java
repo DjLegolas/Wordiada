@@ -64,6 +64,10 @@ class GameDataFromXml {
         return numOfTries;
     }
 
+    void initializeDataFromXml(File file) {
+        // TODO: add and fix code
+    }
+
     void initializeDataFromXml(String pathToXml)
             throws WrongPathException, NotValidXmlFileException, DictionaryNotFoundException, WinTypeException,
             NotXmlFileException, BoardSizeException, DuplicateLetterException, NotEnoughLettersException {
