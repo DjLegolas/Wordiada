@@ -7,61 +7,38 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.stage.Stage;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import java.io.File;
+import java.net.URL;
 
 public class Main extends Application {
-    private GameEngine gameEngine = new GameEngine();
+    protected GameEngine gameEngine = new GameEngine();
+    //private Controller controller = new Controller(gameEngine);
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
-        /*
-        Parent root = FXMLLoader.load(getClass().getResource("../resources/sample.fxml"));
-        primaryStage.setTitle("Hello World");
+    public void start(Stage primaryStage) throws Exception {
+        FXMLLoader loader = new FXMLLoader();
+        URL mainFXML = getClass().getResource("desktopUI.fxml");
+        loader.setLocation(mainFXML);
+        BorderPane root = loader.load();
+        Controller controller = loader.getController();
+        controller.setPrimaryStage(primaryStage);
+        primaryStage.setTitle("Please choose one of the options");
         primaryStage.setScene(new Scene(root, 300, 275));
-        primaryStage.show();*/
+        primaryStage.show();
 
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Choose xml file");
-        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All files", "*.*"),
-                                                 new FileChooser.ExtensionFilter("XML", "*.xml"));
-        File xmlFile = fileChooser.showOpenDialog(primaryStage);
-        
-        try {
-            gameEngine.loadXml(xmlFile.getPath());
-        }
-        catch(WrongPathException e) {
-            new Alert(Alert.AlertType.ERROR, "Wrong path exception!!! ass hollllllle").show();
-        }
-        catch(DictionaryNotFoundException e) {
-            new Alert(Alert.AlertType.ERROR, "There is not dictinary file!").show();
-        }
-        catch(BoardSizeException e) {
-            new Alert(Alert.AlertType.ERROR, "invalid board size").show();
-        }
-        catch(NotXmlFileException e) {
-            new Alert(Alert.AlertType.ERROR, "This is not an XML file! u mother fucker").show();
-        }
-        catch(DuplicateLetterException e) {
-            new Alert(Alert.AlertType.ERROR, "duplicate fucking letter!!!").show();
-        }
-        catch(NotValidXmlFileException e) {
-            new Alert(Alert.AlertType.ERROR, "Not valid xmk file").show();
-        }
-        catch(WinTypeException e) {
-            new Alert(Alert.AlertType.ERROR, "win cheat thing").show();
-        }
-        catch(NotEnoughLettersException e) {
-            new Alert(Alert.AlertType.ERROR, "Not fucjing enouth letters u IDIOT").show();
-        }
+        //controller.loadXmlFile(primaryStage);
+        //   controller.showMenu(primaryStage);
     }
-
 
 
     public static void main(String[] args) {
         launch(args);
+      //  Application.launch(Main.class, args);
+           // Application.launch(args);
     }
 
 
