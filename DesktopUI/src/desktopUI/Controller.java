@@ -3,23 +3,30 @@ package desktopUI;
 
 import engine.GameEngine;
 import engine.exceptions.*;
+import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.File;
-import engine.GameEngine;
 
 public class Controller {
-    private GameEngine gamengine;
+
+    private GameEngine gameEngine;
     private Stage primaryStage;
 
-    Controller(){
-        this.gamengine = new GameEngine();
+    @FXML private VBox buttonsVBox;
+    @FXML private Button loadXmlFile;
+
+
+    public Controller(){
+        this.gameEngine = new GameEngine();
     }
 
     public void setPrimaryStage(Stage primaryStage) {
-
+        this.primaryStage = primaryStage;
     }
 
     public void showMenu(Stage primaryStage){
@@ -33,6 +40,7 @@ public class Controller {
         b1.setOnAction(e -> loadXmlFile());
     }
 
+    @FXML
     public void loadXmlFile(){
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choose xml file");
@@ -41,7 +49,7 @@ public class Controller {
         File xmlFile = fileChooser.showOpenDialog(primaryStage);
 
         try {
-            gamengine.loadXml(xmlFile.getPath());
+            gameEngine.loadXml(xmlFile.getPath());
         }
         catch(WrongPathException e) {
             new Alert(Alert.AlertType.ERROR, "Wrong path exception!!! ass hollllllle").show();

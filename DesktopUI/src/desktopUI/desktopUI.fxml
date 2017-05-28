@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="300" minWidth="400" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="desktopUI.Controller">
+<BorderPane minHeight="300" minWidth="400" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="desktopUI.Controller">
    <top>
       <Label text="Wordiada" BorderPane.alignment="CENTER">
          <font>
@@ -19,9 +19,9 @@
       </Label>
    </top>
    <left>
-      <VBox alignment="TOP_CENTER" prefHeight="359.0" prefWidth="136.0" spacing="10.0" BorderPane.alignment="CENTER">
+      <VBox  fx:id="buttonsVBox" alignment="TOP_CENTER" prefHeight="359.0" prefWidth="136.0" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
-            <Button alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#loadXmlFile" prefHeight="30.0" prefWidth="110.0" text="Load XML">
+            <Button fx:id="loadXmlFile" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#loadXmlFile" prefHeight="30.0" prefWidth="110.0" text="Load XML">
                <VBox.margin>
                   <Insets />
                </VBox.margin></Button>
