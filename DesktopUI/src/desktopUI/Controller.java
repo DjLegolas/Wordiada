@@ -6,7 +6,7 @@ import engine.exceptions.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -18,7 +18,12 @@ public class Controller {
     private Stage primaryStage;
 
     @FXML private VBox buttonsVBox;
-    @FXML private Button loadXmlFile;
+    @FXML private Button loadXmlButton;
+    @FXML private Button startButton;
+    @FXML private Button moveButton;
+    @FXML private Button exitButton;
+
+    @FXML private ScrollPane boardScrollPane;
 
 
     public Controller(){

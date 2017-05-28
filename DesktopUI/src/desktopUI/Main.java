@@ -1,17 +1,12 @@
 package desktopUI;
 
 import engine.GameEngine;
-import engine.exceptions.*;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.net.URL;
 
 public class Main extends Application {

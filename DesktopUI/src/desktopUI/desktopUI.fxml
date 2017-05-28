@@ -21,19 +21,19 @@
    <left>
       <VBox  fx:id="buttonsVBox" alignment="TOP_CENTER" prefHeight="359.0" prefWidth="136.0" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="loadXmlFile" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#loadXmlFile" prefHeight="30.0" prefWidth="110.0" text="Load XML">
+            <Button fx:id="loadXmlButton" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#loadXmlFile" prefHeight="30.0" prefWidth="110.0" text="Load XML">
                <VBox.margin>
                   <Insets />
                </VBox.margin></Button>
-            <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="110.0" text="Start Game">
+            <Button fx:id="startButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="110.0" text="Start Game">
                <VBox.margin>
                   <Insets />
                </VBox.margin></Button>
-            <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="110.0" text="Make a move">
+            <Button fx:id="moveButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="110.0" text="Make a move">
                <VBox.margin>
                   <Insets />
                </VBox.margin></Button>
-            <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="110.0" text="Exit">
+            <Button fx:id="exitButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="110.0" text="Exit">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
@@ -41,7 +41,7 @@
          </children></VBox>
    </left>
    <center>
-      <ScrollPane BorderPane.alignment="CENTER">
+      <ScrollPane fx:id="boardScrollPane" BorderPane.alignment="CENTER">
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
         </content>
