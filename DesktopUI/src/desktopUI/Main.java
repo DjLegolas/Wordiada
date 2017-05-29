@@ -21,8 +21,10 @@ public class Main extends Application {
         BorderPane root = loader.load();
         Controller controller = loader.getController();
         controller.setPrimaryStage(primaryStage);
-        primaryStage.setTitle("Please choose one of the options");
-        primaryStage.setScene(new Scene(root, 300, 275));
+        primaryStage.setTitle("Wordiada");
+        primaryStage.setScene(new Scene(root));
+        primaryStage.setMinHeight(root.getMinHeight());
+        primaryStage.setMinWidth(root.getMinWidth());
         primaryStage.show();
 
         //controller.loadXmlFile(primaryStage);

@@ -7,10 +7,13 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane minHeight="300" minWidth="400" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="desktopUI.Controller">
+<BorderPane minHeight="241" minWidth="500" prefHeight="401.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="desktopUI.Controller">
    <top>
       <Label text="Wordiada" BorderPane.alignment="CENTER">
          <font>
@@ -19,7 +22,7 @@
       </Label>
    </top>
    <left>
-      <VBox  fx:id="buttonsVBox" alignment="TOP_CENTER" prefHeight="359.0" prefWidth="136.0" spacing="10.0" BorderPane.alignment="CENTER">
+      <VBox fx:id="buttonsVBox" alignment="TOP_CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="130.0" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
             <Button fx:id="loadXmlButton" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#loadXmlFile" prefHeight="30.0" prefWidth="110.0" text="Load XML">
                <VBox.margin>
@@ -41,14 +44,35 @@
          </children></VBox>
    </left>
    <center>
-      <ScrollPane fx:id="boardScrollPane" BorderPane.alignment="CENTER">
-        <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
-        </content>
-      </ScrollPane>
+      <ScrollPane fx:id="boardScrollPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="150.0" BorderPane.alignment="CENTER">
+         <content>
+            <GridPane alignment="CENTER" hgap="5.0" vgap="5.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Button mnemonicParsing="false" text="Button" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                  <Button mnemonicParsing="false" text="Button" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                  <Button mnemonicParsing="false" text="Button" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                  <Button mnemonicParsing="false" text="Button" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Button mnemonicParsing="false" text="Button" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                  <Button mnemonicParsing="false" text="Button" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Button mnemonicParsing="false" text="Button" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                  <Button mnemonicParsing="false" text="Button" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <Button mnemonicParsing="false" text="Button" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+               </children>
+            </GridPane>
+         </content></ScrollPane>
    </center>
    <right>
-      <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
+      <SplitPane dividerPositions="0.5" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                <children>
@@ -60,12 +84,12 @@
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                <children>
-                  <Label layoutX="14.0" layoutY="14.0" text="Player Words" />
                   <ScrollPane layoutX="-29.0" layoutY="35.0" prefHeight="200.0" prefWidth="200.0">
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
                     </content>
                   </ScrollPane>
+                  <Label layoutX="14.0" layoutY="14.0" text="Player Words" />
                </children>
             </AnchorPane>
         </items>
