@@ -1,5 +1,6 @@
 package  engine;
 
+import java.io.File;
 import java.lang.String;
 
 import com.sun.xml.internal.bind.v2.schemagen.xmlschema.Import;
@@ -32,6 +33,18 @@ public class GameEngine {
         GameDataFromXml gd = new GameDataFromXml();
         gd.initializeDataFromXml(pathToXml);
         gdfx.add(gd);
+    }
+
+    public void loadXml(File file)
+            throws WrongPathException, DictionaryNotFoundException, BoardSizeException, NotXmlFileException,
+            DuplicateLetterException, NotValidXmlFileException, WinTypeException, NotEnoughLettersException {
+        GameDataFromXml gd = new GameDataFromXml();
+        gd.initializeDataFromXml(file);
+        gdfx.add(gd);
+
+
+
+
     }
 
 
