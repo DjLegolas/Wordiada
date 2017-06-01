@@ -224,7 +224,17 @@ class GameDataFromXml {
             return 1;
         }
         else if (winAccordingTo == WinAccordingTo.WORD_SCORE) {
-            return 1;
+            float wordScore = 0;
+            for(Character ch: word.toCharArray()){
+                for(DataLetter dataLetter: letters) {
+                    Letter letter = dataLetter.getLetter();
+                    if (letter.getSign().get(0).equals(ch.toString())) {
+                        wordScore += letter.getScore();
+                        break;
+                    }
+                }
+            }
+            return wordScore;
         }
         else {
             return 0;
