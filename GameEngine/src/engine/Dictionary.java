@@ -117,16 +117,30 @@ class Dictionary {
         FreqSegment currentSegment = FreqSegment.COMMON;
         List<Word> wordList = new ArrayList<>();
         wordList.addAll(words.values());
-        wordList.sort(Comparator.comparing(word -> (word.count)));
+        wordList.sort(Comparator.comparing(word -> (-word.count)));
         for (Word word: wordList) {
-            if (totalWordsProccessed > firstSegmentSize) {
-                currentSegment = FreqSegment.LESS_COMMON;
-            }
-            else if (totalWordsProccessed > secondSegmentSize) {
+            if (totalWordsProccessed > secondSegmentSize) {
                 currentSegment = FreqSegment.RARE;
+            }
+            else if (totalWordsProccessed > firstSegmentSize) {
+                currentSegment = FreqSegment.LESS_COMMON;
             }
             word.freqSegment = currentSegment;
             totalWordsProccessed += word.count;
+        }
+    }
+
+    int getSegmentScore(String strWord) {
+        Word word = words.get(strWord);
+        switch (word.freqSegment){
+            case COMMON:
+                return 1;
+            case LESS_COMMON:
+                return 2;
+            case RARE:
+                return 3;
+            default:
+                return 0;
         }
     }
 }

@@ -51,7 +51,7 @@ class GameDataFromXml {
     private short totalTargetDeckSize; //כמות אריחים
     private final static String JAXB_XML_GAME_PACKAGE_NAME = "engine.jaxb.schema.generated";
     private Board board;
-    private Players players;
+    private HashMap<Short, Player> players;
     private Dictionary dictionary;
     private enum WinAccordingTo {WORD_COUNT, WORD_SCORE}
     private WinAccordingTo winAccordingTo;
@@ -90,7 +90,13 @@ class GameDataFromXml {
         initBoard();
 
         //init players
-        players = gameDescriptor.getPlayers();
+        for (Player player: gameDescriptor.getPlayers().getPlayer()) {
+            if (players.containsKey(player.getId())) {
+                //TODO: add exception
+                throw new Error("Id exists");
+            }
+            players.put(player.getId(), player);
+        }
 
         initWinType();
     }
@@ -207,11 +213,11 @@ class GameDataFromXml {
     }
 
     List<engine.jaxb.schema.generated.Player> getPlayers() throws NumberOfPlayersException{
-        List<Player> players;
+        List<Player> players = new ArrayList<>();
         if (this.players == null) {
             return new ArrayList<>();
         }
-        players = this.players.getPlayer();
+        players.addAll(this.players.values());
         if (players.size() > 2) {
             //TODO: fix when supporting more than 2
             throw new NumberOfPlayersException(players.size(), engine.Player.MIN_PLAYERS, engine.Player.MIN_PLAYERS);
@@ -234,6 +240,7 @@ class GameDataFromXml {
                     }
                 }
             }
+            wordScore *= dictionary.getSegmentScore(word);
             return wordScore;
         }
         else {

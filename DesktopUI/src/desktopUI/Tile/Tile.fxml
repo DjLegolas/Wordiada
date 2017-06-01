@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+
+
+<HBox prefHeight="16.0" prefWidth="32.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="desktopUI.Tile.Tile">
+   <children>
+      <Label fx:id="letterLabel" text="A" />
+      <Label fx:id="scoreLabel" text="(50)" />
+   </children>
+   <padding>
+      <Insets left="2.0" />
+   </padding>
+</HBox>
