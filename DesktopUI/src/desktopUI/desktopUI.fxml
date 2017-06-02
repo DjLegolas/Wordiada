@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane minHeight="241" minWidth="500" prefHeight="401.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="desktopUI.Controller">
+<BorderPane minHeight="241" minWidth="500" prefHeight="401.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="desktopUI.Controller.Controller">
    <top>
       <Label text="Wordiada" BorderPane.alignment="CENTER">
          <font>
@@ -44,7 +44,7 @@
          </children></VBox>
    </left>
    <center>
-      <ScrollPane fx:id="boardScrollPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="150.0" BorderPane.alignment="CENTER">
+      <ScrollPane fx:id="boardScrollPane" minHeight="10.0" minWidth="20.0" prefHeight="200.0" prefWidth="150.0" BorderPane.alignment="CENTER">
          <content>
             <GridPane alignment="CENTER" hgap="5.0" vgap="5.0">
               <columnConstraints>
@@ -76,10 +76,23 @@
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                <children>
-                  <Label layoutX="14.0" layoutY="14.0" text="Turn No." />
-                  <Label layoutX="79.0" layoutY="14.0" text="0" />
-                  <Label layoutX="14.0" layoutY="35.0" text="Player" />
-                  <Label layoutX="72.0" layoutY="35.0" text="N/A" />
+                  <ScrollPane layoutX="-1.0" prefHeight="176.0" prefWidth="159.0">
+                    <content>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="175.0" prefWidth="159.0">
+                           <children>
+                              <Label prefWidth="101.0" text="Turn No." />
+                              <Label layoutX="59.0" text="0" />
+                              <Label fx:id="player1" layoutY="16.0" text="Player" />
+                              <Label fx:id="NotAviable" layoutX="49.0" layoutY="16.0" text="N/A" />
+                              <Label fx:id="player2" layoutY="38.0" styleClass="task-message-label" text=" " />
+                              <Label fx:id="player4" layoutY="64.0" text=" " />
+                              <Label fx:id="player5" layoutY="85.0" text=" " />
+                              <Label fx:id="player6" layoutY="103.0" text=" " />
+                              <Label fx:id="player3" layoutX="2.0" layoutY="125.0" text=" " />
+                           </children>
+                        </AnchorPane>
+                    </content>
+                  </ScrollPane>
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
