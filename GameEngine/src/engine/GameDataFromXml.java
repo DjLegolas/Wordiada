@@ -52,7 +52,7 @@ class GameDataFromXml {
     private short totalTargetDeckSize; //כמות אריחים
     private final static String JAXB_XML_GAME_PACKAGE_NAME = "engine.jaxb.schema.generated";
     private Board board;
-    private Players players;
+    private HashMap<Short, Player> players;
     private Dictionary dictionary;
     private enum WinAccordingTo {WORD_COUNT, WORD_SCORE}
     private WinAccordingTo winAccordingTo;
@@ -93,6 +93,13 @@ class GameDataFromXml {
         initBoard();
 
         //init players
+        for (Player player: gameDescriptor.getPlayers().getPlayer()) {
+            if (players.containsKey(player.getId())) {
+                //TODO: add exception
+                throw new Error("Id exists");
+            }
+            players.put(player.getId(), player);
+        }
         players = gameDescriptor.getPlayers();
         //init score type
         initWinType();
@@ -210,7 +217,7 @@ class GameDataFromXml {
     }
 
     List<engine.jaxb.schema.generated.Player> getPlayers() throws NumberOfPlayersException{
-        List<Player> players;
+        List<Player> players = new ArrayList<>();
         if (this.players == null) {
             return new ArrayList<>();
         }
@@ -227,7 +234,18 @@ class GameDataFromXml {
             return 1;
         }
         else if (winAccordingTo == WinAccordingTo.WORD_SCORE) {
-            return 1;
+            float wordScore = 0;
+            for(Character ch: word.toCharArray()){
+                for(DataLetter dataLetter: letters) {
+                    Letter letter = dataLetter.getLetter();
+                    if (letter.getSign().get(0).equals(ch.toString())) {
+                        wordScore += letter.getScore();
+                        break;
+                    }
+                }
+            }
+            wordScore *= dictionary.getSegmentScore(word);
+            return wordScore;
         }
         else {
             return 0;

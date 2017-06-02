@@ -4,18 +4,18 @@ import engine.exceptions.DictionaryNotFoundException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 class Dictionary {
     private long numberOfWords = 0;
     private Map<String, Word> words = new HashMap<>();
+    enum FreqSegment { COMMON, LESS_COMMON, RARE }
 
     private class Word {
         private String word;
         private long count = 0;
         private float frequency;
+        private FreqSegment freqSegment;
 
         private Word(String word) {
             this.word = word;
@@ -87,6 +87,7 @@ class Dictionary {
             }
         }
         calcFrequency();
+        setSegment();
     }
 
 
@@ -106,6 +107,40 @@ class Dictionary {
         for (Word word: words.values()) {
             float freq = word.getCount() / numberOfWords * 100;
             word.setFrequency(freq);
+        }
+    }
+
+    private void setSegment() {
+        long firstSegmentSize = numberOfWords / 3;
+        long secondSegmentSize = firstSegmentSize * 2;
+        long totalWordsProccessed = 0;
+        FreqSegment currentSegment = FreqSegment.COMMON;
+        List<Word> wordList = new ArrayList<>();
+        wordList.addAll(words.values());
+        wordList.sort(Comparator.comparing(word -> (-word.count)));
+        for (Word word: wordList) {
+            if (totalWordsProccessed > secondSegmentSize) {
+                currentSegment = FreqSegment.RARE;
+            }
+            else if (totalWordsProccessed > firstSegmentSize) {
+                currentSegment = FreqSegment.LESS_COMMON;
+            }
+            word.freqSegment = currentSegment;
+            totalWordsProccessed += word.count;
+        }
+    }
+
+    int getSegmentScore(String strWord) {
+        Word word = words.get(strWord);
+        switch (word.freqSegment){
+            case COMMON:
+                return 1;
+            case LESS_COMMON:
+                return 2;
+            case RARE:
+                return 3;
+            default:
+                return 0;
         }
     }
 }
