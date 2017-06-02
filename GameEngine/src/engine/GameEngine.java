@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Random;
 import engine.Board.Point;
 
+
 public class GameEngine {
 
     private Player currentPlayer;
@@ -59,12 +60,21 @@ public class GameEngine {
         currentGameData =  gdfx.get(0);
         players = new ArrayList<>();
         List<engine.jaxb.schema.generated.Player> _players = currentGameData.getPlayers();
+        // TODO: check if there is a try catch outside for invalid num of players
+
         for (engine.jaxb.schema.generated.Player p: _players) {
-            players.add(new Player(p.getName().get(0)));
+                players.add(new Player(p.getName().get(0), p.getId(),p.getType()));
         }
+
+
+
+        //IDO's code - dunno what it is
+
+
+        /*
         while (players.size() < 2) {
-            players.add(new Player("Player" + players.size()));
-        }
+            players.add(new Player("Player" + players.size(),));
+        }*/
         currentPlayer = players.get(0);
         isGameStarted = true;
         startTime = System.currentTimeMillis();
@@ -176,5 +186,9 @@ public class GameEngine {
             }
         }
         return winner == null ? "" : winner.getName();
+    }
+
+    public List<Player> getPlayers() {
+        return players;
     }
 }

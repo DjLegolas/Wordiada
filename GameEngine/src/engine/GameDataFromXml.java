@@ -40,6 +40,7 @@ class GameDataFromXml {
         }
     }
 
+    private boolean isGoldFishMode;
     private GameDescriptor gameDescriptor;
     private List<DataLetter> letters = new ArrayList<>();
     private int totalAmountOfLetters = 0;
@@ -77,6 +78,8 @@ class GameDataFromXml {
         struct = gameDescriptor.getStructure();
         buildDataLetters(struct);
 
+        //init gold fish mode
+        isGoldFishMode = gameDescriptor.getGameType().isGoldFishMode();
         //init board size
         boardSize = struct.getBoardSize();
         //init num of wings
@@ -97,7 +100,8 @@ class GameDataFromXml {
             }
             players.put(player.getId(), player);
         }
-
+        players = gameDescriptor.getPlayers();
+        //init score type
         initWinType();
     }
 
@@ -217,8 +221,8 @@ class GameDataFromXml {
         if (this.players == null) {
             return new ArrayList<>();
         }
-        players.addAll(this.players.values());
-        if (players.size() > 2) {
+        players = this.players.getPlayer();
+        if ((players.size() < 2) || (players.size() > 6)) {
             //TODO: fix when supporting more than 2
             throw new NumberOfPlayersException(players.size(), engine.Player.MIN_PLAYERS, engine.Player.MIN_PLAYERS);
         }
