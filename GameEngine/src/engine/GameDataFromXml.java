@@ -52,7 +52,7 @@ class GameDataFromXml {
     private short totalTargetDeckSize; //כמות אריחים
     private final static String JAXB_XML_GAME_PACKAGE_NAME = "engine.jaxb.schema.generated";
     private Board board;
-    private HashMap<Short, Player> players;
+    private HashMap<Short, Player> players = new HashMap<>();
     private Dictionary dictionary;
     private enum WinAccordingTo {WORD_COUNT, WORD_SCORE}
     private WinAccordingTo winAccordingTo;
@@ -100,7 +100,7 @@ class GameDataFromXml {
             }
             players.put(player.getId(), player);
         }
-        players = gameDescriptor.getPlayers();
+        //players = gameDescriptor.getPlayers();
         //init score type
         initWinType();
     }
@@ -221,7 +221,7 @@ class GameDataFromXml {
         if (this.players == null) {
             return new ArrayList<>();
         }
-        players = this.players.getPlayer();
+        players.addAll(this.players.values());
         if ((players.size() < 2) || (players.size() > 6)) {
             //TODO: fix when supporting more than 2
             throw new NumberOfPlayersException(players.size(), engine.Player.MIN_PLAYERS, engine.Player.MIN_PLAYERS);

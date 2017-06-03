@@ -1,5 +1,7 @@
 package desktopUI.GameManager;
 
+import desktopUI.scoreDetail.ScoreDetailController;
+import desktopUI.scoreDetail.WordDetails;
 import engine.GameEngine;
 import engine.Player;
 import engine.exceptions.*;
@@ -60,6 +62,10 @@ public class GameManager {
         }
 
 
+    }
+
+    public void showWords(ScoreDetailController scoreDetailController) {
+        scoreDetailController.setIsCapitalist(gameEngine.isWordScore());
     }
 
 }
