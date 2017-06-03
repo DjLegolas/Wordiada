@@ -9,6 +9,7 @@ import java.util.*;
 class Dictionary {
     private long numberOfWords = 0;
     private Map<String, Word> words = new HashMap<>();
+    private List<String> top10RareWords = new ArrayList<>();
     enum FreqSegment { COMMON, LESS_COMMON, RARE }
 
     private class Word {
@@ -113,20 +114,25 @@ class Dictionary {
     private void setSegment() {
         long firstSegmentSize = numberOfWords / 3;
         long secondSegmentSize = firstSegmentSize * 2;
-        long totalWordsProccessed = 0;
+        long totalWordsProcessed = 0;
+        long totalDistinctWordsProcessed = 0;
         FreqSegment currentSegment = FreqSegment.COMMON;
         List<Word> wordList = new ArrayList<>();
         wordList.addAll(words.values());
         wordList.sort(Comparator.comparing(word -> (-word.count)));
         for (Word word: wordList) {
-            if (totalWordsProccessed > secondSegmentSize) {
+            totalDistinctWordsProcessed++;
+            if (totalWordsProcessed > secondSegmentSize) {
                 currentSegment = FreqSegment.RARE;
             }
-            else if (totalWordsProccessed > firstSegmentSize) {
+            else if (totalWordsProcessed > firstSegmentSize) {
                 currentSegment = FreqSegment.LESS_COMMON;
             }
             word.freqSegment = currentSegment;
-            totalWordsProccessed += word.count;
+            totalWordsProcessed += word.count;
+            if (totalDistinctWordsProcessed >= words.size() - 10) {
+                top10RareWords.add(word.word);
+            }
         }
     }
 
@@ -142,5 +148,13 @@ class Dictionary {
             default:
                 return 0;
         }
+    }
+
+    public String getTop10RareWords() {
+        StringBuilder topTenRareWords = new StringBuilder();
+        for(String letter : top10RareWords){
+            topTenRareWords.append(letter + "\n");
+        }
+        return topTenRareWords.toString();
     }
 }

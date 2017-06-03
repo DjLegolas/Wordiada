@@ -37,7 +37,7 @@ public class Player {
         return name;
     }
 
-    float getScore() {
+    public float getScore() {
         return score;
     }
 
@@ -49,7 +49,7 @@ public class Player {
 
     @Override
     public String toString() {
-        return String.format("%s %d (%s)", name, id, type.name().toLowerCase());
+        return String.format("%s id: %d (%s) Score:", name, id, type.name().toLowerCase(), score);
     }
 
     @Override
