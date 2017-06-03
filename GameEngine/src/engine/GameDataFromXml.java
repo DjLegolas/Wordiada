@@ -52,9 +52,9 @@ class GameDataFromXml {
     private short totalTargetDeckSize; //כמות אריחים
     private final static String JAXB_XML_GAME_PACKAGE_NAME = "engine.jaxb.schema.generated";
     private Board board;
-    private HashMap<Short, Player> players;
+    private HashMap<Short, Player> players = new HashMap<>();
     private Dictionary dictionary;
-    private enum WinAccordingTo {WORD_COUNT, WORD_SCORE}
+    public enum WinAccordingTo {WORD_COUNT, WORD_SCORE}
     private WinAccordingTo winAccordingTo;
 
     // get and set funcs:
@@ -68,6 +68,14 @@ class GameDataFromXml {
     void initializeDataFromXml(File file) {
         // TODO: add and fix code
     }
+
+    public WinAccordingTo getWinAccordingTo(){
+        return winAccordingTo;
+    }
+    public boolean getGoldFishMod(){
+        return isGoldFishMode;
+    }
+
 
     void initializeDataFromXml(String pathToXml)
             throws WrongPathException, NotValidXmlFileException, DictionaryNotFoundException, WinTypeException,
@@ -94,13 +102,13 @@ class GameDataFromXml {
 
         //init players
         for (Player player: gameDescriptor.getPlayers().getPlayer()) {
+            /*
             if (players.containsKey(player.getId())) {
                 //TODO: add exception
                 throw new Error("Id exists");
-            }
+            }*/
             players.put(player.getId(), player);
         }
-        players = gameDescriptor.getPlayers();
         //init score type
         initWinType();
     }
@@ -221,7 +229,7 @@ class GameDataFromXml {
         if (this.players == null) {
             return new ArrayList<>();
         }
-        players = this.players.getPlayer();
+        players.addAll(this.players.values());
         if ((players.size() < 2) || (players.size() > 6)) {
             //TODO: fix when supporting more than 2
             throw new NumberOfPlayersException(players.size(), engine.Player.MIN_PLAYERS, engine.Player.MIN_PLAYERS);

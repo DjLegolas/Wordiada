@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import engine.Board.Point;
+import engine.GameDataFromXml.*;
 
+import engine.jaxb.schema.generated.Letter;
 
 public class GameEngine {
 
@@ -110,6 +112,9 @@ public class GameEngine {
 
     }
 
+    public short getBoardSize(){
+        return currentGameData.getBoard().getBoardSize();
+    }
     private boolean canRetry() {
         return tryNumber <= currentGameData.getNumOfTries();
     }
@@ -191,4 +196,32 @@ public class GameEngine {
     public List<Player> getPlayers() {
         return players;
     }
+    public Board getBoardObject(){
+        return currentGameData.getBoard();}
+
+    public Boolean isInGoldFishMod(){
+        return currentGameData.getGoldFishMod();
+    }
+
+    public WinAccordingTo getWinScoreMod(){
+        return currentGameData.getWinAccordingTo();
+    }
+
+    public boolean isWordScore(){
+        return currentGameData.getWinAccordingTo().equals(WinAccordingTo.WORD_SCORE);
+    }
+
+    public String getFreqEachLetter(){
+        StringBuilder freqLetters = new StringBuilder();
+        for(Letter letter : currentGameData.getBoard().getInitLetters().keySet()) {
+            freqLetters.append(letter.getSign().get(0) + " : " + letter.getFrequency()+ "\n");
+        }
+        return freqLetters.toString();
+    }
+
+    public String getTopTenRareWords(){
+        return currentGameData.getDictionary().getTop10RareWords();
+    }
+
+
 }

@@ -4,24 +4,28 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
 public class SingleLetterController {
-    @FXML private Label letterLabel;
-    @FXML private Label scoreLabel;
 
+    @FXML private Button letterButton;
     private SimpleStringProperty letterProperty;
-    private SimpleIntegerProperty scoreProperty;
 
-    public SingleLetterController() {
+
+
+
+    public SingleLetterController(Button button) {
         letterProperty = new SimpleStringProperty();
-        scoreProperty = new SimpleIntegerProperty();
+        letterButton = button;
+
     }
 
     @FXML
-    private void initialize() {
-        letterLabel.textProperty().bind(letterProperty);
-        scoreLabel.textProperty().bind(Bindings.format("(%d)", scoreProperty));
+    public void initialize() {
+        letterButton.textProperty().bind(letterProperty);
+        letterProperty.set("");
+        //scoreLabel.textProperty().bind(Bindings.format("(%d)", scoreProperty));
     }
 
     public void setLetter(String letter) {
@@ -32,7 +36,4 @@ public class SingleLetterController {
         return letterProperty;
     }
 
-    public SimpleIntegerProperty getScoreProperty() {
-        return scoreProperty;
-    }
 }
