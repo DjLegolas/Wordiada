@@ -109,6 +109,7 @@ class GameDataFromXml {
             }*/
             players.put(player.getId(), player);
         }
+        
         //init score type
         initWinType();
     }

@@ -1,9 +1,12 @@
 
 package desktopUI.Controller;
 
+import desktopUI.scoreDetail.ScoreDetailController;
 import desktopUI.Board.Board;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -19,6 +22,7 @@ import desktopUI.GameManager.GameManager;
 import java.awt.event.ActionEvent;
 import java.beans.EventHandler;
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -152,5 +156,20 @@ public class Controller {
         for(int numTurn = 0; numTurn < diceValue; numTurn++){
 
         }
+    }
+
+    @FXML
+    public void showWords() throws Exception {
+        FXMLLoader loader = new FXMLLoader();
+        URL mainFXML = getClass().getResource("../scoreDetail/ScoreDetail.fxml");
+        loader.setLocation(mainFXML);
+        VBox root = loader.load();
+
+        gameManager.showWords(loader.getController());
+
+        Stage stage = new Stage();
+        stage.setTitle("Player Words - Wordiada");
+        stage.setScene(new Scene(root));
+        stage.show();
     }
 }
