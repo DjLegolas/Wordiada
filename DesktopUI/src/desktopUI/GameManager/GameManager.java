@@ -17,10 +17,25 @@ public class GameManager {
     public String getDataPlayers(){
         StringBuilder dataPlayers = new StringBuilder();
         for(Player p : gameEngine.getPlayers()){
-            dataPlayers.append(p.toString() + "\n");
+            dataPlayers.append(p.toString() + " " + p.getScore() + "\n");
         }
         return dataPlayers.toString();
     }
+
+    public String getInitInfoGame(){
+
+        return String.format("Size Board: %d x %d\n" +"\n"+
+                        "Score type: %s \n" +"\n"+
+                        "Gold Fish Mod: %s\n" + "\n"+
+                        "Top ten rare words: \n %s" +"\n"+
+                        "Frequency for each letter:\n %s",
+                        gameEngine.getBoardSize(), gameEngine.getBoardSize(),
+                        gameEngine.getWinScoreMod(),gameEngine.isInGoldFishMod().toString(),
+                        gameEngine.getTopTenRareWords(),gameEngine.getFreqEachLetter());
+
+    }
+
+    public GameEngine getGameEngine(){return gameEngine;}
 
     public void loadXML(File xmlFile){
 

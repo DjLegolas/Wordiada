@@ -121,6 +121,7 @@ public class Board {
         kupa.addAll(letters);
     }
 
+    public Map <Letter,List<Point>> getInitLetters(){return  initLetters;}
     private Point getRandomPoint() {
         int x,y;
         Random xy = new Random();
@@ -228,4 +229,9 @@ public class Board {
             }
          }
     }
+
+    public Cell getCellByPos(int x, int y){
+        return board[y][x];
+    }
+
 }
