@@ -160,7 +160,7 @@ public class GameEngine {
             List<Board.Point> unShownPoints = new ArrayList<>();
             for(int row = 0; row <currentGameData.getBoard().getBoardSize(); row++){
                 for(int col = 0; col < currentGameData.getBoard().getBoardSize(); col++){
-                    if(!(currentGameData.getBoard().getFullBoardDetails()[row][col].isShown)) {
+                    if(!(currentGameData.getBoard().getBoardFullDetails()[row][col].isShown)) {
                         Point p = new Board.Point (row+1,col+1);
                         unShownPoints.add(p);
                     }

@@ -78,6 +78,11 @@ public class Controller {
         this.primaryStage = primaryStage;
     }
 
+
+
+    // was removed to board class:
+
+    /*
     @FXML
     public void loadBoard(short sizeBoard) {
 
@@ -93,7 +98,10 @@ public class Controller {
                 boardPane.add(tile, col, row );
             }
         }
-    }
+    }*/
+
+
+
     @FXML
     public void loadXmlFile(){
         FileChooser fileChooser = new FileChooser();
@@ -105,9 +113,8 @@ public class Controller {
         NotAviable.setText("");
         selectedPlayerData.set(gameManager.getDataPlayers());
         selectedInitInfoGame.set(gameManager.getInitInfoGame());
-
-      //  board = new Board(gameManager.getGameEngine().getBoardSize(), boardPane);
-        loadBoard(gameManager.getGameEngine().getBoardSize());
+        //init board
+        board = new Board(gameManager.getGameEngine().getBoardSize(),boardPane);
         startButton.setDisable(false);
         selectedTitleInfoGame.set("Information about the Game:");
         selectedTitlePlayerData.set("Information about the Players:");
@@ -142,9 +149,10 @@ public class Controller {
         dieMessage.setTitle("Play Turn");
         dieMessage.setHeaderText("Throwing die...");
         dieMessage.show();
-
+        board.setBoardValues(gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown());
         // make all buttons to be clickable
         for(Node button : board.getButtonsList().keySet()){
+            button.setFocusTraversable(true);
             button.setOnMousePressed(new javafx.event.EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {

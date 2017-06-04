@@ -73,7 +73,7 @@ public class Board {
     static final short MAX_SIZE = 50;
     static final short MIN_SIZE = 5;
 
-    char[][] getBoard_onlySigns() {
+    public char[][] getBoard_onlySigns() {
         char[][] board = new char[size][size];
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
@@ -82,9 +82,19 @@ public class Board {
         }
         return board;
     }
+    public Cell [][] getBoardFullDetails(){
+        return board;
+    }
 
-    Cell[][] getFullBoardDetails(){return board;}
-
+    public char [][] getBoardWithAllSignsShown(){
+        char[][] reSBoard = new char[size][size];
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
+                reSBoard[row][col] = this.board[row][col].sign.toCharArray()[0];
+            }
+        }
+            return reSBoard;
+    }
 
     //C'tor
     Board(short _size, List<GameDataFromXml.DataLetter> letters, int totalAmountLetters){
