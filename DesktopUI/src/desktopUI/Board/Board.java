@@ -6,6 +6,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 
@@ -72,6 +75,19 @@ public class Board {
                 Button tile = new Button();
                 tile.setPrefSize(Region.USE_COMPUTED_SIZE,Region.USE_COMPUTED_SIZE);
                 tile.setMinSize(50,50);
+                tile.setOnMouseClicked(new javafx.event.EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        if (event.getEventType() == MouseEvent.MOUSE_CLICKED) {
+                            if (tile.getStyle().equals("-fx-border-color: blue")) {
+                                tile.setStyle("");
+                            }
+                            else {
+                                tile.setStyle("-fx-border-color: blue");
+                            }
+                        }
+                    }
+                });
                 this.updateNodeToTile(tile);
                 boardGridPane.add(tile, col, row );
             }
