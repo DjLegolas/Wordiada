@@ -9,7 +9,7 @@ public class WordDetails {
     private final SimpleLongProperty amount = new SimpleLongProperty();
     private final SimpleIntegerProperty score = new SimpleIntegerProperty();
 
-    public WordDetails(String word, long amount, short score) {
+    public WordDetails(String word, long amount, int score) {
         this.word.set(word);
         this.amount.set(amount);
         this.score.set(score);

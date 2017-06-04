@@ -5,13 +5,13 @@ import java.lang.String;
 
 import engine.exceptions.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+
 import engine.Board.Point;
 import engine.GameDataFromXml.*;
 
 import engine.jaxb.schema.generated.Letter;
+import javafx.util.Pair;
 
 public class GameEngine {
 
@@ -128,9 +128,10 @@ public class GameEngine {
             if (!currentGameData.getBoard().hasChars(word)) {
                 return WordCheck.CHARS_NOT_PRESENT;
             }
-            if (currentGameData.getDictionary().hasWord(word)) {
+            Dictionary.Word dictWord = currentGameData.getDictionary().hasWord(word);
+            if (dictWord != null) {
                 currentGameData.getBoard().removeLettersFromBoard(word);
-                currentPlayer.updateScore(word, currentGameData.calcScore(word));
+                currentPlayer.updateScore(dictWord, currentGameData.calcScore(word));
                 tryNumber = 1;
                 return WordCheck.CORRECT;
             }
@@ -223,5 +224,11 @@ public class GameEngine {
         return currentGameData.getDictionary().getTop10RareWords();
     }
 
-
+    public Map<String, Pair<Integer, Integer>> getPlayerWords() {
+        Map<String, Pair<Integer, Integer>> words = new HashMap<>();
+        for (Map.Entry<Dictionary.Word, Integer> entry: currentPlayer.getWords().entrySet()) {
+            words.put(entry.getKey().getWord(), new Pair<>(entry.getValue(), entry.getKey().getScore()));
+        }
+        return words;
+    }
 }
