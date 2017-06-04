@@ -2,8 +2,6 @@ package engine;
 
 import java.util.*;
 
-
-
 public class Player {
     public enum Type {
         HUMAN, COMPUTER;
@@ -13,7 +11,7 @@ public class Player {
     private String name;
     private float score;
     private Type type;
-    private List<String> words;
+    private Map<Dictionary.Word, Integer> words;
     static final short MAX_PLAYERS = 6;
     static final short MIN_PLAYERS = 2;
 
@@ -21,16 +19,16 @@ public class Player {
         this.name = name;
         this.id = id;
         this.score = 0;
-        if(type == "Human")
+        if(type.equals("Human"))
             this.type = Type.HUMAN;
         else
             this.type = Type.COMPUTER;
-        words = new ArrayList<>();
+        words = new HashMap<>();
     }
 
-    void updateScore(String word, float score) {
+    void updateScore(Dictionary.Word word, float score) {
         this.score += score;
-        words.add(word);
+        words.put(word, words.containsKey(word) ? words.get(word) + 1 : 1);
     }
 
     String getName() {
@@ -41,10 +39,8 @@ public class Player {
         return score;
     }
 
-    List<String> getWords() {
-        List<String> l = new ArrayList<>();
-        l.addAll(words);
-        return l;
+    Map<Dictionary.Word, Integer> getWords() {
+        return new HashMap<>(this.words);
     }
 
     @Override
@@ -60,13 +56,10 @@ public class Player {
         Player player = (Player) o;
 
         return id == player.id;
-
     }
-
 
     @Override
     public int hashCode() {
         return id;
     }
-
 }

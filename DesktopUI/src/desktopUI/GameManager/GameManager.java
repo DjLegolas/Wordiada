@@ -6,8 +6,10 @@ import engine.GameEngine;
 import engine.Player;
 import engine.exceptions.*;
 import javafx.scene.control.Alert;
+import javafx.util.Pair;
 
 import java.io.File;
+import java.util.Map;
 
 public class GameManager {
 
@@ -81,6 +83,9 @@ public class GameManager {
 
     public void showWords(ScoreDetailController scoreDetailController) {
         scoreDetailController.setIsCapitalist(gameEngine.isWordScore());
+        for (Map.Entry<String, Pair<Integer, Integer>> entry: gameEngine.getPlayerWords().entrySet()) {
+            scoreDetailController.getWords().add(new WordDetails(entry.getKey(), entry.getValue().getKey(), entry.getValue().getValue()));
+        }
     }
 
 }
