@@ -1,11 +1,11 @@
 
 package desktopUI.Controller;
 
-import desktopUI.scoreDetail.ScoreDetailController;
 import desktopUI.Board.Board;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -19,8 +19,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import desktopUI.GameManager.GameManager;
 
-import java.awt.event.ActionEvent;
-import java.beans.EventHandler;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
@@ -83,14 +81,15 @@ public class Controller {
 
         //build cols + rows
 
-        for (short row = 1; row < sizeBoard+1; row++) {
-            for (short col = 1; col < sizeBoard+1; col++) {
+        board = new Board(sizeBoard,boardPane);
+        for (short row = 0; row < sizeBoard; row++) {
+            for (short col = 0; col < sizeBoard; col++) {
                 //TODO: change from button to tile with letter fdata from game engine
 
                 Button tile = new Button();
-                board = new Board(sizeBoard,boardPane);
+                GridPane.setMargin(tile, new Insets(1, 1, 1, 1));
                 board.updateNodeToTile(tile);
-                boardPane.add(tile, col, row );
+                boardPane.add(tile, col, row);
             }
         }
     }
