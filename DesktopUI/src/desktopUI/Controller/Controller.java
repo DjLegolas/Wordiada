@@ -6,7 +6,6 @@ import javafx.beans.property.SimpleIntegerProperty;
 import engine.GameDataFromXml;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
@@ -39,7 +38,7 @@ public class Controller {
     @FXML private Label player1;
     @FXML private Label turnNumber;
     @FXML private ScrollPane boardScrollPane;
-    @FXML private Label NotAviable;
+    @FXML private Label notAvailable;
     @FXML private  Label initInfoGame;
     @FXML private  Label titleInfoGame;
     @FXML private  Label titlePlayerData;
@@ -102,14 +101,17 @@ public class Controller {
 
 
     @FXML
-    public void loadXmlFile() throws Exception{
+    public void loadXmlFile(){
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choose xml file");
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("XML", "*.xml"));
         fileChooser.setInitialDirectory(new File("C:\\Users\\noy\\Desktop\\לימודים\\IdeaProjects\\Wordiada"));
         File xmlFile = fileChooser.showOpenDialog(primaryStage);
-        gameManager.loadXML((xmlFile));
-        NotAviable.setText("");
+        gameManager.loadXML(xmlFile, this);
+    }
+
+    public void initGame() {
+        notAvailable.setText("");
         selectedPlayerData.set(gameManager.getDataPlayers());
         gameManager.getDataPlayers(playerVBox);
         selectedInitInfoGame.set(gameManager.getInitInfoGame());
@@ -118,11 +120,7 @@ public class Controller {
         startButton.setDisable(false);
         selectedTitleInfoGame.set("Information about the Game:");
         selectedTitlePlayerData.set("Information about the Players:");
-
-
     }
-
-
 
     // helper func
         public Node getNodeByRowColumnIndex ( int row,  int column, GridPane gridPane) {
@@ -139,6 +137,12 @@ public class Controller {
         }
         return result;
     }
+
+    @FXML
+    public void startGame() {
+        gameManager.startGame();
+    }
+  
     @FXML public void diceThrow(){
         Alert dieMessage = new Alert(Alert.AlertType.INFORMATION,"Please throw the die");
         dieMessage.setTitle("Play Turn");
@@ -169,11 +173,7 @@ public class Controller {
             {
                 board.setPressedButtonsValues(gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown(), pressedButtons, gameManager.getGameEngine().getCurrentGameData().getKupa());
             }
-
         }
-
-
-
     }
 
 
@@ -186,5 +186,10 @@ public class Controller {
         alert.show();
         gameManager.getDiceValue(diceValueProperty);
         alert.setContentText("Dice value is " + diceValueProperty.get());
+    }
+
+    @FXML
+    public void exitGame() {
+        gameManager.exitGame();
     }
 }

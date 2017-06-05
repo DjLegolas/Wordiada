@@ -1,11 +1,13 @@
 package desktopUI.GameManager;
 
+import desktopUI.Controller.Controller;
 import desktopUI.scoreDetail.ScoreDetailController;
 import desktopUI.scoreDetail.WordDetails;
 import desktopUI.userInfo.UserInfoController;
 import engine.GameEngine;
 import engine.Player;
 import engine.exceptions.*;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
@@ -14,6 +16,7 @@ import javafx.scene.layout.Pane;
 import javafx.util.Pair;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
 
@@ -35,12 +38,18 @@ public class GameManager {
         return dataPlayers.toString();
     }
 
-    public void getDataPlayers(Pane node) throws Exception{
+    public void getDataPlayers(Pane node){
         URL infoFXML = getClass().getResource("../userInfo/UserInfo.fxml");
         for(Player player : gameEngine.getPlayers()) {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(infoFXML);
-            HBox root = loader.load();
+            HBox root = null;
+            try {
+                root = loader.load();
+            }
+            catch (IOException e) {
+                new Alert(Alert.AlertType.ERROR, "Unable to load user nfo").show();
+            }
             UserInfoController userInfoController = loader.getController();
             userInfoController.setGameManager(this);
             userInfoController.setIdProperty(player.getId());
@@ -66,56 +75,76 @@ public class GameManager {
 
     public GameEngine getGameEngine(){return gameEngine;}
 
-    public void loadXML(File xmlFile){
-
+    public void loadXML(File xmlFile, Controller controller){
+        new Thread(() -> {
         try {
             gameEngine.loadXml(xmlFile.getPath());
+            Platform.runLater(() -> controller.initGame());
         }
         catch(WrongPathException e) {
-            new Alert(Alert.AlertType.ERROR, "Wrong path exception!!! ass hollllllle").show();
+            Platform.runLater(() ->
+                    new Alert(Alert.AlertType.ERROR, "Wrong path exception!!! ass hollllllle").show());
         }
         catch(DictionaryNotFoundException e) {
-            new Alert(Alert.AlertType.ERROR, "There is not dictinary file!").show();
+            Platform.runLater(() ->
+                    new Alert(Alert.AlertType.ERROR, "There is not dictinary file!").show());
         }
         catch(BoardSizeException e) {
-            new Alert(Alert.AlertType.ERROR, "invalid board size").show();
+            Platform.runLater(() ->
+                    new Alert(Alert.AlertType.ERROR, "invalid board size").show());
         }
         catch(NotXmlFileException e) {
-            new Alert(Alert.AlertType.ERROR, "This is not an XML file! u mother fucker").show();
+            Platform.runLater(() ->
+                    new Alert(Alert.AlertType.ERROR, "This is not an XML file! u mother fucker").show());
         }
         catch(DuplicateLetterException e) {
-            new Alert(Alert.AlertType.ERROR, "duplicate fucking letter!!!").show();
+            Platform.runLater(() ->
+                    new Alert(Alert.AlertType.ERROR, "duplicate fucking letter!!!").show());
         }
         catch(NotValidXmlFileException e) {
-            new Alert(Alert.AlertType.ERROR, "Not valid xmk file").show();
+            Platform.runLater(() ->
+                    new Alert(Alert.AlertType.ERROR, "Not valid xmk file").show());
         }
         catch(WinTypeException e) {
-            new Alert(Alert.AlertType.ERROR, "win cheat thing").show();
+            Platform.runLater(() ->
+                    new Alert(Alert.AlertType.ERROR, "win cheat thing").show());
         }
         catch(NotEnoughLettersException e) {
-            new Alert(Alert.AlertType.ERROR, "Not fucjing enouth letters u IDIOT").show();
+            Platform.runLater(() ->
+                    new Alert(Alert.AlertType.ERROR, "Not fucjing enouth letters u IDIOT").show());
         }
-
-        try{
-            gameEngine.startGame();
+        catch (NumberOfPlayersException e) {
+            Platform.runLater(() ->
+                    new Alert(Alert.AlertType.ERROR, "num on players.. needed" + e.getMinPlayers() + " to " +
+                    e.getMinPlayers() + "... have " + e.getActualNumOfPlayers()).show());
         }
-        catch(NumberOfPlayersException e)
-        {
-            System.out.println("Fail in init players");
+        catch (DuplicatePlayerIdException e) {
+            Platform.runLater(() ->
+                    new Alert(Alert.AlertType.ERROR, "duplicated player fuckin id " + e.getDuplicateId()).show());
+        }}).start();
+    }
 
-        }
-
-
+    public void startGame() {
+        gameEngine.startGame();
     }
 
     public void showWords(ScoreDetailController scoreDetailController) {
         scoreDetailController.setIsCapitalist(gameEngine.isWordScore());
+        long totalWords = 0;
         for (Map.Entry<String, Pair<Integer, Integer>> entry: gameEngine.getPlayerWords().entrySet()) {
             scoreDetailController.getWords().add(new WordDetails(entry.getKey(), entry.getValue().getKey(), entry.getValue().getValue()));
+            totalWords += entry.getValue().getKey();
         }
+        scoreDetailController.setWordsAmount(totalWords);
     }
 
     public void getDiceValue(SimpleIntegerProperty diceValue) {
         diceValue.set(gameEngine.getDiceValue());
+    }
+
+    public void exitGame() {
+        if (gameEngine.isStarted()) {
+
+        }
     }
 }

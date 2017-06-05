@@ -5,8 +5,13 @@ import com.sun.xml.internal.ws.api.pipe.Engine;
 import desktopUI.Tile.SingleLetterController;
 import engine.GameDataFromXml;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
+import javafx.geometry.*;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Region;
+
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.control.Button;
@@ -56,7 +61,7 @@ public class Board {
         for(int i = 0 ; i < size; i++){
             for(int j = 0; j < size; j ++){
                 char sign = boardView[i][j];
-                Node button = getNodeByRowColumnIndex(i+1,j+1,boardGridPane);
+                Button button = getNodeByRowColumnIndex(i+1,j+1,boardGridPane);
                 DataLetter dataLetter = findDataLetterBySign(sign, dataLetterList);
                 if(dataLetter == null) {
                     System.out.println("Error in getting the letters' information from xml properly !");
@@ -65,12 +70,10 @@ public class Board {
                     String setSign = String.format("%c (%d)", sign, dataLetter.getLetter().getScore());
                     buttonsList.get(button).setLetter(setSign);
                 }
-
             }
         }
 
     }
-
     public void setPressedButtonsValues(char[][] boardView, List<Button> pressedButtons, List<DataLetter> dataLetterList){
         for(int i = 0 ; i < size; i++) {
             for (int j = 0; j < size; j++) {
@@ -90,16 +93,15 @@ public class Board {
         buttonsList.put(button,slc);
     }
 
-    public void loadBoard(){
+    private void loadBoard(){
         for (short row = 1; row < size+1; row++) {
             for (short col = 1; col < size+1; col++) {
                 Button tile = new Button();
                 tile.setId(String.format("tile%d%d",row,col));
                 tile.setPrefSize(Region.USE_COMPUTED_SIZE,Region.USE_COMPUTED_SIZE);
                 tile.setMinSize(70,70);
-                tile.setOnMouseClicked(new javafx.event.EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
+                GridPane.setMargin(tile, new Insets(1, 1, 1, 1));
+                tile.setOnMouseClicked((MouseEvent event) -> {
                         if (event.getEventType() == MouseEvent.MOUSE_CLICKED) {
                             if (tile.getStyle().equals("-fx-border-color: blue")) {
                                 tile.setStyle("");
@@ -109,7 +111,6 @@ public class Board {
                                 tile.setBackground(new Background(new BackgroundFill(Color.AQUA, CornerRadii.EMPTY, null)));
                             }
                         }
-                    }
                 });
                 this.updateNodeToTile(tile);
                 boardGridPane.add(tile, col, row );
@@ -134,22 +135,21 @@ public class Board {
         }
         return null;
     }
-
     //TODO: put those 3 funcs in a static class which support helper funcs without spesific subject
     //1.   helper gridpane func
     public Node getNodeByRowColumnIndex ( int row,  int column, GridPane gridPane) {
         Node result = null;
 
-        java.util.List<Node> childrens = new ArrayList<>();
-        childrens =  gridPane.getChildren();
+        java.util.List<Node> children;
+        children = gridPane.getChildren();
 
-        for (Node node : childrens) {
-            if(gridPane.getRowIndex(node) == row && gridPane.getColumnIndex(node) == column) {
+        for (Node node : children) {
+            if(GridPane.getRowIndex(node) == row && GridPane.getColumnIndex(node) == column) {
                 result = node;
                 break;
             }
         }
-        return result;
+        return(Button)result;
     }
 
     //2. helper func for findinng a dataLetter type in a list:
