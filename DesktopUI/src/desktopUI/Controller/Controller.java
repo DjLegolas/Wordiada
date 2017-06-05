@@ -102,7 +102,7 @@ public class Controller {
 
 
     @FXML
-    public void loadXmlFile(){
+    public void loadXmlFile() throws Exception{
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choose xml file");
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("XML", "*.xml"));
@@ -146,21 +146,17 @@ public class Controller {
         dieMessage.show();
     }
 
-    @FXML public void playTurn(){
+    @FXML public void playTurn() {
         int diceValue;
 
         if (moveButton.isPressed())
             diceThrow();
         // adding the pressed tile to the list:
         moveButton.setDisable(false);
-
-        for( Node button : boardPane.getChildren()) {
-        board.setBoardValues(gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown());
-
         diceButton.setDisable(false);
-        // make all buttons to be clickable
-        for(Node button : board.getButtonsList().keySet()){
-            button.setFocusTraversable(true);
+
+        for (Node button : boardPane.getChildren()) {
+
             button.setOnMousePressed(new javafx.event.EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
@@ -175,7 +171,11 @@ public class Controller {
             }
 
         }
+
+
+
     }
+
 
     @FXML
     public void throwDie() {
