@@ -158,6 +158,7 @@ public class Controller {
         // adding the pressed tile to the list:
         moveButton.setDisable(false);
         diceButton.setDisable(false);
+        gameManager.startGame();
 
         for (Node button : boardPane.getChildren()) {
 
@@ -166,7 +167,7 @@ public class Controller {
                 public void handle(MouseEvent event) {
                     pressedButtons.add((Button) button);
                     //if the player finished to choose letters
-                    if (pressedButtons.size() == gameManager.getGameEngine().getDiceValue()) ;
+                    if (pressedButtons.size() == gameManager.getGameEngine().getDiceValue())
                     {
                         board.setPressedButtonsValues(gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown(), pressedButtons, gameManager.getGameEngine().getCurrentGameData().getKupa());
                     }
