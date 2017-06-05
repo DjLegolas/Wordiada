@@ -98,13 +98,16 @@ public class Controller {
 
 
     @FXML
-    public void loadXmlFile() throws Exception{
+    public void loadXmlFile(){
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choose xml file");
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("XML", "*.xml"));
         //fileChooser.setInitialDirectory(new File("C:\\Users\\noy\\Desktop\\לימודים\\IdeaProjects\\Wordiada"));
         File xmlFile = fileChooser.showOpenDialog(primaryStage);
-        gameManager.loadXML((xmlFile));
+        gameManager.loadXML(xmlFile, this);
+    }
+
+    public void initGame() {
         notAvailable.setText("");
         selectedPlayerData.set(gameManager.getDataPlayers());
         gameManager.getDataPlayers(playerVBox);
@@ -114,11 +117,7 @@ public class Controller {
         startButton.setDisable(false);
         selectedTitleInfoGame.set("Information about the Game:");
         selectedTitlePlayerData.set("Information about the Players:");
-
-
     }
-
-
 
     // helper func
         public Node getNodeByRowColumnIndex ( int row,  int column, GridPane gridPane) {
@@ -136,6 +135,10 @@ public class Controller {
         return result;
     }
 
+    @FXML
+    public void startGame() {
+        gameManager.startGame();
+    }
 
     //TODO: put in on action in start game button
     @FXML public void playTurn(){
@@ -173,5 +176,10 @@ public class Controller {
         alert.show();
         gameManager.getDiceValue(diceValueProperty);
         alert.setContentText("Dice value is " + diceValueProperty.get());
+    }
+
+    @FXML
+    public void exitGame() {
+        gameManager.exitGame();
     }
 }

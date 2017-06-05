@@ -31,7 +31,8 @@ public class GameEngine {
 
     public void loadXml(String pathToXml)
             throws WrongPathException, DictionaryNotFoundException, BoardSizeException, NotXmlFileException,
-            DuplicateLetterException, NotValidXmlFileException, WinTypeException, NotEnoughLettersException {
+            DuplicateLetterException, NotValidXmlFileException, WinTypeException, NotEnoughLettersException,
+            NumberOfPlayersException, DuplicatePlayerIdException {
         GameDataFromXml gd = new GameDataFromXml();
         gd.initializeDataFromXml(pathToXml);
         gdfx.add(gd);
@@ -58,15 +59,21 @@ public class GameEngine {
         return isGameStarted;
     }
 
-    public void startGame() throws NumberOfPlayersException {
-        currentGameData =  gdfx.get(0);
-        players = new ArrayList<>();
-        List<engine.jaxb.schema.generated.Player> _players = currentGameData.getPlayers();
-        // TODO: check if there is a try catch outside for invalid num of players
+    private List<Player> getPlayersList() {
+        List<Player> players = new ArrayList<>();
+        GameDataFromXml gd = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
+        List<engine.jaxb.schema.generated.Player> _players = gd.getPlayers();
 
         for (engine.jaxb.schema.generated.Player p: _players) {
-                players.add(new Player(p.getName().get(0), p.getId(),p.getType()));
+            players.add(new Player(p.getName().get(0), p.getId(),p.getType()));
         }
+        return players;
+    }
+
+    public void startGame() {
+        isGameStarted = true;
+        currentGameData =  gdfx.get(0);
+        players = getPlayersList();
 
 
 
@@ -78,7 +85,6 @@ public class GameEngine {
             players.add(new Player("Player" + players.size(),));
         }*/
         currentPlayer = players.get(0);
-        isGameStarted = true;
         startTime = System.currentTimeMillis();
         tryNumber = 1;
     }
@@ -113,8 +119,10 @@ public class GameEngine {
     }
 
     public short getBoardSize(){
-        return currentGameData.getBoard().getBoardSize();
+        GameDataFromXml gameDataFromXml = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
+        return gameDataFromXml.getBoard().getBoardSize();
     }
+
     private boolean canRetry() {
         return tryNumber <= currentGameData.getNumOfTries();
     }
@@ -195,33 +203,38 @@ public class GameEngine {
     }
 
     public List<Player> getPlayers() {
-        return players;
+        return isGameStarted ? players : getPlayersList();
     }
     public Board getBoardObject(){
         return currentGameData.getBoard();}
 
     public Boolean isInGoldFishMod(){
-        return currentGameData.getGoldFishMod();
+        GameDataFromXml gameDataFromXml = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
+        return gameDataFromXml.getGoldFishMod();
     }
 
     public WinAccordingTo getWinScoreMod(){
-        return currentGameData.getWinAccordingTo();
+        GameDataFromXml gameDataFromXml = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
+        return gameDataFromXml.getWinAccordingTo();
     }
 
     public boolean isWordScore(){
-        return currentGameData.getWinAccordingTo().equals(WinAccordingTo.WORD_SCORE);
+        GameDataFromXml gameDataFromXml = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
+        return gameDataFromXml.getWinAccordingTo().equals(WinAccordingTo.WORD_SCORE);
     }
 
     public String getFreqEachLetter(){
+        GameDataFromXml gameDataFromXml = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
         StringBuilder freqLetters = new StringBuilder();
-        for(Letter letter : currentGameData.getBoard().getInitLetters().keySet()) {
+        for(Letter letter : gameDataFromXml.getBoard().getInitLetters().keySet()) {
             freqLetters.append(letter.getSign().get(0) + " : " + letter.getFrequency()+ "\n");
         }
         return freqLetters.toString();
     }
 
     public String getTopTenRareWords(){
-        return currentGameData.getDictionary().getTop10RareWords();
+        GameDataFromXml gameDataFromXml = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
+        return gameDataFromXml.getDictionary().getTop10RareWords();
     }
 
     public Map<String, Pair<Integer, Integer>> getPlayerWords() {
