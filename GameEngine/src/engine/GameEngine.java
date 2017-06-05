@@ -222,6 +222,8 @@ public class GameEngine {
     public String getTopTenRareWords(){
         return currentGameData.getDictionary().getTop10RareWords();
     }
-
+    public GameDataFromXml getCurrentGameData(){
+        return currentGameData;
+    }
 
 }

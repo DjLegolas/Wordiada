@@ -1,22 +1,25 @@
 package desktopUI.Board;
 
+import com.sun.security.auth.SolarisNumericUserPrincipal;
+import com.sun.xml.internal.ws.api.pipe.Engine;
 import desktopUI.Tile.SingleLetterController;
+import engine.GameDataFromXml;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.layout.*;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Region;
-
+import javafx.scene.paint.*;
+import javafx.scene.paint.Color;
+import engine.GameDataFromXml.DataLetter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.beans.EventHandler;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
 public class Board {
 
@@ -48,17 +51,38 @@ public class Board {
         return buttonsList;
     }
 
-    public void setBoardValues(char [][] boardView){
+    // probably will not need this func--->
+    public void setAllBoardValues(char [][] boardView, List<DataLetter> dataLetterList){
         for(int i = 0 ; i < size; i++){
             for(int j = 0; j < size; j ++){
                 char sign = boardView[i][j];
                 Node button = getNodeByRowColumnIndex(i+1,j+1,boardGridPane);
-                String setSign = String.format("%c",sign);
-                buttonsList.get(button).setLetter(setSign);
+                DataLetter dataLetter = findDataLetterBySign(sign, dataLetterList);
+                if(dataLetter == null) {
+                    System.out.println("Error in getting the letters' information from xml properly !");
+                }
+                else {
+                    String setSign = String.format("%c (%d)", sign, dataLetter.getLetter().getScore());
+                    buttonsList.get(button).setLetter(setSign);
+                }
 
             }
         }
 
+    }
+
+    public void setPressedButtonsValues(char[][] boardView, List<Button> pressedButtons, List<DataLetter> dataLetterList){
+        for(int i = 0 ; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                char sign = boardView[i][j];
+                Node button = getNodeByRowColumnIndex(i+1,j+1,boardGridPane);
+                DataLetter dataLetter = findDataLetterBySign(sign, dataLetterList);
+                if(isButtonExist(pressedButtons,(Button)button)){
+                    String setSign = String.format("%c (%d)", sign, dataLetter.getLetter().getScore());
+                    buttonsList.get(button).setLetter(setSign);
+                }
+            }
+        }
     }
     public void updateNodeToTile(javafx.scene.control.Button button){
         SingleLetterController slc = new SingleLetterController(button);
@@ -66,15 +90,13 @@ public class Board {
         buttonsList.put(button,slc);
     }
 
-
     public void loadBoard(){
         for (short row = 1; row < size+1; row++) {
             for (short col = 1; col < size+1; col++) {
-                //TODO: change from button to tile with letter fdata from game engine
-
                 Button tile = new Button();
+                tile.setId(String.format("tile%d%d",row,col));
                 tile.setPrefSize(Region.USE_COMPUTED_SIZE,Region.USE_COMPUTED_SIZE);
-                tile.setMinSize(50,50);
+                tile.setMinSize(70,70);
                 tile.setOnMouseClicked(new javafx.event.EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
@@ -84,6 +106,7 @@ public class Board {
                             }
                             else {
                                 tile.setStyle("-fx-border-color: blue");
+                                tile.setBackground(new Background(new BackgroundFill(Color.AQUA, CornerRadii.EMPTY, null)));
                             }
                         }
                     }
@@ -112,8 +135,8 @@ public class Board {
         return null;
     }
 
-
-    // helper gridpane func
+    //TODO: put those 3 funcs in a static class which support helper funcs without spesific subject
+    //1.   helper gridpane func
     public Node getNodeByRowColumnIndex ( int row,  int column, GridPane gridPane) {
         Node result = null;
 
@@ -127,5 +150,26 @@ public class Board {
             }
         }
         return result;
+    }
+
+    //2. helper func for findinng a dataLetter type in a list:
+
+    public DataLetter findDataLetterBySign(char sign,List<DataLetter>dataLetterList){
+
+        for(DataLetter dataLetter : dataLetterList){
+            if((dataLetter.getLetter().getSign().get(0).toCharArray())[0] == sign)
+                return dataLetter;
+            }
+        return null;
+    }
+
+
+    //3. helper func to fins if item exist in a list
+    public boolean isButtonExist(List<Button> buttons, Button buttonToFind){
+        for(Button button : buttons){
+            if(buttonToFind == button)
+                return true;
+        }
+        return false;
     }
 }
