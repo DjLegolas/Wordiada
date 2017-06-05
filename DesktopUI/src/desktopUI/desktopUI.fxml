@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane minHeight="249" minWidth="530" prefHeight="408.0" prefWidth="614.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="desktopUI.Controller.Controller">
+<BorderPane minHeight="541.0" minWidth="800.0" prefHeight="401.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="desktopUI.Controller.Controller">
    <top>
       <Label text="Wordiada" BorderPane.alignment="CENTER">
          <font>
@@ -62,7 +62,7 @@
          </content></ScrollPane>
    </center>
    <right>
-      <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <SplitPane dividerPositions="0.5" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="360.0" prefWidth="227.0" BorderPane.alignment="CENTER">
         <items>
             <ScrollPane layoutX="-1.0">
                 <content>
