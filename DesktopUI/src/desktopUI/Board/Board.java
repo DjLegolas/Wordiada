@@ -19,9 +19,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.*;
 import javafx.scene.paint.Color;
 import engine.GameDataFromXml.DataLetter;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.beans.EventHandler;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
@@ -57,7 +54,7 @@ public class Board {
     }
 
     // probably will not need this func--->
-    public void setAllBoardValues(char [][] boardView, List<DataLetter> dataLetterList){
+    /*public void setAllBoardValues(char [][] boardView, List<DataLetter> dataLetterList){
         for(int i = 0 ; i < size; i++){
             for(int j = 0; j < size; j ++){
                 char sign = boardView[i][j];
@@ -72,8 +69,8 @@ public class Board {
                 }
             }
         }
+    }*/
 
-    }
     public void setPressedButtonsValues(char[][] boardView, List<Button> pressedButtons, List<DataLetter> dataLetterList){
         for(int i = 0 ; i < size; i++) {
             for (int j = 0; j < size; j++) {
