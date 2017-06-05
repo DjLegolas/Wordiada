@@ -106,9 +106,12 @@ public class GameManager {
 
     public void showWords(ScoreDetailController scoreDetailController) {
         scoreDetailController.setIsCapitalist(gameEngine.isWordScore());
+        long totalWords = 0;
         for (Map.Entry<String, Pair<Integer, Integer>> entry: gameEngine.getPlayerWords().entrySet()) {
             scoreDetailController.getWords().add(new WordDetails(entry.getKey(), entry.getValue().getKey(), entry.getValue().getValue()));
+            totalWords += entry.getValue().getKey();
         }
+        scoreDetailController.setWordsAmount(totalWords);
     }
 
     public void getDiceValue(SimpleIntegerProperty diceValue) {

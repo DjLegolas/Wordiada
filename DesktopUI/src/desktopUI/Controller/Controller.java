@@ -5,7 +5,6 @@ import desktopUI.Board.Board;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
@@ -36,7 +35,7 @@ public class Controller {
     @FXML private Label player1;
     @FXML private Label turnNumber;
     @FXML private ScrollPane boardScrollPane;
-    @FXML private Label NotAviable;
+    @FXML private Label notAvailable;
     @FXML private  Label initInfoGame;
     @FXML private  Label titleInfoGame;
     @FXML private  Label titlePlayerData;
@@ -106,7 +105,7 @@ public class Controller {
         //fileChooser.setInitialDirectory(new File("C:\\Users\\noy\\Desktop\\לימודים\\IdeaProjects\\Wordiada"));
         File xmlFile = fileChooser.showOpenDialog(primaryStage);
         gameManager.loadXML((xmlFile));
-        NotAviable.setText("");
+        notAvailable.setText("");
         selectedPlayerData.set(gameManager.getDataPlayers());
         gameManager.getDataPlayers(playerVBox);
         selectedInitInfoGame.set(gameManager.getInitInfoGame());

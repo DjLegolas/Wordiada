@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Player {
     public enum Type {
-        HUMAN, COMPUTER;
+        HUMAN, COMPUTER
     }
     private short id;
 
@@ -53,7 +53,7 @@ public class Player {
 
     @Override
     public String toString() {
-        return String.format("%s id: %d (%s) Score:", name, id, type.name().toLowerCase(), score);
+        return String.format("%s id: %d (%s) Score:", name, id, type.name().toLowerCase());
     }
 
     @Override

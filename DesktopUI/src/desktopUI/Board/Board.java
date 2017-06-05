@@ -2,19 +2,13 @@ package desktopUI.Board;
 
 import desktopUI.Tile.SingleLetterController;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
+import javafx.geometry.*;
 import javafx.scene.Node;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.beans.EventHandler;
 import java.io.IOException;
 import java.util.*;
 
@@ -52,22 +46,21 @@ public class Board {
         for(int i = 0 ; i < size; i++){
             for(int j = 0; j < size; j ++){
                 char sign = boardView[i][j];
-                Node button = getNodeByRowColumnIndex(i+1,j+1,boardGridPane);
+                Button button = getNodeByRowColumnIndex(i+1,j+1,boardGridPane);
                 String setSign = String.format("%c",sign);
                 buttonsList.get(button).setLetter(setSign);
-
             }
         }
 
     }
-    public void updateNodeToTile(javafx.scene.control.Button button){
+    private void updateNodeToTile(javafx.scene.control.Button button){
         SingleLetterController slc = new SingleLetterController(button);
         slc.initialize();
         buttonsList.put(button,slc);
     }
 
 
-    public void loadBoard(){
+    private void loadBoard(){
         for (short row = 1; row < size+1; row++) {
             for (short col = 1; col < size+1; col++) {
                 //TODO: change from button to tile with letter fdata from game engine
@@ -75,17 +68,13 @@ public class Board {
                 Button tile = new Button();
                 tile.setPrefSize(Region.USE_COMPUTED_SIZE,Region.USE_COMPUTED_SIZE);
                 tile.setMinSize(50,50);
-                tile.setOnMouseClicked(new javafx.event.EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        if (event.getEventType() == MouseEvent.MOUSE_CLICKED) {
-                            if (tile.getStyle().equals("-fx-border-color: blue")) {
-                                tile.setStyle("");
-                            }
-                            else {
-                                tile.setStyle("-fx-border-color: blue");
-                            }
-                        }
+                GridPane.setMargin(tile, new Insets(1, 1, 1, 1));
+                tile.setOnMouseClicked((MouseEvent event) -> {
+                    if (tile.getStyle().equals("-fx-border-color: blue")) {
+                        tile.setStyle("");
+                    }
+                    else {
+                        tile.setStyle("-fx-border-color: blue");
                     }
                 });
                 this.updateNodeToTile(tile);
@@ -114,18 +103,18 @@ public class Board {
 
 
     // helper gridpane func
-    public Node getNodeByRowColumnIndex ( int row,  int column, GridPane gridPane) {
+    private Button getNodeByRowColumnIndex ( int row,  int column, GridPane gridPane) {
         Node result = null;
 
-        java.util.List<Node> childrens = new ArrayList<>();
-        childrens =  gridPane.getChildren();
+        java.util.List<Node> children;
+        children = gridPane.getChildren();
 
-        for (Node node : childrens) {
-            if(gridPane.getRowIndex(node) == row && gridPane.getColumnIndex(node) == column) {
+        for (Node node : children) {
+            if(GridPane.getRowIndex(node) == row && GridPane.getColumnIndex(node) == column) {
                 result = node;
                 break;
             }
         }
-        return result;
+        return(Button)result;
     }
 }
