@@ -87,7 +87,12 @@ class GameDataFromXml {
         buildDataLetters(struct);
 
         //init gold fish mode
-        isGoldFishMode = gameDescriptor.getGameType().isGoldFishMode();
+        try {
+            isGoldFishMode = gameDescriptor.getGameType().isGoldFishMode();
+        }
+        catch (NullPointerException e) {
+            isGoldFishMode = false;
+        }
         //init board size
         boardSize = struct.getBoardSize();
         //init num of wings

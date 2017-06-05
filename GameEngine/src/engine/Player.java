@@ -31,12 +31,20 @@ public class Player {
         words.put(word, words.containsKey(word) ? words.get(word) + 1 : 1);
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
 
     public float getScore() {
         return score;
+    }
+
+    public String getType() {
+        return type.name().toLowerCase();
+    }
+
+    public short getId() {
+        return id;
     }
 
     Map<Dictionary.Word, Integer> getWords() {

@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -29,6 +30,10 @@
                   <Insets />
                </VBox.margin></Button>
             <Button fx:id="startButton" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#playTurn" prefHeight="30.0" prefWidth="110.0" text="Start Game">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </Button><Button fx:id="diceButton" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#throwDie" prefHeight="30.0" prefWidth="110.0" text="Throw Die">
                <VBox.margin>
                   <Insets />
                </VBox.margin></Button>
@@ -57,19 +62,26 @@
          </content></ScrollPane>
    </center>
    <right>
-      <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
+      <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
             <ScrollPane layoutX="-1.0">
                 <content>
-                    <AnchorPane>
+                    <VBox fx:id="playerVBox">
                         <children>
-                            <Label layoutY="31.0" prefWidth="101.0" text="Turn No." />
-                            <Label fx:id="turnNumber" layoutX="59.0" layoutY="31.0" text="0" />
-                            <Label fx:id="player1" layoutX="5.0" layoutY="52.0" text="Player" />
-                            <Label fx:id="NotAviable" layoutX="50.0" layoutY="52.0" text="N/A" />
-                            <Label fx:id="titlePlayerData" layoutX="8.0" layoutY="4.0" underline="true" />
+                            <Label fx:id="titlePlayerData" underline="true">
+                           <padding>
+                              <Insets left="10.0" />
+                           </padding></Label>
+                            <HBox>
+                                <Label layoutY="31.0" prefWidth="50.0" text="Turn No." />
+                                <Label fx:id="turnNumber" text="0" />
+                            </HBox>
+                            <HBox>
+                                <Label fx:id="player1" text="Player" />
+                                <Label fx:id="NotAviable" text="N/A" />
+                            </HBox>
                         </children>
-                    </AnchorPane>
+                    </VBox>
                 </content>
             </ScrollPane>
             <ScrollPane layoutX="1.0" layoutY="5.0">
