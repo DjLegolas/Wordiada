@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.Map;
 
 public class GameManager {
+    private int currentDiceValue;
 
 
 
@@ -29,6 +30,14 @@ public class GameManager {
     private GameEngine gameEngine = new GameEngine();
 
     public GameManager(){}
+
+    public int getCurrentDiceValue() {
+        return currentDiceValue;
+    }
+
+    public void setCurrentDiceValue(int currentDiceValue) {
+        this.currentDiceValue = currentDiceValue;
+    }
 
     public String getDataPlayers(){
         StringBuilder dataPlayers = new StringBuilder();

@@ -23,24 +23,16 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
+import desktopUI.Controller.*;
 public class Board {
 
     private GridPane boardGridPane;
     private short size;
     private HashMap<Button, SingleLetterController> buttonsList;
+    private List<Button> pressedButtons = new ArrayList<>();
 
     public Board(short size, GridPane boardGridPane) {
 
-        //Ido's code:
-        /*
-        this.size = size;
-        this.boardGridPane = boardGridPane;
-        this.boardGridPane.setAlignment(Pos.CENTER);
-        for (int row = 0; row < size; row++) {
-            for (int col = 0; col < size; col++) {
-                this.boardGridPane.add(createTile(), col, row);
-            }
-        }*/
         this.size = size;
         this.boardGridPane = boardGridPane;
         buttonsList = new HashMap<>();
@@ -48,6 +40,11 @@ public class Board {
     }
 
     // get + set
+
+
+    public List<Button> getPressedButtons() {
+        return pressedButtons;
+    }
 
     public HashMap<Button, SingleLetterController> getButtonsList() {
         return buttonsList;
@@ -102,14 +99,29 @@ public class Board {
                 GridPane.setMargin(tile, new Insets(1, 1, 1, 1));
                 tile.setOnMouseClicked((MouseEvent event) -> {
                         if (event.getEventType() == MouseEvent.MOUSE_CLICKED) {
-                            if (tile.getStyle().equals("-fx-border-color: blue")) {
+                            if (pressedButtons.contains(tile)) {
+                            //if (tile.getStyle().equals("-fx-border-color: blue;" + "-fx-background-color: aqua")){
                                 tile.setStyle("");
-                                tile.setBackground(new Background(new BackgroundFill(Color.WHITESMOKE, CornerRadii.EMPTY, null)));
-                             }
-                            else {
-                                tile.setStyle("-fx-border-color: blue");
-                                tile.setBackground(new Background(new BackgroundFill(Color.AQUA, CornerRadii.EMPTY, null)));
+                                pressedButtons.remove(tile);
                             }
+                            else {
+                                tile.setStyle("-fx-border-color: blue;" +
+                                 "-fx-background-color: aqua");
+                                pressedButtons.add((Button) tile);
+
+                            }
+
+                            /*
+                            //if the button is a button from the board and we didn't pressed it before
+                            if(!isButtonExist(pressedButtons, (Button)tile) && isButtonExist(boardButtonList(),(Button)tile)) {
+                                pressedButtons.add((Button) tile);
+                            }
+
+                            //if the user cancel the perssing button and the button is still in the list
+                            if(!((Button) tile).getBackground().equals("-fx-border-color: blue;" + "-fx-background-color: aqua") && isButtonExist(pressedButtons, (Button)tile))  {
+                                pressedButtons.remove(tile);
+                            }
+                            */
                         }
                 });
                 this.updateNodeToTile(tile);
@@ -165,7 +177,7 @@ public class Board {
     }
 
 
-    //3. helper func to fins if item exist in a list
+    //3. helper func to find if item exists in a list
     public boolean isButtonExist(List<Button> buttons, Button buttonToFind){
         for(Button button : buttons){
             if(buttonToFind == button)
@@ -173,4 +185,14 @@ public class Board {
         }
         return false;
     }
+
+    public List<Button> boardButtonList(){
+        List<Button> retList = new ArrayList<>();
+        for(Button button : buttonsList.keySet()){
+            retList.add(button);
+        }
+        return retList;
+    }
+
+
 }

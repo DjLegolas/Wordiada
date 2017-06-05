@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -60,6 +61,7 @@ public class Controller {
         selectedTitleInfoGame = new SimpleStringProperty();
         selectedTitlePlayerData = new SimpleStringProperty();
         diceValueProperty = new SimpleIntegerProperty();
+
    }
 
     @FXML
@@ -76,27 +78,6 @@ public class Controller {
     }
 
 
-
-    // was removed to board class:
-
-    /*
-    @FXML
-    public void loadBoard(short sizeBoard) {
-
-        //build cols + rows
-
-        board = new Board(sizeBoard,boardPane);
-        for (short row = 0; row < sizeBoard; row++) {
-            for (short col = 0; col < sizeBoard; col++) {
-                //TODO: change from button to tile with letter fdata from game engine
-
-                Button tile = new Button();
-                GridPane.setMargin(tile, new Insets(1, 1, 1, 1));
-                board.updateNodeToTile(tile);
-                boardPane.add(tile, col, row);
-            }
-        }
-    }*/
 
 
 
@@ -150,35 +131,46 @@ public class Controller {
         dieMessage.show();
     }
 
+
+    //TODO: change name of func to relevant one and decide what to do here!!!!!
     @FXML public void playTurn() {
         int diceValue;
 
-        if (moveButton.isPressed())
-            diceThrow();
         // adding the pressed tile to the list:
         moveButton.setDisable(false);
         diceButton.setDisable(false);
         gameManager.startGame();
 
-        for (Node button : boardPane.getChildren()) {
-
-            button.setOnMousePressed(new javafx.event.EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    pressedButtons.add((Button) button);
-                    //if the player finished to choose letters
-                    if (pressedButtons.size() == gameManager.getGameEngine().getDiceValue())
-                    {
-                        board.setPressedButtonsValues(gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown(), pressedButtons, gameManager.getGameEngine().getCurrentGameData().getKupa());
-                    }
-                }
-            });
 
 
-
-        }
     }
 
+    @FXML public void makeMove() {
+
+        //TODO: find a way to watch the word the user chose - mabye label to show  him the word and offer him to change if neccesary
+
+
+        List<Button> chosenTiles = new ArrayList<>();
+        for(int i = 0; i < pressedButtons.size(); i++ ){
+            chosenTiles.add(i, pressedButtons.get(i));
+        }
+
+        board.setPressedButtonsValues(gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown(),board.getPressedButtons(),gameManager.getGameEngine().getCurrentGameData().getKupa());
+        //TODO: CHECK IF ITS A GOOD WORD
+        //the word that the user chose
+        /*
+        String wordToCheck = chosenTiles.toString();
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Chosen Word");
+        alert.setContentText("Are you sure about this word?");
+        alert.setHeaderText(null);
+        alert.show();
+        alert.setContentText("The word you chose is:" + wordToCheck);
+        */
+
+
+
+    }
 
     @FXML
     public void throwDie() {
@@ -189,6 +181,7 @@ public class Controller {
         alert.show();
         gameManager.getDiceValue(diceValueProperty);
         alert.setContentText("Dice value is " + diceValueProperty.get());
+        gameManager.setCurrentDiceValue(diceValueProperty.get());
     }
 
     @FXML
