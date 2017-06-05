@@ -84,6 +84,8 @@ public class Board {
             }
         }
     }
+
+
     public void updateNodeToTile(javafx.scene.control.Button button){
         SingleLetterController slc = new SingleLetterController(button);
         slc.initialize();
@@ -102,7 +104,8 @@ public class Board {
                         if (event.getEventType() == MouseEvent.MOUSE_CLICKED) {
                             if (tile.getStyle().equals("-fx-border-color: blue")) {
                                 tile.setStyle("");
-                            }
+                                tile.setBackground(new Background(new BackgroundFill(Color.WHITESMOKE, CornerRadii.EMPTY, null)));
+                             }
                             else {
                                 tile.setStyle("-fx-border-color: blue");
                                 tile.setBackground(new Background(new BackgroundFill(Color.AQUA, CornerRadii.EMPTY, null)));
@@ -132,6 +135,7 @@ public class Board {
         }
         return null;
     }
+
     //TODO: put those 3 funcs in a static class which support helper funcs without spesific subject
     //1.   helper gridpane func
     public Node getNodeByRowColumnIndex ( int row,  int column, GridPane gridPane) {
@@ -146,7 +150,7 @@ public class Board {
                 break;
             }
         }
-        return(Button)result;
+        return result;
     }
 
     //2. helper func for findinng a dataLetter type in a list:

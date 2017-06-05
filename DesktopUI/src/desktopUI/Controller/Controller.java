@@ -142,7 +142,7 @@ public class Controller {
     public void startGame() {
         gameManager.startGame();
     }
-  
+
     @FXML public void diceThrow(){
         Alert dieMessage = new Alert(Alert.AlertType.INFORMATION,"Please throw the die");
         dieMessage.setTitle("Play Turn");
@@ -165,14 +165,16 @@ public class Controller {
                 @Override
                 public void handle(MouseEvent event) {
                     pressedButtons.add((Button) button);
+                    //if the player finished to choose letters
+                    if (pressedButtons.size() == gameManager.getGameEngine().getDiceValue()) ;
+                    {
+                        board.setPressedButtonsValues(gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown(), pressedButtons, gameManager.getGameEngine().getCurrentGameData().getKupa());
+                    }
                 }
             });
 
-            //if the player finished to choose letters
-            if (pressedButtons.size() == gameManager.getGameEngine().getDiceValue()) ;
-            {
-                board.setPressedButtonsValues(gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown(), pressedButtons, gameManager.getGameEngine().getCurrentGameData().getKupa());
-            }
+
+
         }
     }
 
