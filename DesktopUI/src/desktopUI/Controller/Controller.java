@@ -3,6 +3,7 @@ package desktopUI.Controller;
 
 import desktopUI.Board.Board;
 import javafx.beans.property.SimpleIntegerProperty;
+import engine.GameDataFromXml;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -14,6 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import desktopUI.GameManager.GameManager;
+import engine.GameDataFromXml.DataLetter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ public class Controller {
     private Stage primaryStage;
     private GameManager gameManager = new GameManager();
     private Board board;
+    private List<Button> pressedButtons = new ArrayList<>();
 
     @FXML private  GridPane boardPane;
     @FXML private VBox buttonsVBox;
@@ -99,11 +102,11 @@ public class Controller {
 
 
     @FXML
-    public void loadXmlFile() throws Exception{
+    public void loadXmlFile(){
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choose xml file");
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("XML", "*.xml"));
-        //fileChooser.setInitialDirectory(new File("C:\\Users\\noy\\Desktop\\לימודים\\IdeaProjects\\Wordiada"));
+        fileChooser.setInitialDirectory(new File("C:\\Users\\noy\\Desktop\\לימודים\\IdeaProjects\\Wordiada"));
         File xmlFile = fileChooser.showOpenDialog(primaryStage);
         gameManager.loadXML((xmlFile));
         NotAviable.setText("");
@@ -136,18 +139,24 @@ public class Controller {
         }
         return result;
     }
-
-
-    //TODO: put in on action in start game button
-    @FXML public void playTurn(){
-
-        // view
+    @FXML public void diceThrow(){
         Alert dieMessage = new Alert(Alert.AlertType.INFORMATION,"Please throw the die");
         dieMessage.setTitle("Play Turn");
         dieMessage.setHeaderText("Throwing die...");
         dieMessage.show();
+    }
+
+    @FXML public void playTurn(){
+        int diceValue;
+
+        if (moveButton.isPressed())
+            diceThrow();
+        // adding the pressed tile to the list:
+        moveButton.setDisable(false);
+
+        for( Node button : boardPane.getChildren()) {
         board.setBoardValues(gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown());
-      
+
         diceButton.setDisable(false);
         // make all buttons to be clickable
         for(Node button : board.getButtonsList().keySet()){
@@ -155,12 +164,15 @@ public class Controller {
             button.setOnMousePressed(new javafx.event.EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
-
+                    pressedButtons.add((Button) button);
                 }
             });
-        }
-        int diceValue = gameManager.getGameEngine().getDiceValue();
-        for(int numTurn = 0; numTurn < diceValue; numTurn++){
+
+            //if the player finished to choose letters
+            if (pressedButtons.size() == gameManager.getGameEngine().getDiceValue()) ;
+            {
+                board.setPressedButtonsValues(gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown(), pressedButtons, gameManager.getGameEngine().getCurrentGameData().getKupa());
+            }
 
         }
     }

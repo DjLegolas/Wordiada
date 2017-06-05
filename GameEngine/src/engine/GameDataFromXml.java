@@ -16,7 +16,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 
-class GameDataFromXml {
+public class GameDataFromXml {
 
     public class DataLetter{
        private Letter letter; // sign , score, freq
@@ -260,10 +260,8 @@ class GameDataFromXml {
         return board.getKupaAmount();
     }
 
-    List<DataLetter> getKupa() {
+    public List<DataLetter> getKupa() {
         return board.getKupa();
     }
-    Board getBoardClass(){
-        return board;
-    }
+
 }
