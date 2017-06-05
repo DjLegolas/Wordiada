@@ -22,6 +22,10 @@ import java.util.Map;
 
 public class GameManager {
 
+
+
+    //TODO: add num of tries and all of this....
+
     private GameEngine gameEngine = new GameEngine();
 
     public GameManager(){}
@@ -57,7 +61,7 @@ public class GameManager {
     }
 
     public String getInitInfoGame(){
-
+        //TODO: add the total amount of kupa tiles in the information!
         return String.format("Size Board: %d x %d\n" +"\n"+
                         "Score type: %s \n" +"\n"+
                         "Gold Fish Mod: %s\n" + "\n"+

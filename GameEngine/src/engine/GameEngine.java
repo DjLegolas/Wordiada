@@ -236,6 +236,10 @@ public class GameEngine {
         GameDataFromXml gameDataFromXml = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
         return gameDataFromXml.getDictionary().getTop10RareWords();
     }
+    public GameDataFromXml getCurrentGameData(){
+        return currentGameData;
+    }
+
 
     public Map<String, Pair<Integer, Integer>> getPlayerWords() {
         Map<String, Pair<Integer, Integer>> words = new HashMap<>();
