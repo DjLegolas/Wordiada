@@ -87,7 +87,12 @@ public class GameDataFromXml {
         buildDataLetters(struct);
 
         //init gold fish mode
-        isGoldFishMode = gameDescriptor.getGameType().isGoldFishMode();
+        try {
+            isGoldFishMode = gameDescriptor.getGameType().isGoldFishMode();
+        }
+        catch (NullPointerException e) {
+            isGoldFishMode = false;
+        }
         //init board size
         boardSize = struct.getBoardSize();
         //init num of wings
@@ -97,7 +102,7 @@ public class GameDataFromXml {
         //init dictionary file name
         dictFileName = struct.getDictionaryFileName();
 
-        initDictionary(pathToXml);
+        initDictionary(pathToXml, struct);
         initBoard();
 
         //init players
@@ -176,13 +181,14 @@ public class GameDataFromXml {
     }
 
     // check if dictionary exists and pars it
-    private void initDictionary(String pathToXml) throws DictionaryNotFoundException {
+    private void initDictionary(String pathToXml, Structure struct) throws DictionaryNotFoundException {
         pathToXml = pathToXml.substring(0, pathToXml.length() - 4); // minus 4 for ".xml"
         while (!pathToXml.endsWith("\\")) {
             pathToXml = pathToXml.substring(0, pathToXml.length() - 1);
         }
         dictFilePath = pathToXml + "dictionary\\" + dictFileName;
         dictionary = new Dictionary(dictFilePath);
+        dictionary.calcWordsScore(struct.getLetters().getLetter());
     }
 
     // initialize board after size check
@@ -243,18 +249,7 @@ public class GameDataFromXml {
             return 1;
         }
         else if (winAccordingTo == WinAccordingTo.WORD_SCORE) {
-            float wordScore = 0;
-            for(Character ch: word.toCharArray()){
-                for(DataLetter dataLetter: letters) {
-                    Letter letter = dataLetter.getLetter();
-                    if (letter.getSign().get(0).equals(ch.toString())) {
-                        wordScore += letter.getScore();
-                        break;
-                    }
-                }
-            }
-            wordScore *= dictionary.getSegmentScore(word);
-            return wordScore;
+            return dictionary.getScore(word);
         }
         else {
             return 0;

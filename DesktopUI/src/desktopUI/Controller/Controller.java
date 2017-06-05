@@ -1,18 +1,14 @@
 
 package desktopUI.Controller;
 
-import desktopUI.scoreDetail.ScoreDetailController;
 import desktopUI.Board.Board;
+import javafx.beans.property.SimpleIntegerProperty;
 import engine.GameDataFromXml;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -21,10 +17,7 @@ import javafx.stage.Stage;
 import desktopUI.GameManager.GameManager;
 import engine.GameDataFromXml.DataLetter;
 
-import java.awt.event.ActionEvent;
-import java.beans.EventHandler;
 import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +33,7 @@ public class Controller {
     @FXML private VBox buttonsVBox;
     @FXML private Button loadXmlButton;
     @FXML private Button startButton;
+    @FXML private Button diceButton;
     @FXML private Button moveButton;
     @FXML private Button exitButton;
     @FXML private Label player1;
@@ -49,13 +43,14 @@ public class Controller {
     @FXML private  Label initInfoGame;
     @FXML private  Label titleInfoGame;
     @FXML private  Label titlePlayerData;
-
+    @FXML private VBox playerVBox;
 
     private SimpleStringProperty selectedPlayerData;
     private SimpleStringProperty selectedTurnNumber;
     private SimpleStringProperty selectedInitInfoGame;
     private SimpleStringProperty selectedTitleInfoGame;
     private SimpleStringProperty selectedTitlePlayerData;
+    private SimpleIntegerProperty diceValueProperty;
 
     public Controller(){
         selectedPlayerData = new SimpleStringProperty();
@@ -65,11 +60,11 @@ public class Controller {
         selectedInitInfoGame = new SimpleStringProperty();
         selectedTitleInfoGame = new SimpleStringProperty();
         selectedTitlePlayerData = new SimpleStringProperty();
-
+        diceValueProperty = new SimpleIntegerProperty();
    }
 
     @FXML
-    private void initialize() {
+    public void initialize() {
          player1.textProperty().bind(selectedPlayerData);
          turnNumber.textProperty().bind(selectedTurnNumber);
          initInfoGame.textProperty().bind(selectedInitInfoGame);
@@ -83,6 +78,29 @@ public class Controller {
 
 
 
+    // was removed to board class:
+
+    /*
+    @FXML
+    public void loadBoard(short sizeBoard) {
+
+        //build cols + rows
+
+        board = new Board(sizeBoard,boardPane);
+        for (short row = 0; row < sizeBoard; row++) {
+            for (short col = 0; col < sizeBoard; col++) {
+                //TODO: change from button to tile with letter fdata from game engine
+
+                Button tile = new Button();
+                GridPane.setMargin(tile, new Insets(1, 1, 1, 1));
+                board.updateNodeToTile(tile);
+                boardPane.add(tile, col, row);
+            }
+        }
+    }*/
+
+
+
     @FXML
     public void loadXmlFile(){
         FileChooser fileChooser = new FileChooser();
@@ -93,6 +111,7 @@ public class Controller {
         gameManager.loadXML((xmlFile));
         NotAviable.setText("");
         selectedPlayerData.set(gameManager.getDataPlayers());
+        gameManager.getDataPlayers(playerVBox);
         selectedInitInfoGame.set(gameManager.getInitInfoGame());
         //init board
         board = new Board(gameManager.getGameEngine().getBoardSize(),boardPane);
@@ -136,6 +155,12 @@ public class Controller {
         moveButton.setDisable(false);
 
         for( Node button : boardPane.getChildren()) {
+        board.setBoardValues(gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown());
+
+        diceButton.setDisable(false);
+        // make all buttons to be clickable
+        for(Node button : board.getButtonsList().keySet()){
+            button.setFocusTraversable(true);
             button.setOnMousePressed(new javafx.event.EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
@@ -153,17 +178,13 @@ public class Controller {
     }
 
     @FXML
-    public void showWords() throws Exception {
-        FXMLLoader loader = new FXMLLoader();
-        URL mainFXML = getClass().getResource("../scoreDetail/ScoreDetail.fxml");
-        loader.setLocation(mainFXML);
-        VBox root = loader.load();
-
-        gameManager.showWords(loader.getController());
-
-        Stage stage = new Stage();
-        stage.setTitle("Player Words - Wordiada");
-        stage.setScene(new Scene(root));
-        stage.show();
+    public void throwDie() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Dice Throw - Wordiada");
+        alert.setContentText("Throwing dice...");
+        alert.setHeaderText(null);
+        alert.show();
+        gameManager.getDiceValue(diceValueProperty);
+        alert.setContentText("Dice value is " + diceValueProperty.get());
     }
 }
