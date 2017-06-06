@@ -100,7 +100,8 @@ public class Board {
                 tile.setPrefSize(Region.USE_COMPUTED_SIZE,Region.USE_COMPUTED_SIZE);
                 tile.setMinSize(70,70);
                 GridPane.setMargin(tile, new Insets(1, 1, 1, 1));
-                tile.disableProperty().bind(isClickable.not());
+                //tile.disableProperty().bind(isClickable.not());
+                tile.setDisable(true);
                 tile.setOnMouseClicked((MouseEvent event) -> {
                         if (event.getEventType() == MouseEvent.MOUSE_CLICKED) {
                             if (pressedButtons.contains(tile) && tile.getStyle().equals("-fx-border-color: blue;" +

@@ -26,7 +26,7 @@ public class Player {
         words = new HashMap<>();
     }
 
-    void updateScore(Dictionary.Word word, float score) {
+    public void updateScore(Dictionary.Word word, float score) {
         this.score += score;
         words.put(word, words.containsKey(word) ? words.get(word) + 1 : 1);
     }

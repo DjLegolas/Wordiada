@@ -7,23 +7,32 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
-class Dictionary {
+public class Dictionary {
     private long numberOfWords = 0;
     private Map<String, Word> words = new HashMap<>();
     private List<String> top10RareWords = new ArrayList<>();
     enum FreqSegment { COMMON, LESS_COMMON, RARE }
 
-    class Word {
+    public class Word {
         private String word;
         private long count = 0;
         private float frequency;
         private FreqSegment freqSegment;
         private int score = 0;
 
-        private Word(String word) {
+        public Word(String word) {
             this.word = word;
             count = 1;
         }
+
+        public void setWord(String word) {
+            this.word = word;
+        }
+
+        public void setCount(long count) {
+            this.count = count;
+        }
+
 
         int getScore() {
             return score;
@@ -105,7 +114,9 @@ class Dictionary {
         setSegment();
     }
 
-
+    public Word stringToWord(String word){
+        return new Word(word);
+    }
     Word hasWord(String word) {
         return words.getOrDefault(word, null);
     }
