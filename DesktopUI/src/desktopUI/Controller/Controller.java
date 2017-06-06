@@ -2,6 +2,8 @@
 package desktopUI.Controller;
 
 import desktopUI.Board.Board;
+import desktopUI.userInfo.UserInfoController;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
@@ -17,6 +19,8 @@ import desktopUI.GameManager.GameManager;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class Controller {
 
@@ -25,6 +29,7 @@ public class Controller {
     private GameManager gameManager = new GameManager();
     private Board board;
     private List<Button> pressedButtons = new ArrayList<>();
+    private Map<Short, UserInfoController> userInfoControllerMap;
 
     @FXML private  GridPane boardPane;
     @FXML private VBox buttonsVBox;
@@ -46,7 +51,7 @@ public class Controller {
 
 
     private SimpleStringProperty selectedPlayerData;
-    private SimpleStringProperty selectedTurnNumber;
+    private SimpleIntegerProperty selectedTurnNumber;
     private SimpleStringProperty selectedInitInfoGame;
     private SimpleStringProperty selectedTitleInfoGame;
     private SimpleStringProperty selectedTitlePlayerData;
@@ -55,8 +60,8 @@ public class Controller {
     public Controller(){
         selectedPlayerData = new SimpleStringProperty();
         selectedPlayerData.set("Player");
-        selectedTurnNumber = new SimpleStringProperty();
-        selectedTurnNumber.set("0");
+        selectedTurnNumber = new SimpleIntegerProperty();
+        selectedTurnNumber.set(0);
         selectedInitInfoGame = new SimpleStringProperty();
         selectedTitleInfoGame = new SimpleStringProperty();
         selectedTitlePlayerData = new SimpleStringProperty();
@@ -67,7 +72,7 @@ public class Controller {
     @FXML
     public void initialize() {
          player1.textProperty().bind(selectedPlayerData);
-         turnNumber.textProperty().bind(selectedTurnNumber);
+         turnNumber.textProperty().bind(Bindings.format("%,d", selectedTurnNumber));
          initInfoGame.textProperty().bind(selectedInitInfoGame);
          titleInfoGame.textProperty().bind(selectedTitleInfoGame);
          titlePlayerData.textProperty().bind(selectedTitlePlayerData);
@@ -77,7 +82,17 @@ public class Controller {
         this.primaryStage = primaryStage;
     }
 
-
+    private void reinitialize() {
+        board = null;
+        userInfoControllerMap = null;
+        boardPane.getChildren().clear();
+        selectedPlayerData.set("Player");
+        selectedTurnNumber.set(0);
+        selectedInitInfoGame.set("");
+        moveButton.setDisable(true);
+        diceButton.setDisable(true);
+        playerVBox.getChildren().clear();
+    }
 
 
 
@@ -86,15 +101,20 @@ public class Controller {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choose xml file");
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("XML", "*.xml"));
-        fileChooser.setInitialDirectory(new File("C:\\Users\\noy\\Desktop\\לימודים\\IdeaProjects\\Wordiada"));
+        File noy = new File("C:\\Users\\noy\\Desktop\\לימודים\\IdeaProjects\\Wordiada");
+        if(noy.exists()) fileChooser.setInitialDirectory(noy);
         File xmlFile = fileChooser.showOpenDialog(primaryStage);
+        if (xmlFile == null) {
+            return;
+        }
         gameManager.loadXML(xmlFile, this);
     }
 
     public void initGame() {
+        reinitialize();
         notAvailable.setText("");
         selectedPlayerData.set(gameManager.getDataPlayers());
-        gameManager.getDataPlayers(playerVBox);
+        userInfoControllerMap = gameManager.getDataPlayers(playerVBox);
         selectedInitInfoGame.set(gameManager.getInitInfoGame());
         //init board
         board = new Board(gameManager.getGameEngine().getBoardSize(),boardPane);
@@ -122,6 +142,7 @@ public class Controller {
     @FXML
     public void startGame() {
         gameManager.startGame();
+        board.setIsClickable(true);
     }
 
     @FXML public void diceThrow(){
@@ -137,10 +158,11 @@ public class Controller {
         int diceValue;
 
         // adding the pressed tile to the list:
+        loadXmlButton.setDisable(true);
         moveButton.setDisable(false);
         diceButton.setDisable(false);
         gameManager.startGame();
-
+      
         //show instructions
         //TODO: create a button for showing these instructions if necessary (put the on action in this func and not globaly)
         //TODO : put unclickable board till the throw dice button
@@ -224,12 +246,19 @@ public class Controller {
         alert.setHeaderText(null);
         alert.show();
         gameManager.getDiceValue(diceValueProperty);
+        board.setIsClickable(true);
+        diceButton.setDisable(true);
         alert.setContentText("Dice value is " + diceValueProperty.get());
         gameManager.setCurrentDiceValue(diceValueProperty.get());
     }
 
     @FXML
     public void exitGame() {
-        gameManager.exitGame();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to quit?");
+        alert.setHeaderText(null);
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            gameManager.exitGame();
+        }
     }
 }

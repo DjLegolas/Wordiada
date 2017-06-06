@@ -5,8 +5,10 @@ import desktopUI.Tile.SingleLetterController;
 import desktopUI.scoreDetail.ScoreDetailController;
 import desktopUI.scoreDetail.WordDetails;
 import desktopUI.userInfo.UserInfoController;
+import desktopUI.utils.Common;
 import engine.GameEngine;
 import engine.Player;
+import engine.Status;
 import engine.exceptions.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -17,6 +19,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.util.Pair;
 
+import javax.jws.soap.SOAPBinding;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -27,7 +30,7 @@ import java.util.Map;
 
 public class GameManager {
     private int currentDiceValue;
-
+    private short currentPlayerId;
 
 
     //TODO: add num of tries and all of this....
@@ -52,7 +55,8 @@ public class GameManager {
         return dataPlayers.toString();
     }
 
-    public void getDataPlayers(Pane node){
+    public Map<Short, UserInfoController> getDataPlayers(Pane node){
+        Map<Short, UserInfoController> controllersMap = new HashMap<>();
         URL infoFXML = getClass().getResource("../userInfo/UserInfo.fxml");
         for(Player player : gameEngine.getPlayers()) {
             FXMLLoader loader = new FXMLLoader();
@@ -62,7 +66,7 @@ public class GameManager {
                 root = loader.load();
             }
             catch (IOException e) {
-                new Alert(Alert.AlertType.ERROR, "Unable to load user nfo").show();
+                Common.showError("Unable to load user nfo");
             }
             UserInfoController userInfoController = loader.getController();
             userInfoController.setGameManager(this);
@@ -70,8 +74,10 @@ public class GameManager {
             userInfoController.setNameProperty(player.getName());
             userInfoController.setPlayerTypeProperty(player.getType());
             userInfoController.setScoreProperty(player.getScore());
+            controllersMap.put(player.getId(), userInfoController);
             node.getChildren().add(root);
         }
+        return controllersMap;
     }
 
     public String getInitInfoGame(){
@@ -91,50 +97,40 @@ public class GameManager {
 
     public void loadXML(File xmlFile, Controller controller){
         new Thread(() -> {
-        try {
-            gameEngine.loadXml(xmlFile.getPath());
-            Platform.runLater(() -> controller.initGame());
-        }
-        catch(WrongPathException e) {
-            Platform.runLater(() ->
-                    new Alert(Alert.AlertType.ERROR, "Wrong path exception!!! ass hollllllle").show());
-        }
-        catch(DictionaryNotFoundException e) {
-            Platform.runLater(() ->
-                    new Alert(Alert.AlertType.ERROR, "There is not dictinary file!").show());
-        }
-        catch(BoardSizeException e) {
-            Platform.runLater(() ->
-                    new Alert(Alert.AlertType.ERROR, "invalid board size").show());
-        }
-        catch(NotXmlFileException e) {
-            Platform.runLater(() ->
-                    new Alert(Alert.AlertType.ERROR, "This is not an XML file! u mother fucker").show());
-        }
-        catch(DuplicateLetterException e) {
-            Platform.runLater(() ->
-                    new Alert(Alert.AlertType.ERROR, "duplicate fucking letter!!!").show());
-        }
-        catch(NotValidXmlFileException e) {
-            Platform.runLater(() ->
-                    new Alert(Alert.AlertType.ERROR, "Not valid xmk file").show());
-        }
-        catch(WinTypeException e) {
-            Platform.runLater(() ->
-                    new Alert(Alert.AlertType.ERROR, "win cheat thing").show());
-        }
-        catch(NotEnoughLettersException e) {
-            Platform.runLater(() ->
-                    new Alert(Alert.AlertType.ERROR, "Not fucjing enouth letters u IDIOT").show());
-        }
-        catch (NumberOfPlayersException e) {
-            Platform.runLater(() ->
-                    new Alert(Alert.AlertType.ERROR, "num on players.. needed" + e.getMinPlayers() + " to " +
-                    e.getMinPlayers() + "... have " + e.getActualNumOfPlayers()).show());
-        }
-        catch (DuplicatePlayerIdException e) {
-            Platform.runLater(() ->
-                    new Alert(Alert.AlertType.ERROR, "duplicated player fuckin id " + e.getDuplicateId()).show());
+            try {
+                gameEngine.loadXml(xmlFile.getPath());
+                Platform.runLater(() -> controller.initGame());
+            }
+            catch(WrongPathException e) {
+                Common.showError("Wrong path exception!!! ass hollllllle");
+            }
+            catch(DictionaryNotFoundException e) {
+                Common.showError("There is not dictinary file!");
+            }
+            catch(BoardSizeException e) {
+                Common.showError("invalid board size");
+            }
+            catch(NotXmlFileException e) {
+                Common.showError("This is not an XML file! u mother fucker");
+            }
+            catch(DuplicateLetterException e) {
+                Common.showError("duplicate fucking letter!!!");
+            }
+            catch(NotValidXmlFileException e) {
+                Common.showError("Not valid xmk file");
+            }
+            catch(WinTypeException e) {
+                Common.showError("win cheat thing");
+            }
+            catch(NotEnoughLettersException e) {
+                Common.showError("Not fucjing enouth letters u IDIOT");
+            }
+            catch (NumberOfPlayersException e) {
+                Common.showError("num on players.. needed" + e.getMinPlayers() + " to " +
+                            e.getMinPlayers() + "... have " + e.getActualNumOfPlayers());
+            }
+            catch (DuplicatePlayerIdException e) {
+                Common.showError("duplicated player fuckin id " + e.getDuplicateId());
         }}).start();
     }
 
@@ -178,7 +174,21 @@ public class GameManager {
         }
     }
 
+    public void updateTurnNumber(SimpleIntegerProperty turnProperty) {
+        new Thread(() -> {
+            int turn = gameEngine.getStatistics().getNumOfTurns();
+            Platform.runLater(() -> turnProperty.set(turn));
+        }).start();
+    }
 
+    public void updatePlayerScore(Map<Short, UserInfoController> userInfoControllerMap) {
+        new Thread(() -> {
+            Status status = gameEngine.getStatus();
+            short id = status.getPlayerId();
+            float score = status.getScore();
+            Platform.runLater(() -> userInfoControllerMap.get(id).setScoreProperty(score));
+        }).start();
+    }
 
     public String buttonsToStr(List<Button>letters, HashMap<Button, SingleLetterController>infoAboutLetters,char [][]signs) {
 
@@ -193,11 +203,7 @@ public class GameManager {
             char sign = signs[row][col];
             word.append(sign);
         }
-
-
-
-
-            return  word.toString();
+        return  word.toString();
     }
 }
 
