@@ -33,4 +33,9 @@ public class SingleLetterController {
         return letterProperty;
     }
 
+    public Button getLetterButton() {
+        return letterButton;
+    }
+
+
 }

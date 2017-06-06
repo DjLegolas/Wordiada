@@ -103,7 +103,8 @@ public class Board {
                 tile.disableProperty().bind(isClickable.not());
                 tile.setOnMouseClicked((MouseEvent event) -> {
                         if (event.getEventType() == MouseEvent.MOUSE_CLICKED) {
-                            if (pressedButtons.contains(tile)) {
+                            if (pressedButtons.contains(tile) && tile.getStyle().equals("-fx-border-color: blue;" +
+                                    "-fx-background-color: aqua")) {
                             //if (tile.getStyle().equals("-fx-border-color: blue;" + "-fx-background-color: aqua")){
                                 tile.setStyle("");
                                 pressedButtons.remove(tile);
@@ -112,20 +113,8 @@ public class Board {
                                 tile.setStyle("-fx-border-color: blue;" +
                                  "-fx-background-color: aqua");
                                 pressedButtons.add((Button) tile);
-
                             }
 
-                            /*
-                            //if the button is a button from the board and we didn't pressed it before
-                            if(!isButtonExist(pressedButtons, (Button)tile) && isButtonExist(boardButtonList(),(Button)tile)) {
-                                pressedButtons.add((Button) tile);
-                            }
-
-                            //if the user cancel the perssing button and the button is still in the list
-                            if(!((Button) tile).getBackground().equals("-fx-border-color: blue;" + "-fx-background-color: aqua") && isButtonExist(pressedButtons, (Button)tile))  {
-                                pressedButtons.remove(tile);
-                            }
-                            */
                         }
                 });
                 this.updateNodeToTile(tile);
@@ -192,7 +181,7 @@ public class Board {
         return false;
     }
 
-    public List<Button> boardButtonList(){
+    public List<Button> getBoardButtonList(){
         List<Button> retList = new ArrayList<>();
         for(Button button : buttonsList.keySet()){
             retList.add(button);

@@ -1,6 +1,7 @@
 package desktopUI.GameManager;
 
 import desktopUI.Controller.Controller;
+import desktopUI.Tile.SingleLetterController;
 import desktopUI.scoreDetail.ScoreDetailController;
 import desktopUI.scoreDetail.WordDetails;
 import desktopUI.userInfo.UserInfoController;
@@ -13,6 +14,7 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.util.Pair;
@@ -21,7 +23,9 @@ import javax.jws.soap.SOAPBinding;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GameManager {
@@ -148,6 +152,22 @@ public class GameManager {
         diceValue.set(gameEngine.getDiceValue());
     }
 
+    public void setUnclickableButtons(List<Button> stayClickableButtons, List<Button> allBoardButtons){
+        for(Button button : allBoardButtons){
+            if(!stayClickableButtons.contains(button)){
+                button.setDisable(true);
+            }
+            else
+                button.setDisable(false);
+        }
+    }
+
+    public void setDefaultStyle(List<Button> buttonsList){
+        for(Button button : buttonsList){
+            button.setStyle("");
+        }
+    }
+
     public void exitGame() {
         if (gameEngine.isStarted()) {
 
@@ -169,4 +189,21 @@ public class GameManager {
             Platform.runLater(() -> userInfoControllerMap.get(id).setScoreProperty(score));
         }).start();
     }
+
+    public String buttonsToStr(List<Button>letters, HashMap<Button, SingleLetterController>infoAboutLetters,char [][]signs) {
+
+        int sizeListButtons = letters.size();
+        //  List<Character> word = new ArrayList<>();
+        StringBuilder word = new StringBuilder();
+        for (int i = 0; i < sizeListButtons; i++) {
+            int sizeIdButton = letters.get(i).getId().length();
+            String id = letters.get(i).getId();
+            int col = id.getBytes()[sizeIdButton - 1] - 48 - 1;
+            int row = id.getBytes()[sizeIdButton - 2] - 48 - 1;
+            char sign = signs[row][col];
+            word.append(sign);
+        }
+        return  word.toString();
+    }
 }
+
