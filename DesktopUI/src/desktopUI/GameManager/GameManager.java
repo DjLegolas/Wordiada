@@ -20,6 +20,7 @@ import javafx.util.Pair;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -176,14 +177,27 @@ public class GameManager {
 
         }
     }
-    public void isWord(List<Button>letters, HashMap<Button, SingleLetterController>infoAboutLetters){
 
-        char [] word = new char[currentDiceValue];
-        for(int i = 0; i < letters.size(); i++){
-            char sign =
-            word[currentDiceValue-(i+1)] =
+
+
+    public String buttonsToStr(List<Button>letters, HashMap<Button, SingleLetterController>infoAboutLetters,char [][]signs) {
+
+        int sizeListButtons = letters.size();
+        //  List<Character> word = new ArrayList<>();
+        StringBuilder word = new StringBuilder();
+        for (int i = 0; i < sizeListButtons; i++) {
+            int sizeIdButton = letters.get(i).getId().length();
+            String id = letters.get(i).getId();
+            int col = id.getBytes()[sizeIdButton - 1] - 48 - 1;
+            int row = id.getBytes()[sizeIdButton - 2] - 48 - 1;
+            char sign = signs[row][col];
+            word.append(sign);
         }
 
-    }
 
+
+
+            return  word.toString();
+    }
 }
+

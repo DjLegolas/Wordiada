@@ -42,6 +42,8 @@ public class Controller {
     @FXML private  Label titlePlayerData;
     @FXML private VBox playerVBox;
     @FXML private Button buildWord;
+    @FXML private Button checkWord;
+
 
     private SimpleStringProperty selectedPlayerData;
     private SimpleStringProperty selectedTurnNumber;
@@ -155,6 +157,13 @@ public class Controller {
 
     @FXML public void makeMove() {
 
+        moveButton.setDisable(false);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Instructions");
+        alert.setContentText(" Now you can watch are the hidden letters you chose to open!\n\nPlease press on the Build A Word button to continue the game.");
+
+        alert.setHeaderText(null);
+        alert.show();
         //TODO: find a way to watch the word the user chose - mabye label to show  him the word and offer him to change if neccesary
         buildWord.setDisable(false);
         moveButton.setDisable(true);
@@ -164,7 +173,7 @@ public class Controller {
 
         //change the target of the button to be the check word issue
         moveButton.setOnMouseClicked((MouseEvent event) -> {
-           checkWord();
+            checkWord();
         });
 
 
@@ -183,9 +192,16 @@ public class Controller {
 
     }
     @FXML public void checkWord(){
-
+        //TODO:  check why its noy working when putting the result in variable word
+       String word = gameManager.buttonsToStr(board.getPressedButtons(),board.getButtonsList(),gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown());
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Building A Word");
+        alert.setContentText(word);
+        alert.setHeaderText(null);
+        alert.show();
     }
     @FXML public void buildWord(){
+        checkWord.setDisable(false);
         board.getPressedButtons().clear();
         moveButton.setDisable(false);
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -195,6 +211,8 @@ public class Controller {
 
         alert.setHeaderText(null);
         alert.show();
+
+
     }
 
     @FXML
