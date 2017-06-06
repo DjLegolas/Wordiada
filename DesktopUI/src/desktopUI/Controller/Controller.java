@@ -2,6 +2,8 @@
 package desktopUI.Controller;
 
 import desktopUI.Board.Board;
+import desktopUI.userInfo.UserInfoController;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleIntegerProperty;
 import engine.GameDataFromXml;
 import javafx.beans.property.SimpleStringProperty;
@@ -20,6 +22,7 @@ import engine.GameDataFromXml.DataLetter;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class Controller {
@@ -29,6 +32,7 @@ public class Controller {
     private GameManager gameManager = new GameManager();
     private Board board;
     private List<Button> pressedButtons = new ArrayList<>();
+    private Map<Short, UserInfoController> userInfoControllerMap;
 
     @FXML private  GridPane boardPane;
     @FXML private VBox buttonsVBox;
@@ -47,7 +51,7 @@ public class Controller {
     @FXML private VBox playerVBox;
 
     private SimpleStringProperty selectedPlayerData;
-    private SimpleStringProperty selectedTurnNumber;    //TODO: convert to integer
+    private SimpleIntegerProperty selectedTurnNumber;
     private SimpleStringProperty selectedInitInfoGame;
     private SimpleStringProperty selectedTitleInfoGame;
     private SimpleStringProperty selectedTitlePlayerData;
@@ -56,8 +60,8 @@ public class Controller {
     public Controller(){
         selectedPlayerData = new SimpleStringProperty();
         selectedPlayerData.set("Player");
-        selectedTurnNumber = new SimpleStringProperty();
-        selectedTurnNumber.set("0");
+        selectedTurnNumber = new SimpleIntegerProperty();
+        selectedTurnNumber.set(0);
         selectedInitInfoGame = new SimpleStringProperty();
         selectedTitleInfoGame = new SimpleStringProperty();
         selectedTitlePlayerData = new SimpleStringProperty();
@@ -68,7 +72,7 @@ public class Controller {
     @FXML
     public void initialize() {
          player1.textProperty().bind(selectedPlayerData);
-         turnNumber.textProperty().bind(selectedTurnNumber);
+         turnNumber.textProperty().bind(Bindings.format("%,d", selectedTurnNumber));
          initInfoGame.textProperty().bind(selectedInitInfoGame);
          titleInfoGame.textProperty().bind(selectedTitleInfoGame);
          titlePlayerData.textProperty().bind(selectedTitlePlayerData);
@@ -80,9 +84,10 @@ public class Controller {
 
     private void reinitialize() {
         board = null;
+        userInfoControllerMap = null;
         boardPane.getChildren().clear();
         selectedPlayerData.set("Player");
-        selectedTurnNumber.set("0");
+        selectedTurnNumber.set(0);
         selectedInitInfoGame.set("");
         moveButton.setDisable(true);
         diceButton.setDisable(true);
@@ -109,7 +114,7 @@ public class Controller {
         reinitialize();
         notAvailable.setText("");
         selectedPlayerData.set(gameManager.getDataPlayers());
-        gameManager.getDataPlayers(playerVBox);
+        userInfoControllerMap = gameManager.getDataPlayers(playerVBox);
         selectedInitInfoGame.set(gameManager.getInitInfoGame());
         //init board
         board = new Board(gameManager.getGameEngine().getBoardSize(),boardPane);
@@ -157,7 +162,6 @@ public class Controller {
         moveButton.setDisable(false);
         diceButton.setDisable(false);
         gameManager.startGame();
-        board.setIsClickable(true);
     }
 
     @FXML public void makeMove() {
@@ -195,6 +199,8 @@ public class Controller {
         alert.setHeaderText(null);
         alert.show();
         gameManager.getDiceValue(diceValueProperty);
+        board.setIsClickable(true);
+        diceButton.setDisable(true);
         alert.setContentText("Dice value is " + diceValueProperty.get());
         gameManager.setCurrentDiceValue(diceValueProperty.get());
     }

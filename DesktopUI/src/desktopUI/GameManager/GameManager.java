@@ -7,6 +7,7 @@ import desktopUI.userInfo.UserInfoController;
 import desktopUI.utils.Common;
 import engine.GameEngine;
 import engine.Player;
+import engine.Status;
 import engine.exceptions.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -16,14 +17,16 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.util.Pair;
 
+import javax.jws.soap.SOAPBinding;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
 public class GameManager {
     private int currentDiceValue;
-
+    private short currentPlayerId;
 
 
     //TODO: add num of tries and all of this....
@@ -48,7 +51,8 @@ public class GameManager {
         return dataPlayers.toString();
     }
 
-    public void getDataPlayers(Pane node){
+    public Map<Short, UserInfoController> getDataPlayers(Pane node){
+        Map<Short, UserInfoController> controllersMap = new HashMap<>();
         URL infoFXML = getClass().getResource("../userInfo/UserInfo.fxml");
         for(Player player : gameEngine.getPlayers()) {
             FXMLLoader loader = new FXMLLoader();
@@ -66,8 +70,10 @@ public class GameManager {
             userInfoController.setNameProperty(player.getName());
             userInfoController.setPlayerTypeProperty(player.getType());
             userInfoController.setScoreProperty(player.getScore());
+            controllersMap.put(player.getId(), userInfoController);
             node.getChildren().add(root);
         }
+        return controllersMap;
     }
 
     public String getInitInfoGame(){
@@ -146,5 +152,21 @@ public class GameManager {
         if (gameEngine.isStarted()) {
 
         }
+    }
+
+    public void updateTurnNumber(SimpleIntegerProperty turnProperty) {
+        new Thread(() -> {
+            int turn = gameEngine.getStatistics().getNumOfTurns();
+            Platform.runLater(() -> turnProperty.set(turn));
+        }).start();
+    }
+
+    public void updatePlayerScore(Map<Short, UserInfoController> userInfoControllerMap) {
+        new Thread(() -> {
+            Status status = gameEngine.getStatus();
+            short id = status.getPlayerId();
+            float score = status.getScore();
+            Platform.runLater(() -> userInfoControllerMap.get(id).setScoreProperty(score));
+        }).start();
     }
 }
