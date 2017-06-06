@@ -4,6 +4,7 @@ import desktopUI.Controller.Controller;
 import desktopUI.scoreDetail.ScoreDetailController;
 import desktopUI.scoreDetail.WordDetails;
 import desktopUI.userInfo.UserInfoController;
+import desktopUI.utils.Common;
 import engine.GameEngine;
 import engine.Player;
 import engine.exceptions.*;
@@ -57,7 +58,7 @@ public class GameManager {
                 root = loader.load();
             }
             catch (IOException e) {
-                new Alert(Alert.AlertType.ERROR, "Unable to load user nfo").show();
+                Common.showError("Unable to load user nfo");
             }
             UserInfoController userInfoController = loader.getController();
             userInfoController.setGameManager(this);
@@ -86,50 +87,40 @@ public class GameManager {
 
     public void loadXML(File xmlFile, Controller controller){
         new Thread(() -> {
-        try {
-            gameEngine.loadXml(xmlFile.getPath());
-            Platform.runLater(() -> controller.initGame());
-        }
-        catch(WrongPathException e) {
-            Platform.runLater(() ->
-                    new Alert(Alert.AlertType.ERROR, "Wrong path exception!!! ass hollllllle").show());
-        }
-        catch(DictionaryNotFoundException e) {
-            Platform.runLater(() ->
-                    new Alert(Alert.AlertType.ERROR, "There is not dictinary file!").show());
-        }
-        catch(BoardSizeException e) {
-            Platform.runLater(() ->
-                    new Alert(Alert.AlertType.ERROR, "invalid board size").show());
-        }
-        catch(NotXmlFileException e) {
-            Platform.runLater(() ->
-                    new Alert(Alert.AlertType.ERROR, "This is not an XML file! u mother fucker").show());
-        }
-        catch(DuplicateLetterException e) {
-            Platform.runLater(() ->
-                    new Alert(Alert.AlertType.ERROR, "duplicate fucking letter!!!").show());
-        }
-        catch(NotValidXmlFileException e) {
-            Platform.runLater(() ->
-                    new Alert(Alert.AlertType.ERROR, "Not valid xmk file").show());
-        }
-        catch(WinTypeException e) {
-            Platform.runLater(() ->
-                    new Alert(Alert.AlertType.ERROR, "win cheat thing").show());
-        }
-        catch(NotEnoughLettersException e) {
-            Platform.runLater(() ->
-                    new Alert(Alert.AlertType.ERROR, "Not fucjing enouth letters u IDIOT").show());
-        }
-        catch (NumberOfPlayersException e) {
-            Platform.runLater(() ->
-                    new Alert(Alert.AlertType.ERROR, "num on players.. needed" + e.getMinPlayers() + " to " +
-                    e.getMinPlayers() + "... have " + e.getActualNumOfPlayers()).show());
-        }
-        catch (DuplicatePlayerIdException e) {
-            Platform.runLater(() ->
-                    new Alert(Alert.AlertType.ERROR, "duplicated player fuckin id " + e.getDuplicateId()).show());
+            try {
+                gameEngine.loadXml(xmlFile.getPath());
+                Platform.runLater(() -> controller.initGame());
+            }
+            catch(WrongPathException e) {
+                Common.showError("Wrong path exception!!! ass hollllllle");
+            }
+            catch(DictionaryNotFoundException e) {
+                Common.showError("There is not dictinary file!");
+            }
+            catch(BoardSizeException e) {
+                Common.showError("invalid board size");
+            }
+            catch(NotXmlFileException e) {
+                Common.showError("This is not an XML file! u mother fucker");
+            }
+            catch(DuplicateLetterException e) {
+                Common.showError("duplicate fucking letter!!!");
+            }
+            catch(NotValidXmlFileException e) {
+                Common.showError("Not valid xmk file");
+            }
+            catch(WinTypeException e) {
+                Common.showError("win cheat thing");
+            }
+            catch(NotEnoughLettersException e) {
+                Common.showError("Not fucjing enouth letters u IDIOT");
+            }
+            catch (NumberOfPlayersException e) {
+                Common.showError("num on players.. needed" + e.getMinPlayers() + " to " +
+                            e.getMinPlayers() + "... have " + e.getActualNumOfPlayers());
+            }
+            catch (DuplicatePlayerIdException e) {
+                Common.showError("duplicated player fuckin id " + e.getDuplicateId());
         }}).start();
     }
 

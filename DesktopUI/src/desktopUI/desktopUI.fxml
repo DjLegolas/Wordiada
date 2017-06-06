@@ -63,22 +63,24 @@
    <right>
       <SplitPane dividerPositions="0.5" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="360.0" prefWidth="227.0" BorderPane.alignment="CENTER">
         <ScrollPane layoutX="-1.0">
-            <VBox fx:id="playerVBox">
+            <VBox>
                <Label fx:id="titlePlayerData" underline="true">
-               <padding>
-                   <Insets left="10.0" />
-               </padding>
-              <effect>
-                <ColorAdjust brightness="0.27" contrast="1.0" />
-              </effect></Label>
-               <HBox>
-                   <Label layoutY="31.0" prefWidth="50.0" text="Turn No." />
+                   <padding>
+                       <Insets left="10.0" />
+                   </padding>
+                   <effect>
+                       <ColorAdjust brightness="0.27" contrast="1.0" />
+                   </effect>
+               </Label>
+               <HBox spacing="5.0">
+                   <Label text="Turn No." />
                    <Label fx:id="turnNumber" text="0" />
                </HBox>
-               <HBox>
+               <HBox spacing="5.0">
                    <Label fx:id="player1" text="Player" />
                    <Label fx:id="notAvailable" text="N/A" />
                </HBox>
+               <VBox fx:id="playerVBox" />
             </VBox>
         </ScrollPane>
         <ScrollPane layoutX="1.0" layoutY="5.0">

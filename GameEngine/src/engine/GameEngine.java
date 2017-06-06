@@ -72,7 +72,7 @@ public class GameEngine {
 
     public void startGame() {
         isGameStarted = true;
-        currentGameData =  gdfx.get(0);
+        currentGameData =  gdfx.get(gdfx.size() - 1);
         players = getPlayersList();
 
 

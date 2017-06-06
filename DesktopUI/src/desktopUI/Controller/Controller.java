@@ -20,6 +20,7 @@ import engine.GameDataFromXml.DataLetter;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Controller {
 
@@ -46,7 +47,7 @@ public class Controller {
     @FXML private VBox playerVBox;
 
     private SimpleStringProperty selectedPlayerData;
-    private SimpleStringProperty selectedTurnNumber;
+    private SimpleStringProperty selectedTurnNumber;    //TODO: convert to integer
     private SimpleStringProperty selectedInitInfoGame;
     private SimpleStringProperty selectedTitleInfoGame;
     private SimpleStringProperty selectedTitlePlayerData;
@@ -77,7 +78,16 @@ public class Controller {
         this.primaryStage = primaryStage;
     }
 
-
+    private void reinitialize() {
+        board = null;
+        boardPane.getChildren().clear();
+        selectedPlayerData.set("Player");
+        selectedTurnNumber.set("0");
+        selectedInitInfoGame.set("");
+        moveButton.setDisable(true);
+        diceButton.setDisable(true);
+        playerVBox.getChildren().clear();
+    }
 
 
 
@@ -86,12 +96,17 @@ public class Controller {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choose xml file");
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("XML", "*.xml"));
-        //fileChooser.setInitialDirectory(new File("C:\\Users\\noy\\Desktop\\לימודים\\IdeaProjects\\Wordiada"));
+        File noy = new File("C:\\Users\\noy\\Desktop\\לימודים\\IdeaProjects\\Wordiada");
+        if(noy.exists()) fileChooser.setInitialDirectory(noy);
         File xmlFile = fileChooser.showOpenDialog(primaryStage);
+        if (xmlFile == null) {
+            return;
+        }
         gameManager.loadXML(xmlFile, this);
     }
 
     public void initGame() {
+        reinitialize();
         notAvailable.setText("");
         selectedPlayerData.set(gameManager.getDataPlayers());
         gameManager.getDataPlayers(playerVBox);
@@ -138,13 +153,11 @@ public class Controller {
         int diceValue;
 
         // adding the pressed tile to the list:
+        loadXmlButton.setDisable(true);
         moveButton.setDisable(false);
         diceButton.setDisable(false);
         gameManager.startGame();
         board.setIsClickable(true);
-
-
-
     }
 
     @FXML public void makeMove() {
@@ -188,6 +201,11 @@ public class Controller {
 
     @FXML
     public void exitGame() {
-        gameManager.exitGame();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to quit?");
+        alert.setHeaderText(null);
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            gameManager.exitGame();
+        }
     }
 }
