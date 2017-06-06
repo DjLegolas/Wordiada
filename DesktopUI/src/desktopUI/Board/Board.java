@@ -4,6 +4,7 @@ import com.sun.security.auth.SolarisNumericUserPrincipal;
 import com.sun.xml.internal.ws.api.pipe.Engine;
 import desktopUI.Tile.SingleLetterController;
 import engine.GameDataFromXml;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.*;
 import javafx.scene.Node;
@@ -30,12 +31,14 @@ public class Board {
     private short size;
     private HashMap<Button, SingleLetterController> buttonsList;
     private List<Button> pressedButtons = new ArrayList<>();
+    private SimpleBooleanProperty isClickable;
 
     public Board(short size, GridPane boardGridPane) {
 
         this.size = size;
         this.boardGridPane = boardGridPane;
         buttonsList = new HashMap<>();
+        isClickable = new SimpleBooleanProperty(false);
         loadBoard();
     }
 
@@ -97,6 +100,7 @@ public class Board {
                 tile.setPrefSize(Region.USE_COMPUTED_SIZE,Region.USE_COMPUTED_SIZE);
                 tile.setMinSize(70,70);
                 GridPane.setMargin(tile, new Insets(1, 1, 1, 1));
+                tile.disableProperty().bind(isClickable.not());
                 tile.setOnMouseClicked((MouseEvent event) -> {
                         if (event.getEventType() == MouseEvent.MOUSE_CLICKED) {
                             if (pressedButtons.contains(tile)) {
@@ -130,7 +134,9 @@ public class Board {
         }
     }
 
-
+    public void setIsClickable(boolean isClickable) {
+        this.isClickable.set(isClickable);
+    }
 
     public Node createTile() {
         try {

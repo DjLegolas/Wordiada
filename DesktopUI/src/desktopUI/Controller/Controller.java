@@ -86,7 +86,7 @@ public class Controller {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choose xml file");
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("XML", "*.xml"));
-        fileChooser.setInitialDirectory(new File("C:\\Users\\noy\\Desktop\\לימודים\\IdeaProjects\\Wordiada"));
+        //fileChooser.setInitialDirectory(new File("C:\\Users\\noy\\Desktop\\לימודים\\IdeaProjects\\Wordiada"));
         File xmlFile = fileChooser.showOpenDialog(primaryStage);
         gameManager.loadXML(xmlFile, this);
     }
@@ -122,6 +122,7 @@ public class Controller {
     @FXML
     public void startGame() {
         gameManager.startGame();
+        board.setIsClickable(true);
     }
 
     @FXML public void diceThrow(){
@@ -140,6 +141,7 @@ public class Controller {
         moveButton.setDisable(false);
         diceButton.setDisable(false);
         gameManager.startGame();
+        board.setIsClickable(true);
 
 
 
