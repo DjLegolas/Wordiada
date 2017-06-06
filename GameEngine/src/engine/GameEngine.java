@@ -95,7 +95,9 @@ public class GameEngine {
         return new Status(
                 gd.getBoard().getBoard_onlySigns(),
                 currentPlayer != null ? currentPlayer.getName() : null,
-                gd.getBoard().getKupaAmount()
+                gd.getBoard().getKupaAmount(),
+                currentPlayer != null ? currentPlayer.getScore() : 0,
+                currentPlayer != null ? currentPlayer.getId() : 0
         );
     }
 
