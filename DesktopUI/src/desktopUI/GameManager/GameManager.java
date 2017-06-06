@@ -1,6 +1,7 @@
 package desktopUI.GameManager;
 
 import desktopUI.Controller.Controller;
+import desktopUI.Tile.SingleLetterController;
 import desktopUI.scoreDetail.ScoreDetailController;
 import desktopUI.scoreDetail.WordDetails;
 import desktopUI.userInfo.UserInfoController;
@@ -11,6 +12,7 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.util.Pair;
@@ -18,6 +20,8 @@ import javafx.util.Pair;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GameManager {
@@ -151,9 +155,35 @@ public class GameManager {
         diceValue.set(gameEngine.getDiceValue());
     }
 
+    public void setUnclickableButtons(List<Button> stayClickableButtons, List<Button> allBoardButtons){
+        for(Button button : allBoardButtons){
+            if(!stayClickableButtons.contains(button)){
+                button.setDisable(true);
+            }
+            else
+                button.setDisable(false);
+        }
+    }
+
+    public void setDefaultStyle(List<Button> buttonsList){
+        for(Button button : buttonsList){
+            button.setStyle("");
+        }
+    }
+
     public void exitGame() {
         if (gameEngine.isStarted()) {
 
         }
     }
+    public void isWord(List<Button>letters, HashMap<Button, SingleLetterController>infoAboutLetters){
+
+        char [] word = new char[currentDiceValue];
+        for(int i = 0; i < letters.size(); i++){
+            char sign =
+            word[currentDiceValue-(i+1)] =
+        }
+
+    }
+
 }
