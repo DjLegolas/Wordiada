@@ -6,10 +6,8 @@ import desktopUI.scoreDetail.ScoreDetailController;
 import desktopUI.scoreDetail.WordDetails;
 import desktopUI.userInfo.UserInfoController;
 import desktopUI.utils.Common;
-import engine.Dictionary;
 import engine.GameEngine;
 import engine.Player;
-import engine.Status;
 import engine.exceptions.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -19,13 +17,10 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.util.Pair;
-import engine.Dictionary.Word;
 
-import javax.jws.soap.SOAPBinding;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -173,7 +168,7 @@ public class GameManager {
 
     public void exitGame() {
         if (gameEngine.isStarted()) {
-
+            //TODO: guss what....
         }
     }
 

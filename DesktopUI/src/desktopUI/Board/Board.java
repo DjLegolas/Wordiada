@@ -21,14 +21,12 @@ public class Board {
     private short size;
     private Map<Button, SingleLetterController> buttonsMap;
     private List<Button> pressedButtons = new ArrayList<>();
-    private SimpleBooleanProperty isClickable;
 
     public Board(short size, GridPane boardGridPane) {
 
         this.size = size;
         this.boardGridPane = boardGridPane;
         buttonsMap = new HashMap<>();
-        isClickable = new SimpleBooleanProperty(false);
         loadBoard();
     }
 
@@ -108,7 +106,7 @@ public class Board {
                             else {
                                 tile.setStyle("-fx-border-color: blue;" +
                                  "-fx-background-color: aqua");
-                                pressedButtons.add((Button) tile);
+                                pressedButtons.add(tile);
                             }
 
                         }
@@ -117,10 +115,6 @@ public class Board {
                 boardGridPane.add(tile, col, row );
             }
         }
-    }
-
-    public void setIsClickable(boolean isClickable) {
-        this.isClickable.set(isClickable);
     }
 
     public Node createTile() {
@@ -179,9 +173,7 @@ public class Board {
 
     public List<Button> getBoardButtonList(){
         List<Button> retList = new ArrayList<>();
-        for(Button button : buttonsMap.keySet()){
-            retList.add(button);
-        }
+        retList.addAll(buttonsMap.keySet());
         return retList;
     }
 

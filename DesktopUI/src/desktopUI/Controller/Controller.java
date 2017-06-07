@@ -147,10 +147,10 @@ public class Controller {
         return result;
     }
 
+    //TODO: decide what to do with this func...
     @FXML
     public void startGame() {
         gameManager.startGame();
-        board.setIsClickable(true);
     }
 
     @FXML public void diceThrow(){
@@ -163,9 +163,6 @@ public class Controller {
 
     //TODO: change name of func to relevant one and decide what to do here!!!!!
     @FXML public void playTurn() {
-        int diceValue;
-
-
         // adding the pressed tile to the list:
         loadXmlButton.setDisable(true);
         startButton.setDisable(true);
@@ -245,9 +242,7 @@ public class Controller {
         gameManager.setDefaultStyle(board.getPressedButtons());
 
         //change the target of the button to be the check word issue
-        moveButton.setOnMouseClicked((MouseEvent event) -> {
-            checkWord();
-        });
+        moveButton.setOnMouseClicked((MouseEvent event) -> checkWord());
 
 
 
