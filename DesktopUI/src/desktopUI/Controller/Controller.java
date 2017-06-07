@@ -3,6 +3,7 @@ package desktopUI.Controller;
 
 import desktopUI.Board.Board;
 import desktopUI.userInfo.UserInfoController;
+import engine.GameEngine;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -157,13 +158,14 @@ public class Controller {
     @FXML public void playTurn() {
         int diceValue;
 
+
         // adding the pressed tile to the list:
         loadXmlButton.setDisable(true);
-        moveButton.setDisable(false);
+      //  moveButton.setDisable(false);
         diceButton.setDisable(false);
         gameManager.startGame();
-      
-        //show instructions
+
+                //show instructions
         //TODO: create a button for showing these instructions if necessary (put the on action in this func and not globaly)
         //TODO : put unclickable board till the throw dice button
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -180,12 +182,41 @@ public class Controller {
     @FXML public void makeMove() {
 
         moveButton.setDisable(false);
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Instructions");
-        alert.setContentText(" Now you can watch are the hidden letters you chose to open!\n\nPlease press on the Build A Word button to continue the game.");
 
-        alert.setHeaderText(null);
-        alert.show();
+        String outputMessageValidMove = " Now you can watch are the hidden letters you chose to open!\n\nPlease press on the Build A Word button to continue the game.";
+        String outputMessageInValidMove = "You need to choose at least one letter!\n\nTry again.";
+
+        if(board.getPressedButtons().isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setContentText(outputMessageInValidMove);
+            alert.show();
+            gameManager.setUnclickableButtons(board.getBoardButtonList(),board.getBoardButtonList());
+            return;
+        }
+        else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Message");
+            alert.setContentText(outputMessageValidMove);
+            alert.show();
+        }
+
+
+
+        /*
+       do{
+           if(board.getPressedButtons().isEmpty()) {
+                alert.setContentText(outputMessageInValidMove);
+                gameManager.setUnclickableButtons(board.getBoardButtonList(),board.getBoardButtonList());
+           }
+           else {
+                alert.setContentText(outputMessageValidMove);
+           }
+       }while(board.getPressedButtons().isEmpty());*/
+
+
+        //alert.setHeaderText(null);
+        ///alert.show();
         //TODO: find a way to watch the word the user chose - mabye label to show  him the word and offer him to change if neccesary
         buildWord.setDisable(false);
         moveButton.setDisable(true);
@@ -214,13 +245,9 @@ public class Controller {
 
     }
     @FXML public void checkWord(){
-        //TODO:  check why its noy working when putting the result in variable word
-       String word = gameManager.buttonsToStr(board.getPressedButtons(),board.getButtonsList(),gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown());
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Building A Word");
-        alert.setContentText(word);
-        alert.setHeaderText(null);
-        alert.show();
+        String word = gameManager.buttonsToStr(board.getPressedButtons(),board.getButtonsList(),gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown());
+        gameManager.checkWord(word);
+
     }
     @FXML public void buildWord(){
         checkWord.setDisable(false);
@@ -240,13 +267,15 @@ public class Controller {
     @FXML
     //TODO: make unclick the throw a dice button but keep the info about the value somewhere so the player can watch anytime
     public void throwDie() {
+        moveButton.setDisable(false);
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Dice Throw - Wordiada");
         alert.setContentText("Throwing dice...");
         alert.setHeaderText(null);
         alert.show();
         gameManager.getDiceValue(diceValueProperty);
-        board.setIsClickable(true);
+        //board.setIsClickable(true);
+        gameManager.setUnclickableButtons(board.getBoardButtonList(), board.getBoardButtonList());
         diceButton.setDisable(true);
         alert.setContentText("Dice value is " + diceValueProperty.get());
         gameManager.setCurrentDiceValue(diceValueProperty.get());

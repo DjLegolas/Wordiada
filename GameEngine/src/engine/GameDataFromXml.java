@@ -151,6 +151,7 @@ public class GameDataFromXml {
         }
     }
 
+
     // builds the letters variable and calculates the each letter's frequency
     private void buildDataLetters(Structure struct) throws DuplicateLetterException {
         // creates list of data letters
@@ -228,7 +229,7 @@ public class GameDataFromXml {
         return board;
     }
 
-    Dictionary getDictionary() {
+    public Dictionary getDictionary() {
         return dictionary;
     }
 
@@ -245,7 +246,7 @@ public class GameDataFromXml {
         return players;
     }
 
-    float calcScore(String word) {
+    public float calcScore(String word) {
         if (winAccordingTo == WinAccordingTo.WORD_COUNT) {
             return 1;
         }

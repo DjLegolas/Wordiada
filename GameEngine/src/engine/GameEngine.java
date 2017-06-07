@@ -29,6 +29,10 @@ public class GameEngine {
             CORRECT, WRONG, WRONG_CANT_RETRY, CHARS_NOT_PRESENT, TRIES_DEPLETED
     }
 
+    public void setGameStarted(boolean gameStarted) {
+        isGameStarted = gameStarted;
+    }
+
     public void loadXml(String pathToXml)
             throws WrongPathException, DictionaryNotFoundException, BoardSizeException, NotXmlFileException,
             DuplicateLetterException, NotValidXmlFileException, WinTypeException, NotEnoughLettersException,
@@ -87,6 +91,10 @@ public class GameEngine {
         currentPlayer = players.get(0);
         startTime = System.currentTimeMillis();
         tryNumber = 1;
+    }
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
     }
 
     public Status getStatus() {
