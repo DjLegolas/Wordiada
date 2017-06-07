@@ -166,6 +166,14 @@ public class GameManager {
         }
     }
 
+    public void updateBoard(List<int[]> selectedButtonsPoints) {
+        try {
+            gameEngine.updateBoard(selectedButtonsPoints);
+        } catch (OutOfBoardBoundariesException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void exitGame() {
         if (gameEngine.isStarted()) {
             //TODO: guss what....

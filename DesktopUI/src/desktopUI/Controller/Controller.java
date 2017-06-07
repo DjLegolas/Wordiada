@@ -218,22 +218,6 @@ public class Controller {
             alert.show();
         }
 
-
-
-        /*
-       do{
-           if(board.getPressedButtons().isEmpty()) {
-                alert.setContentText(outputMessageInValidMove);
-                gameManager.setUnclickableButtons(board.getBoardButtonList(),board.getBoardButtonList());
-           }
-           else {
-                alert.setContentText(outputMessageValidMove);
-           }
-       }while(board.getPressedButtons().isEmpty());*/
-
-
-        //alert.setHeaderText(null);
-        ///alert.show();
         //TODO: find a way to watch the word the user chose - mabye label to show  him the word and offer him to change if neccesary
         buildWord.setDisable(false);
         moveButton.setDisable(true);
