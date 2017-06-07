@@ -6,6 +6,7 @@ import desktopUI.scoreDetail.ScoreDetailController;
 import desktopUI.scoreDetail.WordDetails;
 import desktopUI.userInfo.UserInfoController;
 import desktopUI.utils.Common;
+import engine.Dictionary;
 import engine.GameEngine;
 import engine.Player;
 import engine.Status;
@@ -18,6 +19,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.util.Pair;
+import engine.Dictionary.Word;
 
 import javax.jws.soap.SOAPBinding;
 import java.io.File;
@@ -30,6 +32,7 @@ import java.util.Map;
 
 public class GameManager {
     private int currentDiceValue;
+    private int tryNumber = 1;
     private short currentPlayerId;
 
 
@@ -198,6 +201,53 @@ public class GameManager {
             word.append(sign);
         }
         return  word.toString();
+    }
+
+    //check if ita a good word and calc score if necessary
+    public void checkWord(String word) {
+        Alert alert;
+        float score;
+        switch (gameEngine.isWordValid(word, tryNumber)) {
+            case CORRECT:
+                alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Congratulations! your word \"" + word + "\" is correct!!!");
+                alert.setContentText(word);
+                alert.setHeaderText(null);
+                alert.show();
+                //calc score
+               Word word1 = gameEngine.getCurrentGameData().getDictionary().stringToWord(word);
+                gameEngine.getCurrentPlayer().updateScore(word1,gameEngine.getCurrentGameData().calcScore(word));
+
+                break;
+            case WRONG:
+                alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Boooooz! u r a failure! \"" + word + "\" is wrong!!!");
+                alert.setContentText(word);
+                alert.setHeaderText(null);
+                alert.show();
+                break;
+            case TRIES_DEPLETED:
+                alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Boooooz! u r a failure! \"" + word + "\" is wrong!!!");
+                alert.setContentText(word);
+                alert.setHeaderText(null);
+                alert.show();
+                break;
+            case CHARS_NOT_PRESENT:
+                alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Boooooz! u r a failure! \"" + word + "\" is wrong!!!");
+                alert.setContentText(word);
+                alert.setHeaderText(null);
+                alert.show();
+                break;
+            case WRONG_CANT_RETRY:
+                alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Boooooz! u r a failure! \"" + word + "\" is wrong!!!");
+                alert.setContentText(word);
+                alert.setHeaderText(null);
+                alert.show();
+                break;
+        }
     }
 }
 
