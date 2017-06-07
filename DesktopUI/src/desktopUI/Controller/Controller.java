@@ -11,6 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -38,6 +39,7 @@ public class Controller {
     @FXML private Button diceButton;
     @FXML private Button moveButton;
     @FXML private Button exitButton;
+    @FXML private Button helpButton;
     @FXML private Label player1;
     @FXML private Label turnNumber;
     @FXML private ScrollPane boardScrollPane;
@@ -49,8 +51,6 @@ public class Controller {
     @FXML private Button buildWord;
     @FXML private Button checkWord;
 
-
-    private SimpleStringProperty selectedPlayerData;
     private SimpleIntegerProperty selectedTurnNumber;
     private SimpleStringProperty selectedInitInfoGame;
     private SimpleStringProperty selectedTitleInfoGame;
@@ -58,8 +58,6 @@ public class Controller {
     private SimpleIntegerProperty diceValueProperty;
 
     public Controller(){
-        selectedPlayerData = new SimpleStringProperty();
-        selectedPlayerData.set("Player");
         selectedTurnNumber = new SimpleIntegerProperty();
         selectedTurnNumber.set(0);
         selectedInitInfoGame = new SimpleStringProperty();
@@ -71,7 +69,6 @@ public class Controller {
 
     @FXML
     public void initialize() {
-         player1.textProperty().bind(selectedPlayerData);
          turnNumber.textProperty().bind(Bindings.format("%,d", selectedTurnNumber));
          initInfoGame.textProperty().bind(selectedInitInfoGame);
          titleInfoGame.textProperty().bind(selectedTitleInfoGame);
@@ -86,15 +83,12 @@ public class Controller {
         board = null;
         userInfoControllerMap = null;
         boardPane.getChildren().clear();
-        selectedPlayerData.set("Player");
         selectedTurnNumber.set(0);
         selectedInitInfoGame.set("");
         moveButton.setDisable(true);
         diceButton.setDisable(true);
         playerVBox.getChildren().clear();
     }
-
-
 
     @FXML
     public void loadXmlFile(){
@@ -112,8 +106,6 @@ public class Controller {
 
     public void initGame() {
         reinitialize();
-        notAvailable.setText("");
-        selectedPlayerData.set(gameManager.getDataPlayers());
         userInfoControllerMap = gameManager.getDataPlayers(playerVBox);
         selectedInitInfoGame.set(gameManager.getInitInfoGame());
         //init board
@@ -161,7 +153,8 @@ public class Controller {
         loadXmlButton.setDisable(true);
         moveButton.setDisable(false);
         diceButton.setDisable(false);
-        gameManager.startGame();
+        short id = gameManager.startGame();
+        selectPlayer((short)-1, id);
       
         //show instructions
         //TODO: create a button for showing these instructions if necessary (put the on action in this func and not globaly)
@@ -175,6 +168,18 @@ public class Controller {
 
         alert.setHeaderText(null);
         alert.show();
+    }
+
+    public void selectPlayer(short prevId, short newId) {
+        UserInfoController userController;
+        if (prevId != -1) {
+            userController = userInfoControllerMap.get(prevId);
+            userController.setStyleProperty("");
+            userController.disableDetailsButton(true);
+        }
+        userController = userInfoControllerMap.get(newId);
+        userController.setStyleProperty("-fx-font-weight: bold");
+        userController.disableDetailsButton(false);
     }
 
     @FXML public void makeMove() {

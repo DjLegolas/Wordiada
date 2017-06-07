@@ -11,5 +11,5 @@
   <Label fx:id="playerTypeLabel" text="type" />
   <Label text="Score:" />
   <Label fx:id="scoreLabel" text="score#" />
-  <Button disable="true" mnemonicParsing="false" text="Details" onAction="#showWords" />
+  <Button fx:id="detailsButton" disable="true" mnemonicParsing="false" text="Details" onAction="#showWords" />
 </HBox>

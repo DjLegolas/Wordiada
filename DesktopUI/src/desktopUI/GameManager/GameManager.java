@@ -47,14 +47,6 @@ public class GameManager {
         this.currentDiceValue = currentDiceValue;
     }
 
-    public String getDataPlayers(){
-        StringBuilder dataPlayers = new StringBuilder();
-        for(Player p : gameEngine.getPlayers()){
-            dataPlayers.append(p.toString() + " " + p.getScore() + "\n");
-        }
-        return dataPlayers.toString();
-    }
-
     public Map<Short, UserInfoController> getDataPlayers(Pane node){
         Map<Short, UserInfoController> controllersMap = new HashMap<>();
         URL infoFXML = getClass().getResource("../userInfo/UserInfo.fxml");
@@ -134,8 +126,10 @@ public class GameManager {
         }}).start();
     }
 
-    public void startGame() {
+    public short startGame() {
         gameEngine.startGame();
+        currentPlayerId = gameEngine.getCurrentPlayerId();
+        return currentPlayerId;
     }
 
     public void showWords(ScoreDetailController scoreDetailController) {
