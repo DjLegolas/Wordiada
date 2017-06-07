@@ -144,6 +144,7 @@ public class GameEngine {
     public WordCheck isWordValid(String word, int tries) {
         if (tries == tryNumber && canRetry()) {
             if (!currentGameData.getBoard().hasChars(word)) {
+                tryNumber++;
                 return WordCheck.CHARS_NOT_PRESENT;
             }
             Dictionary.Word dictWord = currentGameData.getDictionary().hasWord(word);

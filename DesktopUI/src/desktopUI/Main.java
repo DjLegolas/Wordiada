@@ -1,8 +1,6 @@
 package desktopUI;
 
 import desktopUI.Controller.Controller;
-import engine.GameEngine;
-import desktopUI.GameManager.*;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -13,13 +11,6 @@ import javafx.stage.Stage;
 import java.net.URL;
 
 public class Main extends Application {
-
-    //todo: remove game engine from here and use run variable that runs the startGame func
-    protected GameEngine gameEngine = new GameEngine();
-
-    private GameManager run = new GameManager();
-    private Controller c = new Controller();
-
 
     @Override
     public void start(Stage primaryStage) throws Exception {

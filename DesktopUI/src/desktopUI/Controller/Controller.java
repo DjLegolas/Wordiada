@@ -3,7 +3,6 @@ package desktopUI.Controller;
 
 import desktopUI.Board.Board;
 import desktopUI.userInfo.UserInfoController;
-import engine.GameEngine;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -12,7 +11,6 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -28,7 +26,7 @@ public class Controller {
 
 
     private Stage primaryStage;
-    private GameManager gameManager = new GameManager();
+    private GameManager gameManager = new GameManager(this);
     private Board board;
     private List<Button> pressedButtons = new ArrayList<>();
     private Map<Short, UserInfoController> userInfoControllerMap;
@@ -80,6 +78,14 @@ public class Controller {
         this.primaryStage = primaryStage;
     }
 
+    public SimpleIntegerProperty getTurnProperty() {
+        return selectedTurnNumber;
+    }
+
+    public Map<Short, UserInfoController> getUserInfoMap() {
+        return userInfoControllerMap;
+    }
+
     private void reinitialize() {
         board = null;
         userInfoControllerMap = null;
@@ -89,6 +95,19 @@ public class Controller {
         moveButton.setDisable(true);
         diceButton.setDisable(true);
         playerVBox.getChildren().clear();
+    }
+
+    public void resetTurn(boolean clearButtons) {
+        diceButton.setDisable(false);
+        moveButton.setDisable(true);
+        buildWord.setDisable(true);
+        checkWord.setDisable(true);
+        board.resetPressStyle();
+        if (clearButtons) {
+            board.resetPressedButtons();
+        }
+        board.getPressedButtons().clear();
+        board.setAllDisable(true);
     }
 
     @FXML
@@ -102,7 +121,7 @@ public class Controller {
         if (xmlFile == null) {
             return;
         }
-        gameManager.loadXML(xmlFile, this);
+        gameManager.loadXML(xmlFile);
     }
 
     public void initGame() {
@@ -117,14 +136,13 @@ public class Controller {
     }
 
     // helper func
-        public Node getNodeByRowColumnIndex ( int row,  int column, GridPane gridPane) {
+    public Node getNodeByRowColumnIndex ( int row,  int column, GridPane gridPane) {
         Node result = null;
 
-        List <Node> childrens = new ArrayList<>();
-        childrens =  gridPane.getChildren();
+        List <Node> children = gridPane.getChildren();
 
-        for (Node node : childrens) {
-            if(gridPane.getRowIndex(node) == row && gridPane.getColumnIndex(node) == column) {
+        for (Node node : children) {
+            if(GridPane.getRowIndex(node) == row && GridPane.getColumnIndex(node) == column) {
                 result = node;
                 break;
             }
@@ -132,10 +150,10 @@ public class Controller {
         return result;
     }
 
+    //TODO: decide what to do with this func...
     @FXML
     public void startGame() {
         gameManager.startGame();
-        board.setIsClickable(true);
     }
 
     @FXML public void diceThrow(){
@@ -148,12 +166,9 @@ public class Controller {
 
     //TODO: change name of func to relevant one and decide what to do here!!!!!
     @FXML public void playTurn() {
-        int diceValue;
-
-
         // adding the pressed tile to the list:
         loadXmlButton.setDisable(true);
-      //  moveButton.setDisable(false);
+        startButton.setDisable(true);
         diceButton.setDisable(false);
         short id = gameManager.startGame();
         selectPlayer((short)-1, id);
@@ -186,53 +201,40 @@ public class Controller {
 
     @FXML public void makeMove() {
 
-        moveButton.setDisable(false);
+        //moveButton.setDisable(false);
 
-        String outputMessageValidMove = " Now you can watch are the hidden letters you chose to open!\n\nPlease press on the Build A Word button to continue the game.";
         String outputMessageInValidMove = "You need to choose at least one letter!\n\nTry again.";
 
-        if(board.getPressedButtons().isEmpty()) {
+        if (board.getPressedButtons().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setContentText(outputMessageInValidMove);
             alert.show();
-            gameManager.setUnclickableButtons(board.getBoardButtonList(),board.getBoardButtonList());
+            board.setAllDisable(false);
             return;
         }
-        else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Message");
-            alert.setContentText(outputMessageValidMove);
-            alert.show();
-        }
+        gameManager.updateBoard(board.getPressedButtonsIndices());
+    }
+
+    public void updateBoard(char[][] board){
+        String outputMessageValidMove = "Now you can watch are the hidden letters you chose to open!\n\n" +
+                "Please press on the Build A Word button to continue the game.";
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Message");
+        alert.setContentText(outputMessageValidMove);
+        alert.show();
 
 
-
-        /*
-       do{
-           if(board.getPressedButtons().isEmpty()) {
-                alert.setContentText(outputMessageInValidMove);
-                gameManager.setUnclickableButtons(board.getBoardButtonList(),board.getBoardButtonList());
-           }
-           else {
-                alert.setContentText(outputMessageValidMove);
-           }
-       }while(board.getPressedButtons().isEmpty());*/
-
-
-        //alert.setHeaderText(null);
-        ///alert.show();
         //TODO: find a way to watch the word the user chose - mabye label to show  him the word and offer him to change if neccesary
         buildWord.setDisable(false);
         moveButton.setDisable(true);
-        board.setPressedButtonsValues(gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown(),board.getPressedButtons(),gameManager.getGameEngine().getCurrentGameData().getKupa());
-        gameManager.setUnclickableButtons(board.getPressedButtons(),board.getBoardButtonList());
-        gameManager.setDefaultStyle(board.getPressedButtons());
+        this.board.setPressedButtonsValues(board, this.board.getPressedButtons(), gameManager.getGameEngine().getCurrentGameData().getKupa());
+        gameManager.setUnclickableButtons(this.board.getPressedButtons(), this.board.getBoardButtonList());
+        gameManager.setDefaultStyle(this.board.getPressedButtons());
 
         //change the target of the button to be the check word issue
-        moveButton.setOnMouseClicked((MouseEvent event) -> {
-            checkWord();
-        });
+        //TODO: decide what to do with the change below
+        //moveButton.setOnMouseClicked((MouseEvent event) -> checkWord());
 
 
 
@@ -247,17 +249,18 @@ public class Controller {
         alert.show();
         alert.setContentText("The word you chose is:" + wordToCheck);
         */
-
     }
+
     @FXML public void checkWord(){
-        String word = gameManager.buttonsToStr(board.getPressedButtons(),board.getButtonsList(),gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown());
+        String word = gameManager.buttonsToStr(board.getPressedButtons(),board.getButtonsMap(),gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown());
         gameManager.checkWord(word);
 
     }
     @FXML public void buildWord(){
         checkWord.setDisable(false);
         board.getPressedButtons().clear();
-        moveButton.setDisable(false);
+        moveButton.setDisable(true);
+        buildWord.setDisable(true);
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Instructions");
         alert.setContentText("Now that you chose the letters, all you need is to create a word that combines them. It can combines all letters or part of them." +
@@ -280,7 +283,7 @@ public class Controller {
         alert.show();
         gameManager.getDiceValue(diceValueProperty);
         //board.setIsClickable(true);
-        gameManager.setUnclickableButtons(board.getBoardButtonList(), board.getBoardButtonList());
+        board.setAllDisable(false);
         diceButton.setDisable(true);
         alert.setContentText("Dice value is " + diceValueProperty.get());
         gameManager.setCurrentDiceValue(diceValueProperty.get());
