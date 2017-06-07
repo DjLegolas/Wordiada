@@ -1,9 +1,6 @@
 package desktopUI.Board;
 
-import com.sun.security.auth.SolarisNumericUserPrincipal;
-import com.sun.xml.internal.ws.api.pipe.Engine;
 import desktopUI.Tile.SingleLetterController;
-import engine.GameDataFromXml;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.*;
@@ -13,23 +10,16 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.control.Button;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.*;
-import javafx.scene.paint.Color;
 import engine.GameDataFromXml.DataLetter;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
-import desktopUI.Controller.*;
 public class Board {
 
     private GridPane boardGridPane;
     private short size;
-    private HashMap<Button, SingleLetterController> buttonsList;
+    private Map<Button, SingleLetterController> buttonsMap;
     private List<Button> pressedButtons = new ArrayList<>();
     private SimpleBooleanProperty isClickable;
 
@@ -37,7 +27,7 @@ public class Board {
 
         this.size = size;
         this.boardGridPane = boardGridPane;
-        buttonsList = new HashMap<>();
+        buttonsMap = new HashMap<>();
         isClickable = new SimpleBooleanProperty(false);
         loadBoard();
     }
@@ -49,8 +39,8 @@ public class Board {
         return pressedButtons;
     }
 
-    public HashMap<Button, SingleLetterController> getButtonsList() {
-        return buttonsList;
+    public Map<Button, SingleLetterController> getButtonsMap() {
+        return buttonsMap;
     }
 
     // probably will not need this func--->
@@ -65,7 +55,7 @@ public class Board {
                 }
                 else {
                     String setSign = String.format("%c (%d)", sign, dataLetter.getLetter().getScore());
-                    buttonsList.get(button).setLetter(setSign);
+                    buttonsMap.get(button).setLetter(setSign);
                 }
             }
         }
@@ -79,17 +69,22 @@ public class Board {
                 DataLetter dataLetter = findDataLetterBySign(sign, dataLetterList);
                 if(isButtonExist(pressedButtons,(Button)button)){
                     String setSign = String.format("%c (%d)", sign, dataLetter.getLetter().getScore());
-                    buttonsList.get(button).setLetter(setSign);
+                    buttonsMap.get(button).setLetter(setSign);
                 }
             }
         }
     }
 
+    public void resetPressStyle() {
+        for (Button button: pressedButtons) {
+            button.setStyle("");
+        }
+    }
 
     public void updateNodeToTile(javafx.scene.control.Button button){
         SingleLetterController slc = new SingleLetterController(button);
         slc.initialize();
-        buttonsList.put(button,slc);
+        buttonsMap.put(button,slc);
     }
 
     private void loadBoard(){
@@ -135,7 +130,7 @@ public class Board {
             Button singleLetterTile = loader.load();
 
             SingleLetterController singleLetterController = loader.getController();
-            buttonsList.put(singleLetterTile, singleLetterController);
+            buttonsMap.put(singleLetterTile, singleLetterController);
 
             return singleLetterTile;
         } catch (IOException e) {
@@ -184,11 +179,15 @@ public class Board {
 
     public List<Button> getBoardButtonList(){
         List<Button> retList = new ArrayList<>();
-        for(Button button : buttonsList.keySet()){
+        for(Button button : buttonsMap.keySet()){
             retList.add(button);
         }
         return retList;
     }
 
-
+    public void setAllDisable(boolean disable) {
+        for (Button button: buttonsMap.keySet()) {
+            button.setDisable(disable);
+        }
+    }
 }

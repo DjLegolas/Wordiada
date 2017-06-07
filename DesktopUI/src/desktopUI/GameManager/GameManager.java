@@ -39,8 +39,11 @@ public class GameManager {
     //TODO: add num of tries and all of this....
 
     private GameEngine gameEngine = new GameEngine();
+    private Controller controller;
 
-    public GameManager(){}
+    public GameManager(Controller controller) {
+        this.controller = controller;
+    }
 
     public int getCurrentDiceValue() {
         return currentDiceValue;
@@ -90,7 +93,7 @@ public class GameManager {
 
     public GameEngine getGameEngine(){return gameEngine;}
 
-    public void loadXML(File xmlFile, Controller controller){
+    public void loadXML(File xmlFile){
         new Thread(() -> {
             try {
                 gameEngine.loadXml(xmlFile.getPath());
@@ -151,11 +154,14 @@ public class GameManager {
 
     public void setUnclickableButtons(List<Button> stayClickableButtons, List<Button> allBoardButtons){
         for(Button button : allBoardButtons){
-            if(!stayClickableButtons.contains(button)){
-                button.setDisable(true);
+            if(stayClickableButtons.contains(button)){
+                button.setDisable(false);
+            }
+            else if (!button.getText().equals("")) {
+                button.setDisable(false);
             }
             else
-                button.setDisable(false);
+                button.setDisable(true);
         }
     }
 
@@ -171,23 +177,23 @@ public class GameManager {
         }
     }
 
-    public void updateTurnNumber(SimpleIntegerProperty turnProperty) {
-        new Thread(() -> {
-            int turn = gameEngine.getStatistics().getNumOfTurns();
-            Platform.runLater(() -> turnProperty.set(turn));
-        }).start();
+    private void updateTurnNumber() {
+        int turn = gameEngine.getStatistics().getNumOfTurns();
+        Platform.runLater(() -> controller.getTurnProperty().set(turn));
     }
 
-    public void updatePlayerScore(Map<Short, UserInfoController> userInfoControllerMap) {
-        new Thread(() -> {
-            Status status = gameEngine.getStatus();
-            short id = status.getPlayerId();
-            float score = status.getScore();
-            Platform.runLater(() -> userInfoControllerMap.get(id).setScoreProperty(score));
-        }).start();
+    private void updatePlayerScore() {
+        Map<Short, UserInfoController> userInfoControllerMap = controller.getUserInfoMap();
+        List<Player> players = gameEngine.getPlayers();
+        for (Player player: players) {
+            if (player.getId() == currentPlayerId) {
+                Platform.runLater(() -> userInfoControllerMap.get(currentPlayerId).setScoreProperty(player.getScore()));
+                break;
+            }
+        }
     }
 
-    public String buttonsToStr(List<Button>letters, HashMap<Button, SingleLetterController>infoAboutLetters,char [][]signs) {
+    public String buttonsToStr(List<Button>letters, Map<Button, SingleLetterController>infoAboutLetters,char [][]signs) {
 
         int sizeListButtons = letters.size();
         //  List<Character> word = new ArrayList<>();
@@ -206,7 +212,6 @@ public class GameManager {
     //check if ita a good word and calc score if necessary
     public void checkWord(String word) {
         Alert alert;
-        float score;
         switch (gameEngine.isWordValid(word, tryNumber)) {
             case CORRECT:
                 alert = new Alert(Alert.AlertType.INFORMATION);
@@ -214,10 +219,7 @@ public class GameManager {
                 alert.setContentText(word);
                 alert.setHeaderText(null);
                 alert.show();
-                //calc score
-               Word word1 = gameEngine.getCurrentGameData().getDictionary().stringToWord(word);
-                gameEngine.getCurrentPlayer().updateScore(word1,gameEngine.getCurrentGameData().calcScore(word));
-
+                nextTurn();
                 break;
             case WRONG:
                 alert = new Alert(Alert.AlertType.INFORMATION);
@@ -225,29 +227,52 @@ public class GameManager {
                 alert.setContentText(word);
                 alert.setHeaderText(null);
                 alert.show();
+                tryNumber++;
                 break;
             case TRIES_DEPLETED:
                 alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Boooooz! u r a failure! \"" + word + "\" is wrong!!!");
+                alert.setTitle("nooooob! u got no more retries!");
                 alert.setContentText(word);
                 alert.setHeaderText(null);
                 alert.show();
+                nextTurn();
                 break;
             case CHARS_NOT_PRESENT:
                 alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Boooooz! u r a failure! \"" + word + "\" is wrong!!!");
+                alert.setTitle("OMG!! how did u managed to enter invalid char?");
                 alert.setContentText(word);
                 alert.setHeaderText(null);
                 alert.show();
+                tryNumber++;
                 break;
             case WRONG_CANT_RETRY:
                 alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Boooooz! u r a failure! \"" + word + "\" is wrong!!!");
+                alert.setTitle("Boooooz! u r a failure! \"" + word + "\" is wrong!!!\n" +
+                        "nooooob! u got no more retries!");
                 alert.setContentText(word);
                 alert.setHeaderText(null);
                 alert.show();
+                nextTurn();
                 break;
         }
+    }
+
+    private void switchUser() {
+        short newId = gameEngine.getCurrentPlayerId();
+        short prevId;
+        if (newId != currentPlayerId) {
+            prevId = currentPlayerId;
+            Platform.runLater(() -> controller.selectPlayer(prevId, newId));
+            currentPlayerId = newId;
+        }
+    }
+
+    private void nextTurn() {
+        updatePlayerScore();
+        switchUser();
+        updateTurnNumber();
+        tryNumber = 1;
+        Platform.runLater(() -> controller.resetTurn());
     }
 }
 
