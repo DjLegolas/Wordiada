@@ -37,6 +37,15 @@ public class Board {
         return pressedButtons;
     }
 
+    public List<int[]> getPressedButtonsIndices() {
+        List<int[]> indexList = new ArrayList<>();
+        for (Button button: pressedButtons) {
+            int[] point = {GridPane.getRowIndex(button), GridPane.getColumnIndex(button)};
+            indexList.add(point);
+        }
+        return indexList;
+    }
+
     public Map<Button, SingleLetterController> getButtonsMap() {
         return buttonsMap;
     }
@@ -180,6 +189,12 @@ public class Board {
     public void setAllDisable(boolean disable) {
         for (Button button: buttonsMap.keySet()) {
             button.setDisable(disable);
+        }
+    }
+
+    public void resetPressedButtons() {
+        for (Button button: pressedButtons) {
+            buttonsMap.get(button).setLetter("");
         }
     }
 }

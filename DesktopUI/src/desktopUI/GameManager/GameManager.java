@@ -167,10 +167,19 @@ public class GameManager {
     }
 
     public void updateBoard(List<int[]> selectedButtonsPoints) {
+        boolean enoughTiles;
         try {
-            gameEngine.updateBoard(selectedButtonsPoints);
+            enoughTiles = gameEngine.updateBoard(selectedButtonsPoints);
         } catch (OutOfBoardBoundariesException e) {
-            e.printStackTrace();
+            Common.showError("How did you managed to select one tile out of boundaries?");
+            return;
+        }
+        if (enoughTiles) {
+            char[][] board = gameEngine.getBoard();
+            Platform.runLater(() -> controller.updateBoard(board));
+        }
+        else {
+            Common.showError("You selected too many tiles. you need only " + currentDiceValue);
         }
     }
 
@@ -190,7 +199,7 @@ public class GameManager {
         List<Player> players = gameEngine.getPlayers();
         for (Player player: players) {
             if (player.getId() == currentPlayerId) {
-                Platform.runLater(() -> userInfoControllerMap.get(currentPlayerId).setScoreProperty(player.getScore()));
+                Platform.runLater(() -> userInfoControllerMap.get(player.getId()).setScoreProperty(player.getScore()));
                 break;
             }
         }
@@ -222,7 +231,7 @@ public class GameManager {
                 alert.setContentText(word);
                 alert.setHeaderText(null);
                 alert.show();
-                nextTurn();
+                nextTurn(true);
                 break;
             case WRONG:
                 alert = new Alert(Alert.AlertType.INFORMATION);
@@ -238,7 +247,7 @@ public class GameManager {
                 alert.setContentText(word);
                 alert.setHeaderText(null);
                 alert.show();
-                nextTurn();
+                nextTurn(false);
                 break;
             case CHARS_NOT_PRESENT:
                 alert = new Alert(Alert.AlertType.INFORMATION);
@@ -255,7 +264,7 @@ public class GameManager {
                 alert.setContentText(word);
                 alert.setHeaderText(null);
                 alert.show();
-                nextTurn();
+                nextTurn(false);
                 break;
         }
     }
@@ -270,12 +279,12 @@ public class GameManager {
         }
     }
 
-    private void nextTurn() {
+    private void nextTurn(boolean clearButtons) {
         updatePlayerScore();
         switchUser();
         updateTurnNumber();
         tryNumber = 1;
-        Platform.runLater(() -> controller.resetTurn());
+        Platform.runLater(() -> controller.resetTurn(clearButtons));
     }
 }
 

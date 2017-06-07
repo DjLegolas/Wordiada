@@ -97,12 +97,15 @@ public class Controller {
         playerVBox.getChildren().clear();
     }
 
-    public void resetTurn() {
+    public void resetTurn(boolean clearButtons) {
         diceButton.setDisable(false);
         moveButton.setDisable(true);
         buildWord.setDisable(true);
         checkWord.setDisable(true);
         board.resetPressStyle();
+        if (clearButtons) {
+            board.resetPressedButtons();
+        }
         board.getPressedButtons().clear();
         board.setAllDisable(true);
     }
@@ -198,12 +201,11 @@ public class Controller {
 
     @FXML public void makeMove() {
 
-        moveButton.setDisable(false);
+        //moveButton.setDisable(false);
 
-        String outputMessageValidMove = " Now you can watch are the hidden letters you chose to open!\n\nPlease press on the Build A Word button to continue the game.";
         String outputMessageInValidMove = "You need to choose at least one letter!\n\nTry again.";
 
-        if(board.getPressedButtons().isEmpty()) {
+        if (board.getPressedButtons().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setContentText(outputMessageInValidMove);
@@ -211,22 +213,28 @@ public class Controller {
             board.setAllDisable(false);
             return;
         }
-        else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Message");
-            alert.setContentText(outputMessageValidMove);
-            alert.show();
-        }
+        gameManager.updateBoard(board.getPressedButtonsIndices());
+    }
+
+    public void updateBoard(char[][] board){
+        String outputMessageValidMove = "Now you can watch are the hidden letters you chose to open!\n\n" +
+                "Please press on the Build A Word button to continue the game.";
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Message");
+        alert.setContentText(outputMessageValidMove);
+        alert.show();
+
 
         //TODO: find a way to watch the word the user chose - mabye label to show  him the word and offer him to change if neccesary
         buildWord.setDisable(false);
         moveButton.setDisable(true);
-        board.setPressedButtonsValues(gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown(),board.getPressedButtons(),gameManager.getGameEngine().getCurrentGameData().getKupa());
-        gameManager.setUnclickableButtons(board.getPressedButtons(),board.getBoardButtonList());
-        gameManager.setDefaultStyle(board.getPressedButtons());
+        this.board.setPressedButtonsValues(board, this.board.getPressedButtons(), gameManager.getGameEngine().getCurrentGameData().getKupa());
+        gameManager.setUnclickableButtons(this.board.getPressedButtons(), this.board.getBoardButtonList());
+        gameManager.setDefaultStyle(this.board.getPressedButtons());
 
         //change the target of the button to be the check word issue
-        moveButton.setOnMouseClicked((MouseEvent event) -> checkWord());
+        //TODO: decide what to do with the change below
+        //moveButton.setOnMouseClicked((MouseEvent event) -> checkWord());
 
 
 
@@ -241,8 +249,8 @@ public class Controller {
         alert.show();
         alert.setContentText("The word you chose is:" + wordToCheck);
         */
-
     }
+
     @FXML public void checkWord(){
         String word = gameManager.buttonsToStr(board.getPressedButtons(),board.getButtonsMap(),gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown());
         gameManager.checkWord(word);
