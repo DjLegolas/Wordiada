@@ -191,7 +191,6 @@ public class GameEngine {
     public boolean isGameEnded(){
         //if no more left cards in kupa and all the tails in the board are shown
         return (currentGameData.getBoard().getKupaAmount() == 0) || (getUnShownPoints().isEmpty());
-
     }
 
     public String getWinnerName(boolean userEnd) {
@@ -215,8 +214,14 @@ public class GameEngine {
     public List<Player> getPlayers() {
         return isGameStarted ? players : getPlayersList();
     }
+
+    public short getCurrentPlayerId() {
+        return isGameStarted ? currentPlayer.getId() : 0;
+    }
+
     public Board getBoardObject(){
-        return currentGameData.getBoard();}
+        return currentGameData.getBoard();
+    }
 
     public Boolean isInGoldFishMod(){
         GameDataFromXml gameDataFromXml = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
