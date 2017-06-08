@@ -17,6 +17,7 @@ public class GameEngine {
 
     private Player currentPlayer;
     private int nextPlayerNumber = 1;
+    private int numOfPlayers;
     private List<Player> players;
     private List<GameDataFromXml> gdfx = new ArrayList<>();
     private GameDataFromXml currentGameData;
@@ -78,7 +79,7 @@ public class GameEngine {
         isGameStarted = true;
         currentGameData =  gdfx.get(gdfx.size() - 1);
         players = getPlayersList();
-
+        numOfPlayers = players.size();
 
 
         //IDO's code - dunno what it is
@@ -167,8 +168,10 @@ public class GameEngine {
     }
 
     private void nextPlayer() {
-        currentPlayer = players.get(nextPlayerNumber);
-        nextPlayerNumber = (nextPlayerNumber + 1) % players.size();
+        do {
+            currentPlayer = players.get(nextPlayerNumber);
+            nextPlayerNumber = (nextPlayerNumber + 1) % players.size();
+        } while (currentPlayer.isRetired());
         numberOfTurns++;
         tryNumber = 1;
     }
@@ -264,5 +267,14 @@ public class GameEngine {
             words.put(entry.getKey().getWord(), new Pair<>(entry.getValue(), entry.getKey().getScore()));
         }
         return words;
+    }
+
+    public boolean retirePlayer() {
+        if (numOfPlayers == 2) {
+            return false;
+        }
+        currentPlayer.retire();
+        nextPlayer();
+        return true;
     }
 }

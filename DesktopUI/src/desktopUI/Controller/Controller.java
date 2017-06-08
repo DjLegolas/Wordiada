@@ -49,6 +49,7 @@ public class Controller {
     @FXML private Label buildWordLabel;
     @FXML private Label tryNumberLabel;
     @FXML private Label totalTriesLabel;
+    @FXML private Label diceValueLabel;
 
     private SimpleIntegerProperty selectedTurnNumber;
     private SimpleStringProperty selectedInitInfoGame;
@@ -80,6 +81,7 @@ public class Controller {
         buildWordLabel.textProperty().bind(wordBuildProperty);
         totalTriesLabel.textProperty().bind(Bindings.format("%,d", totalTriesProperty));
         tryNumberLabel.textProperty().bind(Bindings.format("%,d", tryNumberProperty));
+        diceValueLabel.textProperty().bind(Bindings.format("%,d", diceValueProperty));
     }
 
     public void setPrimaryStage(Stage primaryStage) {
@@ -123,6 +125,7 @@ public class Controller {
         board.setAllDisable(true);
         board.buildWord(false, null);
         tryNumberProperty.set(0);
+        diceValueProperty.set(0);
     }
 
     @FXML
@@ -301,7 +304,7 @@ public class Controller {
             wordBuildProperty.set(gameManager.buttonsToStr(board.getPressedButtons(),board.getButtonsMap(),gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown()));
             return Boolean.TRUE;
         });
-
+        tryNumberProperty.set(1);
     }*/
 
     @FXML
@@ -329,5 +332,10 @@ public class Controller {
         if (result.isPresent() && result.get() == ButtonType.OK) {
             gameManager.exitGame();
         }
+    }
+
+    public void playerRetired(short retiredPlayerId) {
+        UserInfoController userInfoController = userInfoControllerMap.get(retiredPlayerId);
+        userInfoController.setStrikeThrough();
     }
 }
