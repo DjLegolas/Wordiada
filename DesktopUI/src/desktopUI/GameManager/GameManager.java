@@ -86,6 +86,10 @@ public class GameManager {
 
     }
 
+    public int getMaxTries() {
+        return gameEngine.getMaxRetries();
+    }
+
     public GameEngine getGameEngine(){return gameEngine;}
 
     public void loadXML(File xmlFile){
@@ -240,6 +244,7 @@ public class GameManager {
                 alert.setHeaderText(null);
                 alert.show();
                 tryNumber++;
+                controller.getTryNumberProperty().set(tryNumber);
                 break;
             case TRIES_DEPLETED:
                 alert = new Alert(Alert.AlertType.INFORMATION);
@@ -256,6 +261,7 @@ public class GameManager {
                 alert.setHeaderText(null);
                 alert.show();
                 tryNumber++;
+                controller.getTryNumberProperty().set(tryNumber);
                 break;
             case WRONG_CANT_RETRY:
                 alert = new Alert(Alert.AlertType.INFORMATION);

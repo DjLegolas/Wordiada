@@ -1,7 +1,7 @@
 package desktopUI.Board;
 
+import desktopUI.Controller.Controller;
 import desktopUI.Tile.SingleLetterController;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.*;
 import javafx.scene.Node;
@@ -14,13 +14,16 @@ import engine.GameDataFromXml.DataLetter;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 public class Board {
 
     private GridPane boardGridPane;
+    private Callable<Boolean> wordBuilder;
     private short size;
     private Map<Button, SingleLetterController> buttonsMap;
     private List<Button> pressedButtons = new ArrayList<>();
+    private boolean buildWord = false;
 
     public Board(short size, GridPane boardGridPane) {
 
@@ -111,11 +114,23 @@ public class Board {
                             //if (tile.getStyle().equals("-fx-border-color: blue;" + "-fx-background-color: aqua")){
                                 tile.setStyle("");
                                 pressedButtons.remove(tile);
+                                if (buildWord) {
+                                    try {
+                                        wordBuilder.call();
+                                    }
+                                    catch (Exception e) {}
+                                }
                             }
                             else {
                                 tile.setStyle("-fx-border-color: blue;" +
                                  "-fx-background-color: aqua");
                                 pressedButtons.add(tile);
+                                if (buildWord) {
+                                    try {
+                                        wordBuilder.call();
+                                    }
+                                    catch (Exception e) {}
+                                }
                             }
 
                         }
@@ -196,5 +211,10 @@ public class Board {
         for (Button button: pressedButtons) {
             buttonsMap.get(button).setLetter("");
         }
+    }
+
+    public void buildWord(boolean buildWord, Callable<Boolean> wordBuilder) {
+        this.buildWord = buildWord;
+        this.wordBuilder = wordBuilder;
     }
 }

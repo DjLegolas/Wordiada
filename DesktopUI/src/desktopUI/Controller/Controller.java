@@ -9,7 +9,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -39,22 +38,26 @@ public class Controller {
     @FXML private Button moveButton;
     @FXML private Button exitButton;
     @FXML private Button helpButton;
-    @FXML private Label player1;
-    @FXML private Label turnNumber;
+    @FXML private Label turnNumberLabel;
     @FXML private ScrollPane boardScrollPane;
-    @FXML private Label notAvailable;
     @FXML private  Label initInfoGame;
     @FXML private  Label titleInfoGame;
     @FXML private  Label titlePlayerData;
     @FXML private VBox playerVBox;
     @FXML private Button buildWord;
     @FXML private Button checkWord;
+    @FXML private Label buildWordLabel;
+    @FXML private Label tryNumberLabel;
+    @FXML private Label totalTriesLabel;
 
     private SimpleIntegerProperty selectedTurnNumber;
     private SimpleStringProperty selectedInitInfoGame;
     private SimpleStringProperty selectedTitleInfoGame;
     private SimpleStringProperty selectedTitlePlayerData;
     private SimpleIntegerProperty diceValueProperty;
+    private SimpleStringProperty wordBuildProperty;
+    private SimpleIntegerProperty tryNumberProperty;
+    private SimpleIntegerProperty totalTriesProperty;
 
     public Controller(){
         selectedTurnNumber = new SimpleIntegerProperty();
@@ -63,15 +66,20 @@ public class Controller {
         selectedTitleInfoGame = new SimpleStringProperty();
         selectedTitlePlayerData = new SimpleStringProperty();
         diceValueProperty = new SimpleIntegerProperty();
-
+        wordBuildProperty = new SimpleStringProperty();
+        tryNumberProperty = new SimpleIntegerProperty();
+        totalTriesProperty = new SimpleIntegerProperty();
    }
 
     @FXML
     public void initialize() {
-         turnNumber.textProperty().bind(Bindings.format("%,d", selectedTurnNumber));
-         initInfoGame.textProperty().bind(selectedInitInfoGame);
-         titleInfoGame.textProperty().bind(selectedTitleInfoGame);
-         titlePlayerData.textProperty().bind(selectedTitlePlayerData);
+        turnNumberLabel.textProperty().bind(Bindings.format("%,d", selectedTurnNumber));
+        initInfoGame.textProperty().bind(selectedInitInfoGame);
+        titleInfoGame.textProperty().bind(selectedTitleInfoGame);
+        titlePlayerData.textProperty().bind(selectedTitlePlayerData);
+        buildWordLabel.textProperty().bind(wordBuildProperty);
+        totalTriesLabel.textProperty().bind(Bindings.format("%,d", totalTriesProperty));
+        tryNumberLabel.textProperty().bind(Bindings.format("%,d", tryNumberProperty));
     }
 
     public void setPrimaryStage(Stage primaryStage) {
@@ -86,6 +94,10 @@ public class Controller {
         return userInfoControllerMap;
     }
 
+    public SimpleIntegerProperty getTryNumberProperty() {
+        return tryNumberProperty;
+    }
+
     private void reinitialize() {
         board = null;
         userInfoControllerMap = null;
@@ -98,6 +110,7 @@ public class Controller {
     }
 
     public void resetTurn(boolean clearButtons) {
+        wordBuildProperty.set("");
         diceButton.setDisable(false);
         moveButton.setDisable(true);
         buildWord.setDisable(true);
@@ -108,6 +121,8 @@ public class Controller {
         }
         board.getPressedButtons().clear();
         board.setAllDisable(true);
+        board.buildWord(false, null);
+        tryNumberProperty.set(0);
     }
 
     @FXML
@@ -128,8 +143,9 @@ public class Controller {
         reinitialize();
         userInfoControllerMap = gameManager.getDataPlayers(playerVBox);
         selectedInitInfoGame.set(gameManager.getInitInfoGame());
+        totalTriesProperty.set(gameManager.getMaxTries());
         //init board
-        board = new Board(gameManager.getGameEngine().getBoardSize(),boardPane);
+        board = new Board(gameManager.getGameEngine().getBoardSize(), boardPane);
         startButton.setDisable(false);
         selectedTitleInfoGame.set("Information about the Game:");
         selectedTitlePlayerData.set("Information about the Players:");
@@ -268,7 +284,10 @@ public class Controller {
 
         alert.setHeaderText(null);
         alert.show();
-
+        board.buildWord(true, () -> {
+            wordBuildProperty.set(gameManager.buttonsToStr(board.getPressedButtons(),board.getButtonsMap(),gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown()));
+            return Boolean.TRUE;
+        });
 
     }
 
