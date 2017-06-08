@@ -138,7 +138,8 @@ public class GameEngine {
     }
 
     public int getMaxRetries() {
-        return currentGameData.getNumOfTries();
+        GameDataFromXml gameDataFromXml = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
+        return gameDataFromXml.getNumOfTries();
     }
 
     public WordCheck isWordValid(String word, int tries) {
