@@ -1,5 +1,6 @@
 package desktopUI.userInfo;
 
+import com.sun.scenario.effect.impl.state.HVSeparableKernel;
 import desktopUI.GameManager.GameManager;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleFloatProperty;
@@ -10,12 +11,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.net.URL;
 
 public class UserInfoController {
+    @FXML private HBox userInfoHBox;
     @FXML private Label nameLabel;
     @FXML private Label idLabel;
     @FXML private Label playerTypeLabel;
@@ -91,5 +94,9 @@ public class UserInfoController {
         stage.setTitle("Player Words - Wordiada");
         stage.setScene(new Scene(root));
         stage.show();
+    }
+
+    public void setStrikeThrough() {
+        userInfoHBox.getStylesheets().addAll(getClass().getResource("Strikethrough.css").toExternalForm());
     }
 }

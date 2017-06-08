@@ -78,12 +78,14 @@
                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
            </rowConstraints>
             <children>
-               <Label text="Turn No." />
+               <Label text="Turn No." style="-fx-strikethrough: true"/>
                <Label fx:id="turnNumberLabel" text="0" GridPane.columnIndex="1" />
                <Label text="Try No." GridPane.rowIndex="2" />
-               <Label fx:id="tryNumberLabel" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+               <Label fx:id="tryNumberLabel" text="0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                <Label text="Total tries" GridPane.rowIndex="1" />
-               <Label fx:id="totalTriesLabel" text="0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+               <Label fx:id="totalTriesLabel" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+               <Label text="Dice value:" GridPane.columnIndex="2" />
+               <Label fx:id="diceValueLabel" GridPane.columnIndex="3" />
                <Label text="Word:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                <Label fx:id="buildWordLabel" text="word" GridPane.columnIndex="3" GridPane.rowIndex="1" />
             </children>

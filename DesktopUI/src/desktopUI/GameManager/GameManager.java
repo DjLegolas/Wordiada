@@ -189,7 +189,11 @@ public class GameManager {
 
     public void exitGame() {
         if (gameEngine.isStarted()) {
-            //TODO: guss what....
+            if (gameEngine.retirePlayer()) {
+                nextTurn(false);
+                short retiredId = currentPlayerId;
+                controller.playerRetired(retiredId);
+            }
         }
     }
 

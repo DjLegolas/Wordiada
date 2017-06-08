@@ -12,6 +12,7 @@ public class Player {
     private float score;
     private Type type;
     private Map<Dictionary.Word, Integer> words;
+    private boolean isRetired = false;
     static final short MAX_PLAYERS = 6;
     static final short MIN_PLAYERS = 2;
 
@@ -45,6 +46,14 @@ public class Player {
 
     public short getId() {
         return id;
+    }
+
+    boolean isRetired() {
+        return isRetired;
+    }
+
+    void retire() {
+        this.isRetired = true;
     }
 
     Map<Dictionary.Word, Integer> getWords() {
