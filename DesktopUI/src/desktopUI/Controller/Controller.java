@@ -36,6 +36,7 @@ public class Controller {
     @FXML private Button startButton;
     @FXML private Button diceButton;
     @FXML private Button moveButton;
+    @FXML private Button retireButton;
     @FXML private Button exitButton;
     @FXML private Button helpButton;
     @FXML private Label turnNumberLabel;
@@ -109,6 +110,7 @@ public class Controller {
         moveButton.setDisable(true);
         diceButton.setDisable(true);
         playerVBox.getChildren().clear();
+        retireButton.setDisable(true);
     }
 
     public void resetTurn(boolean clearButtons) {
@@ -189,8 +191,10 @@ public class Controller {
         loadXmlButton.setDisable(true);
         startButton.setDisable(true);
         diceButton.setDisable(false);
+        retireButton.setDisable(false);
         short id = gameManager.startGame();
         selectPlayer((short)-1, id);
+
       
         //show instructions
         //TODO: create a button for showing these instructions if necessary (put the on action in this func and not globaly)
@@ -326,7 +330,7 @@ public class Controller {
 
     @FXML
     public void exitGame() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to quit?");
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to exit?");
         alert.setHeaderText(null);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
@@ -337,5 +341,15 @@ public class Controller {
     public void playerRetired(short retiredPlayerId) {
         UserInfoController userInfoController = userInfoControllerMap.get(retiredPlayerId);
         userInfoController.setStrikeThrough();
+    }
+
+    @FXML
+    public void retire() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to retire?");
+        alert.setHeaderText(null);
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            gameManager.retire();
+        }
     }
 }

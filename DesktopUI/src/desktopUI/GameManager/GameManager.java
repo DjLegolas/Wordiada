@@ -188,14 +188,24 @@ public class GameManager {
         }
     }
 
-    public void exitGame() {
+    public void retire() {
         if (gameEngine.isStarted()) {
             if (gameEngine.retirePlayer()) {
-                nextTurn(false);
                 short retiredId = currentPlayerId;
                 controller.playerRetired(retiredId);
+                nextTurn(false);
+            } else {
+                endGame();
             }
         }
+    }
+
+    private void endGame() {
+
+    }
+
+    public void exitGame() {
+        Platform.exit();
     }
 
     private void updateTurnNumber() {
