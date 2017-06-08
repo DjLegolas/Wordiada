@@ -99,35 +99,35 @@ public class GameManager {
                 Platform.runLater(() -> controller.initGame());
             }
             catch(WrongPathException e) {
-                Common.showError("Wrong path exception!!! ass hollllllle");
+                Common.showError("Wrong path to Xml file!");
             }
             catch(DictionaryNotFoundException e) {
                 Common.showError("There is not dictinary file!");
             }
             catch(BoardSizeException e) {
-                Common.showError("invalid board size");
+                Common.showError("Invalid board size!");
             }
             catch(NotXmlFileException e) {
-                Common.showError("This is not an XML file! u mother fucker");
+                Common.showError("This is not an XML file! ");
             }
             catch(DuplicateLetterException e) {
-                Common.showError("duplicate fucking letter!!!");
+                Common.showError("Duplicate letter Error!");
             }
             catch(NotValidXmlFileException e) {
-                Common.showError("Not valid xmk file");
+                Common.showError("Not valid Xml file!");
             }
             catch(WinTypeException e) {
-                Common.showError("win cheat thing");
+                Common.showError("Not entered win score mod!");
             }
             catch(NotEnoughLettersException e) {
-                Common.showError("Not fucjing enouth letters u IDIOT");
+                Common.showError("Not enough letters!");
             }
             catch (NumberOfPlayersException e) {
-                Common.showError("num on players.. needed" + e.getMinPlayers() + " to " +
-                            e.getMinPlayers() + "... have " + e.getActualNumOfPlayers());
+                Common.showError("Number of players needs to be between " + e.getMinPlayers() + " to " +
+                            e.getMinPlayers() + ", and you entered "  + e.getActualNumOfPlayers() + "!");
             }
             catch (DuplicatePlayerIdException e) {
-                Common.showError("duplicated player fuckin id " + e.getDuplicateId());
+                Common.showError("Duplicate Id player Error! " + e.getDuplicateId());
         }}).start();
     }
 
@@ -179,8 +179,9 @@ public class GameManager {
             return;
         }
         if (enoughTiles) {
+
             char[][] board = gameEngine.getBoard();
-            Platform.runLater(() -> controller.updateBoard(board));
+          //  Platform.runLater(() -> controller.updateBoard(board));
         }
         else {
             Common.showError("You selected too many tiles. you need only " + currentDiceValue);
@@ -235,16 +236,16 @@ public class GameManager {
         switch (gameEngine.isWordValid(word, tryNumber)) {
             case CORRECT:
                 alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Congratulations! your word \"" + word + "\" is correct!!!");
-                alert.setContentText(word);
+                alert.setTitle("Check Word");
+                alert.setContentText("Well done! your word \"" + word + "\" is correct!!!");
                 alert.setHeaderText(null);
                 alert.show();
                 nextTurn(true);
                 break;
             case WRONG:
                 alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Boooooz! u r a failure! \"" + word + "\" is wrong!!!");
-                alert.setContentText(word);
+                alert.setTitle("Check Word");
+                alert.setContentText("Uhh.. the word \"" + word + "\" is wrong!!!");
                 alert.setHeaderText(null);
                 alert.show();
                 tryNumber++;
@@ -252,16 +253,16 @@ public class GameManager {
                 break;
             case TRIES_DEPLETED:
                 alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("nooooob! u got no more retries!");
-                alert.setContentText(word);
+                alert.setTitle("Check Word");
+                alert.setContentText("Oops.. you have got No more tries!!");
                 alert.setHeaderText(null);
                 alert.show();
                 nextTurn(false);
                 break;
             case CHARS_NOT_PRESENT:
                 alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("OMG!! how did u managed to enter invalid char?");
-                alert.setContentText(word);
+                alert.setTitle("Check Word");
+                alert.setContentText("Oops.. you enter INVALID chars!?");
                 alert.setHeaderText(null);
                 alert.show();
                 tryNumber++;
@@ -269,9 +270,9 @@ public class GameManager {
                 break;
             case WRONG_CANT_RETRY:
                 alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Boooooz! u r a failure! \"" + word + "\" is wrong!!!\n" +
-                        "nooooob! u got no more retries!");
-                alert.setContentText(word);
+                //TODO: check out with ido whats this error means
+                alert.setTitle("Check Word");
+                alert.setContentText("I DON'T KNOW WHAT THIS ERROR YET!");
                 alert.setHeaderText(null);
                 alert.show();
                 nextTurn(false);
