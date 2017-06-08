@@ -1,6 +1,5 @@
 package desktopUI.userInfo;
 
-import com.sun.scenario.effect.impl.state.HVSeparableKernel;
 import desktopUI.GameManager.GameManager;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleFloatProperty;
@@ -84,7 +83,7 @@ public class UserInfoController {
     @FXML
     public void showWords() throws Exception {
         FXMLLoader loader = new FXMLLoader();
-        URL mainFXML = getClass().getResource("../scoreDetail/ScoreDetail.fxml");
+        URL mainFXML = getClass().getResource("/desktopUI/scoreDetail/ScoreDetail.fxml");
         loader.setLocation(mainFXML);
         VBox root = loader.load();
 
@@ -97,6 +96,6 @@ public class UserInfoController {
     }
 
     public void setStrikeThrough() {
-        userInfoHBox.getStylesheets().addAll(getClass().getResource("Strikethrough.css").toExternalForm());
+        userInfoHBox.getStylesheets().addAll(getClass().getResource("/desktopUI/userInfo/StrikeThrough.css").toExternalForm());
     }
 }

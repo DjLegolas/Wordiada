@@ -41,6 +41,7 @@
               <Insets />
            </VBox.margin></Button>
         <Button fx:id="checkWord" disable="true" mnemonicParsing="false" onAction="#checkWord" prefHeight="31.0" prefWidth="110.0" text="Check Word" />
+        <Button fx:id="retireButton" disable="true" mnemonicParsing="false" onAction="#retire" prefHeight="31.0" prefWidth="110.0" text="Retire" />
         <Button fx:id="exitButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#exitGame" prefHeight="30.0" prefWidth="110.0" text="Exit">
            <VBox.margin>
               <Insets />
