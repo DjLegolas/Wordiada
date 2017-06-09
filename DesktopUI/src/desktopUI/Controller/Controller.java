@@ -240,12 +240,6 @@ public class Controller {
             board.setAllDisable(false);
             return;
         }
-        if(board.getPressedButtons().size() < gameManager.getCurrentDiceValue()) {
-            alert.setContentText(outputMessageInValidMove2);
-            alert.show();
-            board.setAllDisable(false);
-            return;
-        }
       
         gameManager.updateBoard(board.getPressedButtonsIndices());
 
