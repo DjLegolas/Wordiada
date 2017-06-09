@@ -11,6 +11,7 @@ import engine.Board.Point;
 import engine.GameDataFromXml.*;
 
 import engine.jaxb.schema.generated.Letter;
+import javafx.scene.control.Alert;
 import javafx.util.Pair;
 
 public class GameEngine {
@@ -29,6 +30,7 @@ public class GameEngine {
     public enum WordCheck {
             CORRECT, WRONG, WRONG_CANT_RETRY, CHARS_NOT_PRESENT, TRIES_DEPLETED
     }
+
 
     public void setGameStarted(boolean gameStarted) {
         isGameStarted = gameStarted;
@@ -142,6 +144,7 @@ public class GameEngine {
         GameDataFromXml gameDataFromXml = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
         return gameDataFromXml.getNumOfTries();
     }
+
 
     public WordCheck isWordValid(String word, int tries) {
         if (tries == tryNumber && canRetry()) {

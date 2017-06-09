@@ -128,6 +128,10 @@ public class Controller {
         board.buildWord(false, null);
         tryNumberProperty.set(0);
         diceValueProperty.set(0);
+        //TODO: check if works
+        if(gameManager.getIsFishMod()){
+          board.removeAllBoardButtons();
+        }
     }
 
     @FXML
@@ -171,7 +175,11 @@ public class Controller {
         return result;
     }
 
-    //TODO: decide what to do with this func...
+    public Board getBoard() {
+        return board;
+    }
+
+
     @FXML
     public void startGame() {
         gameManager.startGame();
@@ -185,7 +193,6 @@ public class Controller {
     }
 
 
-    //TODO: change name of func to relevant one and decide what to do here!!!!!
     @FXML public void playTurn() {
         // adding the pressed tile to the list:
         loadXmlButton.setDisable(true);
@@ -195,10 +202,6 @@ public class Controller {
         short id = gameManager.startGame();
         selectPlayer((short)-1, id);
 
-      
-        //show instructions
-        //TODO: create a button for showing these instructions if necessary (put the on action in this func and not globaly)
-        //TODO : put unclickable board till the throw dice button
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Instructions");
         alert.setContentText("The game is started!\npress on Throw Die button to see the value of your die, and then you" +
@@ -225,10 +228,9 @@ public class Controller {
     @FXML public void makeMove() {
 
         //moveButton.setDisable(false);
-
+        //TODO: check if enough tiles to choose tiles  as dice value
         String outputMessageInValidMove1 = "You need to choose at least one letter!\n\nTry again.";
-        String outputMessageInValidMove2 = "You chose only " +  board.getPressedButtons().size() + " tiles\n\n" +
-                                           "You need to choose " + gameManager.getCurrentDiceValue() + " tiles!";
+
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
 
@@ -238,13 +240,13 @@ public class Controller {
             board.setAllDisable(false);
             return;
         }
-
         if(board.getPressedButtons().size() < gameManager.getCurrentDiceValue()) {
             alert.setContentText(outputMessageInValidMove2);
             alert.show();
             board.setAllDisable(false);
             return;
         }
+      
         gameManager.updateBoard(board.getPressedButtonsIndices());
 
         updateBoard(gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown());
