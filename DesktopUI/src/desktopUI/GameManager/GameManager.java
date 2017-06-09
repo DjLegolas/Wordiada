@@ -18,6 +18,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.util.Pair;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -29,6 +30,7 @@ public class GameManager {
     private int currentDiceValue;
     private int tryNumber = 1;
     private short currentPlayerId;
+    private boolean isFishMod;
 
 
     //TODO: add num of tries and all of this....
@@ -40,6 +42,9 @@ public class GameManager {
         this.controller = controller;
     }
 
+    public Boolean getIsFishMod() {
+        return isFishMod;
+    }
     public int getCurrentDiceValue() {
         return currentDiceValue;
     }
@@ -134,6 +139,7 @@ public class GameManager {
     public short startGame() {
         gameEngine.startGame();
         currentPlayerId = gameEngine.getCurrentPlayerId();
+        isFishMod = gameEngine.getCurrentGameData().getGoldFishMod();
         return currentPlayerId;
     }
 
@@ -248,6 +254,7 @@ public class GameManager {
                 alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Check Word");
                 alert.setContentText("Well done! your word \"" + word + "\" is correct!!!");
+                removeWordFromBoard();
                 alert.setHeaderText(null);
                 alert.show();
                 nextTurn(true);
@@ -272,7 +279,7 @@ public class GameManager {
             case CHARS_NOT_PRESENT:
                 alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Check Word");
-                alert.setContentText("Oops.. you enter INVALID chars!?");
+                alert.setContentText("Oops.. you enter INVALID chars!");
                 alert.setHeaderText(null);
                 alert.show();
                 tryNumber++;
@@ -282,12 +289,14 @@ public class GameManager {
                 alert = new Alert(Alert.AlertType.INFORMATION);
                 //TODO: check out with ido whats this error means
                 alert.setTitle("Check Word");
-                alert.setContentText("I DON'T KNOW WHAT THIS ERROR YET!");
+                alert.setContentText("Uhh..This word is Wrong.\nThat was your last try..  !");
                 alert.setHeaderText(null);
                 alert.show();
                 nextTurn(false);
                 break;
         }
+
+
     }
 
     private void switchUser() {
@@ -306,6 +315,11 @@ public class GameManager {
         updateTurnNumber();
         tryNumber = 1;
         Platform.runLater(() -> controller.resetTurn(clearButtons));
+    }
+
+    public void removeWordFromBoard(){
+        List<Point> lettersToRemove = controller.getBoard().fromSingleLetterToPoint();
+        gameEngine.getBoardObject().removeLettersFromBoard(lettersToRemove);
     }
 }
 

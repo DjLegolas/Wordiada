@@ -3,6 +3,9 @@ package engine;
 import engine.exceptions.OutOfBoardBoundariesException;
 import engine.jaxb.schema.generated.Letter;
 
+import javax.xml.soap.Node;
+import java.awt.*;
+import java.util.List;
 import java.util.Random;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +13,7 @@ import java.util.*;
 
 public class Board {
 
-    public static class Point{
+      static class Point{
         private int x;
         private int y;
 
@@ -238,6 +241,31 @@ public class Board {
                 }
             }
          }
+    }
+
+
+
+
+
+
+    public void removeLettersFromBoard(List <java.awt.Point> pointsToRemove) {
+        Random random = new Random();
+        GameDataFromXml.DataLetter dataLetter;
+
+        for(java.awt.Point point : pointsToRemove){
+            int row = (int)point.getY();
+            int col = (int)point.getX();
+            do {
+                int letter = random.nextInt(initLetters.size());
+                dataLetter = kupa.get(letter);
+            } while(!(dataLetter.getAmount() > 0));
+            Letter letter = dataLetter.getLetter();
+            initLetters.get(letter).add(new Point(col, row));
+            dataLetter.setAmount(dataLetter.getAmount() - 1);
+            board[row][col].sign = letter.getSign().get(0);
+            board[row][col].isShown = false;
+            leftCards--;
+        }
     }
 
     public Cell getCellByPos(int x, int y){

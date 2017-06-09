@@ -12,4 +12,16 @@ public class Common {
             alert.showAndWait();
         });
     }
+
+
+    //TODO: change all the code areas i used this func without call it
+    public static void showMessage(String title, String message, Alert.AlertType type){
+        Platform.runLater(() -> {
+            Alert alert = new Alert(type);
+            alert.setTitle(title);
+            alert.setContentText(message);
+            alert.setHeaderText(null);
+            alert.showAndWait();
+        });
+    }
 }
