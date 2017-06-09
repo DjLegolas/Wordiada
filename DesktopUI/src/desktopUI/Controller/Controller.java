@@ -233,7 +233,6 @@ public class Controller {
         alert.setTitle("Error");
 
         if (board.getPressedButtons().isEmpty()) {
-            alert.setTitle("Error");
             alert.setContentText(outputMessageInValidMove1);
             alert.show();
             board.setAllDisable(false);
@@ -241,7 +240,6 @@ public class Controller {
         }
 
         if(board.getPressedButtons().size() < gameManager.getCurrentDiceValue()) {
-            alert.setTitle("Error");
             alert.setContentText(outputMessageInValidMove2);
             alert.show();
             board.setAllDisable(false);
@@ -351,5 +349,40 @@ public class Controller {
         if (result.isPresent() && result.get() == ButtonType.OK) {
             gameManager.retire();
         }
+    }
+
+    @FXML
+    public void help() {
+        // Play turn
+        String playTurnHelpTitle = "Instructions";
+        String playTurnHelpContent = "The game is started!\npress on Throw Die button to see the value of your die, and then you" +
+                "need to choose tiles on the board as many as the die's value.\nOnce you choose press on the " +
+                "Make a Move button which will shows you the hidden letters." +
+                "\n\n Have Fun!!!";
+
+        //update board
+        String updateBoardHelpTitle = "Message";
+        String updateBoardHelpContent = "Now you can watch the hidden letters you chose to open!\n\n" +
+                "Try to build a word from those letter by pressing them by the order in which they apper. (If you" +
+                " accidentally pressed the wrong order, that's OK, just press again, so the letters will " +
+                "be covered by a blue background).\n When you have a word in your mind, press on the Check Word Button to continue.\n\nGood Luch!!!";
+
+        String title = null;
+        String content = null;
+
+        if (!diceButton.isDisable()) {
+            title = playTurnHelpTitle;
+            content = playTurnHelpContent;
+        }
+        else if (!moveButton.isDisable()) {
+            title = updateBoardHelpTitle;
+            content = updateBoardHelpContent;
+        }
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setContentText(content);
+        alert.setHeaderText(null);
+        alert.showAndWait();
     }
 }
