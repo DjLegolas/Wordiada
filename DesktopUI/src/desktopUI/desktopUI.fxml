@@ -47,7 +47,7 @@
               <Insets />
            </VBox.margin>
         </Button>
-        <Button fx:id="helpButton" />
+        <Button fx:id="helpButton" text="?" onAction="#help" />
       </VBox>
    </left>
    <center>
