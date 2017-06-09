@@ -4,6 +4,7 @@ import desktopUI.Controller.Controller;
 import desktopUI.Tile.SingleLetterController;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.*;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
@@ -11,10 +12,13 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 
 import engine.GameDataFromXml.DataLetter;
+
+import java.awt.*;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.Callable;
+import javafx.geometry.Point2D;
 
 public class Board {
 
@@ -216,5 +220,22 @@ public class Board {
     public void buildWord(boolean buildWord, Callable<Boolean> wordBuilder) {
         this.buildWord = buildWord;
         this.wordBuilder = wordBuilder;
+    }
+
+    public void removeAllBoardButtons(){
+        for(SingleLetterController buttonlLetter : buttonsMap.values())
+            buttonlLetter.setLetter("");
+    }
+    public List<Point> fromSingleLetterToPoint(){
+        List<Point> points = new ArrayList<>();
+
+        for(Button button: pressedButtons){
+            int sizeId = button.getId().length();
+            int col = button.getId().charAt(sizeId-1) - 48;
+            int row = button.getId().charAt(sizeId-2) - 48;
+            Point pointToAdd = new Point(row,col);
+            points.add(pointToAdd);
+        }
+        return  points;
     }
 }
