@@ -14,6 +14,7 @@ import javafx.scene.layout.Region;
 import engine.GameDataFromXml.DataLetter;
 
 import java.awt.*;
+import desktopUI.utils.Common;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
@@ -113,27 +114,32 @@ public class Board {
                 tile.setDisable(true);
                 tile.setOnMouseClicked((MouseEvent event) -> {
                         if (event.getEventType() == MouseEvent.MOUSE_CLICKED) {
-                            if (pressedButtons.contains(tile) && tile.getStyle().equals("-fx-border-color: blue;" +
-                                    "-fx-background-color: aqua")) {
-                            //if (tile.getStyle().equals("-fx-border-color: blue;" + "-fx-background-color: aqua")){
-                                tile.setStyle("");
-                                pressedButtons.remove(tile);
-                                if (buildWord) {
-                                    try {
-                                        wordBuilder.call();
-                                    }
-                                    catch (Exception e) {}
-                                }
+                            boolean allClickable = areAllButtonsClickable();
+                            if(buttonsMap.get(tile).getLetterProperty().getValue()!="" && allClickable){
+                                Common.showError("you Cannot open an already open tile!\n\nTry again!");
                             }
                             else {
-                                tile.setStyle("-fx-border-color: blue;" +
-                                 "-fx-background-color: aqua");
-                                pressedButtons.add(tile);
-                                if (buildWord) {
-                                    try {
-                                        wordBuilder.call();
+                                if (pressedButtons.contains(tile) && tile.getStyle().equals("-fx-border-color: blue;" +
+                                        "-fx-background-color: aqua")) {
+                                    //if (tile.getStyle().equals("-fx-border-color: blue;" + "-fx-background-color: aqua")){
+                                    tile.setStyle("");
+                                    pressedButtons.remove(tile);
+                                    if (buildWord) {
+                                        try {
+                                            wordBuilder.call();
+                                        } catch (Exception e) {
+                                        }
                                     }
-                                    catch (Exception e) {}
+                                } else {
+                                    tile.setStyle("-fx-border-color: blue;" +
+                                            "-fx-background-color: aqua");
+                                    pressedButtons.add(tile);
+                                    if (buildWord) {
+                                        try {
+                                            wordBuilder.call();
+                                        } catch (Exception e) {
+                                        }
+                                    }
                                 }
                             }
 
@@ -216,6 +222,11 @@ public class Board {
             buttonsMap.get(button).setLetter("");
         }
     }
+    public void resetAllButtons(){
+        for (Button button: buttonsMap.keySet()) {
+            buttonsMap.get(button).setLetter("");
+        }
+    }
 
     public void buildWord(boolean buildWord, Callable<Boolean> wordBuilder) {
         this.buildWord = buildWord;
@@ -237,5 +248,21 @@ public class Board {
             points.add(pointToAdd);
         }
         return  points;
+    }
+
+    public boolean areAllButtonsClickable(){
+        for(Button button : buttonsMap.keySet()){
+            if(button.isDisable())
+                return false;
+        }
+        return true;
+    }
+
+    public boolean areAllTilesShown(){
+        for(SingleLetterController singleLetter : buttonsMap.values()){
+            if(singleLetter.getLetterProperty().getValue().equals(""))
+                return false;
+        }
+        return  true;
     }
 }

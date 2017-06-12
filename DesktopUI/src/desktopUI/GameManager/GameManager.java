@@ -6,11 +6,15 @@ import desktopUI.scoreDetail.ScoreDetailController;
 import desktopUI.scoreDetail.WordDetails;
 import desktopUI.userInfo.UserInfoController;
 import desktopUI.utils.Common;
+import desktopUI.utils.HelperFuncs;
+import desktopUI.utils.HelperFuncs.*;
 import engine.GameEngine;
+import engine.GameEngine.CaptureTheMoment;
 import engine.Player;
 import engine.exceptions.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -31,9 +35,6 @@ public class GameManager {
     private int tryNumber = 1;
     private short currentPlayerId;
     private boolean isFishMod;
-
-
-    //TODO: add num of tries and all of this....
 
     private GameEngine gameEngine = new GameEngine();
     private Controller controller;
@@ -143,10 +144,11 @@ public class GameManager {
         return currentPlayerId;
     }
 
-    public void showWords(ScoreDetailController scoreDetailController) {
+    public void showWords(int playerId, ScoreDetailController scoreDetailController) {
         scoreDetailController.setIsCapitalist(gameEngine.isWordScore());
         long totalWords = 0;
-        for (Map.Entry<String, Pair<Integer, Integer>> entry: gameEngine.getPlayerWords().entrySet()) {
+        Map<String, Pair<Integer, Integer>> words = gameEngine.getPlayerWords(playerId);
+        for (Map.Entry<String, Pair<Integer, Integer>> entry: words.entrySet()) {
             scoreDetailController.getWords().add(new WordDetails(entry.getKey(), entry.getValue().getKey(), entry.getValue().getValue()));
             totalWords += entry.getValue().getKey();
         }
@@ -191,6 +193,7 @@ public class GameManager {
         }
         else {
             Common.showError("You selected too many tiles. you need only " + currentDiceValue);
+
         }
     }
 
@@ -206,6 +209,8 @@ public class GameManager {
         }
     }
 
+
+    //TODO: complete the func when no more tiles and then get to this endgame func + update the pointerToTurnData in this func
     private void endGame() {
 
     }
@@ -217,6 +222,9 @@ public class GameManager {
     private void updateTurnNumber() {
         int turn = gameEngine.getStatistics().getNumOfTurns();
         Platform.runLater(() -> controller.getTurnProperty().set(turn));
+    }
+    private void updateTurnNumber(int turnNum) {
+        Platform.runLater(() -> controller.getTurnProperty().set(turnNum));
     }
 
     private void updatePlayerScore() {
@@ -287,14 +295,15 @@ public class GameManager {
                 break;
             case WRONG_CANT_RETRY:
                 alert = new Alert(Alert.AlertType.INFORMATION);
-                //TODO: check out with ido whats this error means
                 alert.setTitle("Check Word");
                 alert.setContentText("Uhh..This word is Wrong.\nThat was your last try..  !");
                 alert.setHeaderText(null);
                 alert.show();
+                gameEngine.saveTheTurn(controller.getBoard().getPressedButtons());
                 nextTurn(false);
                 break;
         }
+
 
 
     }
@@ -320,6 +329,32 @@ public class GameManager {
     public void removeWordFromBoard(){
         List<Point> lettersToRemove = controller.getBoard().fromSingleLetterToPoint();
         gameEngine.getBoardObject().removeLettersFromBoard(lettersToRemove);
+        //update turn info
+        gameEngine.saveTheTurn(controller.getBoard().getPressedButtons());
     }
+
+
+    //TODO: probably not be useable - need to be removed!
+    public Player getPlayerById(short id,List<Player>players){
+        for(Player player : players){
+            if(player.getId() == id)
+                return player;
+        }
+        return null;
+    }
+
+    public void setTurnValues(CaptureTheMoment turnValues){
+        int turnNum = turnValues.getTurnNumber();
+        updateTurnNumber(turnNum);
+        currentPlayerId = turnValues.getCurrentPlayer().getId();
+        switchUser();
+
+    }
+
+
+
+
+
+
 }
 

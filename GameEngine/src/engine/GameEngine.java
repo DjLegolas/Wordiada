@@ -5,6 +5,7 @@ import java.lang.String;
 
 import engine.exceptions.*;
 
+import java.sql.Struct;
 import java.util.*;
 
 import engine.Board.Point;
@@ -12,6 +13,7 @@ import engine.GameDataFromXml.*;
 
 import engine.jaxb.schema.generated.Letter;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.util.Pair;
 
 public class GameEngine {
@@ -27,10 +29,58 @@ public class GameEngine {
     private long startTime;
     private int numberOfTurns = 0;
     private int tryNumber;
+    private Map <Integer, GameEngine.CaptureTheMoment> turnData = new HashMap<>();
+    public int pointerForTurnData = 0;
     public enum WordCheck {
             CORRECT, WRONG, WRONG_CANT_RETRY, CHARS_NOT_PRESENT, TRIES_DEPLETED
     }
 
+
+    //TODO: we need also save dice value , num of tries?
+    public static class CaptureTheMoment{
+        private  List<Player> players;
+        private List<Button> selectedBoardButtons; //for showing the selected word
+        private Player currentPlayer;
+        private int turnNumber;
+
+        public CaptureTheMoment(){}
+
+        public void setCurrentPlayer(Player currentPlayer) {
+            this.currentPlayer = currentPlayer;
+        }
+
+        public void setPlayers(List<Player> players) {
+            this.players = players;
+        }
+
+        public void setSelectedBoardButtons(List<Button> selectedBoardButtons) {
+            this.selectedBoardButtons = selectedBoardButtons;
+        }
+
+        public void setTurnNumber(int turnNumber) {
+            this.turnNumber = turnNumber;
+        }
+
+        public Player getCurrentPlayer() {
+            return currentPlayer;
+        }
+
+        public List<Player> getPlayers() {
+            return players;
+        }
+
+        public int getTurnNumber() {
+            return turnNumber;
+        }
+
+        public List<Button> getSelectedBoardButtons() {
+            return selectedBoardButtons;
+        }
+    }
+
+    public Map<Integer, CaptureTheMoment> getTurnData() {
+        return turnData;
+    }
 
     public void setGameStarted(boolean gameStarted) {
         isGameStarted = gameStarted;
@@ -201,6 +251,12 @@ public class GameEngine {
         return (currentGameData.getBoard().getKupaAmount() == 0) || (getUnShownPoints().isEmpty());
     }
 
+    public boolean isGameEnded(boolean allTilesShown) {
+        return (currentGameData.getBoard().getKupaAmount() == 0) || allTilesShown;
+    }
+
+
+
     public String getWinnerName(boolean userEnd) {
         Player winner = null;
         // TODO: fix when having more than 2 players
@@ -264,12 +320,18 @@ public class GameEngine {
     }
 
 
-    public Map<String, Pair<Integer, Integer>> getPlayerWords() {
+    public Map<String, Pair<Integer, Integer>> getPlayerWords(int playerId) {
         Map<String, Pair<Integer, Integer>> words = new HashMap<>();
-        for (Map.Entry<Dictionary.Word, Integer> entry: currentPlayer.getWords().entrySet()) {
-            words.put(entry.getKey().getWord(), new Pair<>(entry.getValue(), entry.getKey().getScore()));
+        List<Player> players = isGameEnded() ? turnData.get(pointerForTurnData).players : this.players;
+        for (Player player: players) {
+            if (player.getId() == playerId) {
+                for (Map.Entry<Dictionary.Word, Integer> entry: player.getWords().entrySet()) {
+                    words.put(entry.getKey().getWord(), new Pair<>(entry.getValue(), entry.getKey().getScore()));
+                }
+                return words;
+            }
         }
-        return words;
+        return null;
     }
 
     public boolean retirePlayer() {
@@ -279,5 +341,20 @@ public class GameEngine {
         currentPlayer.retire();
         nextPlayer();
         return true;
+    }
+
+    //TODO: decide where to call this func - should be after each move
+    public void saveTheTurn(List<Button> pressedButtons){
+        CaptureTheMoment captureTheMoment = new CaptureTheMoment();
+        Player currentPlayer = this.currentPlayer;
+        captureTheMoment.setCurrentPlayer(currentPlayer);
+        captureTheMoment.setPlayers(players);
+        captureTheMoment.setTurnNumber(numberOfTurns);
+        captureTheMoment.setSelectedBoardButtons(pressedButtons);
+        turnData.put(diceValue,captureTheMoment);
+    }
+
+    public CaptureTheMoment getSpesificTurn(){
+        return turnData.get(pointerForTurnData);
     }
 }
