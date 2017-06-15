@@ -1,5 +1,6 @@
 package desktopUI.userInfo;
 
+import com.sun.javafx.beans.IDProperty;
 import desktopUI.GameManager.GameManager;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleFloatProperty;
@@ -87,7 +88,7 @@ public class UserInfoController {
         loader.setLocation(mainFXML);
         VBox root = loader.load();
 
-        gameManager.showWords(loader.getController());
+        gameManager.showWords(idProperty.get(), loader.getController());
 
         Stage stage = new Stage();
         stage.setTitle("Player Words - Wordiada");

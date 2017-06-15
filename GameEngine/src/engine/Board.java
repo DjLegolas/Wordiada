@@ -253,8 +253,8 @@ public class Board {
         GameDataFromXml.DataLetter dataLetter;
 
         for(java.awt.Point point : pointsToRemove){
-            int row = (int)point.getY();
-            int col = (int)point.getX();
+            int row = (int)point.getY()- 1;
+            int col = (int)point.getX() - 1;
             do {
                 int letter = random.nextInt(initLetters.size());
                 dataLetter = kupa.get(letter);

@@ -47,12 +47,16 @@
               <Insets />
            </VBox.margin>
         </Button>
-        <Button fx:id="helpButton" text="?" onAction="#help" />
+        <Button fx:id="helpButton" onAction="#endOfGameStatus" text="?" />
+         <Button fx:id="newGameButton" mnemonicParsing="false" text="New Game" visible="false" />
+         <Button fx:id="playAgainButton" mnemonicParsing="false" text="Play Again" visible="false" />
+         <Button fx:id="prevButton" mnemonicParsing="false" text="Prev" visible="false" />
+         <Button fx:id="nextButton" mnemonicParsing="false" text="Next" visible="false" />
       </VBox>
    </left>
    <center>
        <VBox>
-          <ScrollPane fx:id="boardScrollPane" BorderPane.alignment="CENTER">
+          <ScrollPane fx:id="boardScrollPane" prefHeight="542.0" prefWidth="443.0" BorderPane.alignment="CENTER">
             <GridPane fx:id="boardPane">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
@@ -77,7 +81,7 @@
                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
            </rowConstraints>
             <children>
-               <Label text="Turn No." style="-fx-strikethrough: true"/>
+               <Label style="-fx-strikethrough: true" text="Turn No." />
                <Label fx:id="turnNumberLabel" text="0" GridPane.columnIndex="1" />
                <Label text="Try No." GridPane.rowIndex="2" />
                <Label fx:id="tryNumberLabel" text="0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
