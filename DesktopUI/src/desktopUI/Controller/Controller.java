@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class Controller {
+ public class Controller {
 
 
     private Stage primaryStage;
@@ -45,12 +45,17 @@ public class Controller {
     @FXML private  Label titleInfoGame;
     @FXML private  Label titlePlayerData;
     @FXML private VBox playerVBox;
-    @FXML private Button buildWord;
+    @FXML private Button buildWord; //TODO: what's this?
     @FXML private Button checkWord;
     @FXML private Label buildWordLabel;
     @FXML private Label tryNumberLabel;
     @FXML private Label totalTriesLabel;
     @FXML private Label diceValueLabel;
+    @FXML private Button newGameButton;
+    @FXML private Button playAgainButton;
+    @FXML private Button nextButton;
+    @FXML private Button prevButton;
+
 
     private SimpleIntegerProperty selectedTurnNumber;
     private SimpleStringProperty selectedInitInfoGame;
@@ -91,6 +96,46 @@ public class Controller {
 
     public SimpleIntegerProperty getTurnProperty() {
         return selectedTurnNumber;
+    }
+
+    public Button getLoadXmlButton() {
+        return loadXmlButton;
+    }
+
+    public Button getMoveButton() {
+        return moveButton;
+    }
+
+    public Button getCheckWord() {
+        return checkWord;
+    }
+
+    public Button getRetireButton() {
+        return retireButton;
+    }
+
+    public Button getStartButton() {
+        return startButton;
+    }
+
+    public Button getDiceButton() {
+        return diceButton;
+    }
+
+    public Button getNextButton() {
+        return nextButton;
+    }
+
+    public Button getPrevButton() {
+        return prevButton;
+    }
+
+    public Button getPlayAgainButton() {
+        return playAgainButton;
+    }
+
+    public Button getNewGameButton() {
+        return newGameButton;
     }
 
     public Map<Short, UserInfoController> getUserInfoMap() {
@@ -230,12 +275,21 @@ public class Controller {
         //moveButton.setDisable(false);
         //TODO: check if enough tiles to choose tiles  as dice value
         String outputMessageInValidMove1 = "You need to choose at least one letter!\n\nTry again.";
+        String outputMessageInValidMove2 = "You chose too many tiles! you need to choose only " +gameManager.getCurrentDiceValue() + " tiles \n\nTry again.";
 
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
 
         if (board.getPressedButtons().isEmpty()) {
             alert.setContentText(outputMessageInValidMove1);
+            alert.show();
+            board.setAllDisable(false);
+            return;
+        }
+
+      //TODO: check the too many tiles error with the accepetion
+        if(board.getPressedButtons().size() > gameManager.getCurrentDiceValue()){
+            alert.setContentText(outputMessageInValidMove2);
             alert.show();
             board.setAllDisable(false);
             return;
@@ -266,16 +320,16 @@ public class Controller {
         gameManager.setUnclickableButtons(this.board.getPressedButtons(), this.board.getBoardButtonList());
         gameManager.setDefaultStyle(this.board.getPressedButtons());
 
+        this.board.buildWord(true, () -> {
+            wordBuildProperty.set(gameManager.buttonsToStr(this.board.getPressedButtons(),this.board.getButtonsMap(),gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown()));
+            return Boolean.TRUE;
+        });
    }
 
     @FXML public void checkWord(){
 
         moveButton.setDisable(true);
 
-        board.buildWord(true, () -> {
-            wordBuildProperty.set(gameManager.buttonsToStr(board.getPressedButtons(),board.getButtonsMap(),gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown()));
-            return Boolean.TRUE;
-        });
         String word = gameManager.buttonsToStr(board.getPressedButtons(),board.getButtonsMap(),gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown());
         gameManager.checkWord(word);
 
@@ -308,18 +362,32 @@ public class Controller {
     @FXML
     //TODO: make unclick the throw a dice button but keep the info about the value somewhere so the player can watch anytime
     public void throwDie() {
-        moveButton.setDisable(false);
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Dice Throw - Wordiada");
-        alert.setContentText("Throwing dice...");
-        alert.setHeaderText(null);
-        alert.show();
-        gameManager.getDiceValue(diceValueProperty);
-        //board.setIsClickable(true);
-        board.setAllDisable(false);
-        diceButton.setDisable(true);
-        alert.setContentText("Dice value is " + diceValueProperty.get());
-        gameManager.setCurrentDiceValue(diceValueProperty.get());
+        boolean allShown = false;
+        if(!gameManager.getIsFishMod())
+            allShown = board.areAllTilesShown();
+        //if the game is over
+        if(gameManager.getGameEngine().isGameEnded(allShown)){
+            alert.setTitle("Game is Over");
+            alert.setContentText("Game's Over...\n Choose one of the buttons options");
+            alert.setHeaderText(null);
+            alert.show();
+            endOfGameStatus();
+        }
+
+        else {
+            moveButton.setDisable(false);
+            alert.setTitle("Dice Throw - Wordiada");
+            alert.setContentText("Throwing dice...");
+            alert.setHeaderText(null);
+            alert.show();
+            gameManager.getDiceValue(diceValueProperty);
+            //board.setIsClickable(true);
+            board.setAllDisable(false);
+            diceButton.setDisable(true);
+            alert.setContentText("Dice value is " + diceValueProperty.get());
+            gameManager.setCurrentDiceValue(diceValueProperty.get());
+        }
     }
 
     @FXML
@@ -348,6 +416,7 @@ public class Controller {
     }
 
     @FXML
+    //TODO: fix and put back the call in the button - i changed foe testing
     public void help() {
         // Play turn
         String playTurnHelpTitle = "Instructions";
@@ -381,4 +450,33 @@ public class Controller {
         alert.setHeaderText(null);
         alert.showAndWait();
     }
+
+    //show the buttons: new game, play again, prev and next
+    @FXML
+    public void endOfGameStatus(){
+        startButton.setDisable(true);
+        loadXmlButton.setDisable(true);
+        diceButton.setDisable(true);
+        moveButton.setDisable(true);
+        retireButton.setDisable(true);
+        checkWord.setDisable(true);
+        newGameButton.setVisible(true);
+        playAgainButton.setVisible(true);
+        prevButton.setVisible(true);
+        nextButton.setVisible(true);
+        gameManager.getGameEngine().pointerForTurnData = gameManager.getGameEngine().getTurnData().size();
+        board.resetAllButtons();
+    }
+
+    //TODO: init all data game to the start
+    @FXML public void playAgain(){
+
+    }
+    public void prev (){
+        gameManager.getGameEngine().pointerForTurnData --;
+        gameManager.getGameEngine().getSpesificTurn();
+
+    }
+
+
 }
