@@ -1,5 +1,6 @@
 package engine;
 
+import engine.exceptions.OutOfBoardBoundariesException;
 import javafx.concurrent.Task;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ public class ComputerTask extends Task<Boolean> {
     private Player player;
     private GameEngine gameEngine;
     private int diceValue;
+    private int tryNumber;
 
     ComputerTask(Player player, GameEngine gameEngine) {
         this.player = player;
@@ -20,6 +22,7 @@ public class ComputerTask extends Task<Boolean> {
 
     @Override
     protected Boolean call() {
+        tryNumber = 0;
         getDiceValue();
         selectTilesToShow();
         buildWord();
@@ -49,22 +52,49 @@ public class ComputerTask extends Task<Boolean> {
         updateMessage("Selecting " + diceValue + " tiles to show...");
         sleepForAWhile(SLEEP_TIME);
         List<Board.Point> points = gameEngine.getUnShownPoints();
-        List<Board.Point> selectedPoints = new ArrayList<>();
+        List<int[]> selectedPoints = new ArrayList<>();
         Random random = new Random();
         for (int i = 0; i < diceValue; i++) {
             updateProgress(i, diceValue);
-            Board.Point point;
+            int[] p = new int[2];
             do {
-                point = points.get(random.nextInt(points.size()));
-            } while (!selectedPoints.contains(point));
-            selectedPoints.add(point);
+                Board.Point point = points.get(random.nextInt(points.size()));
+                p[0] = point.getY();
+                p[1] = point.getX();
+            } while (!selectedPoints.contains(p));
+            selectedPoints.add(p);
+        }
+        try {
+            gameEngine.updateBoard(selectedPoints);
+        } catch (OutOfBoardBoundariesException e) {
+            e.printStackTrace();
         }
         updateMessage("Selection completed.");
         sleepForAWhile(SLEEP_TIME);
     }
 
     private void buildWord() {
-        updateMessage("Building a word...");
+        String tryNumberStr = "Try number: "+ tryNumber + "\n";
+        updateMessage(tryNumberStr +"Building a word...");
         sleepForAWhile(SLEEP_TIME);
+        char[][] board = gameEngine.getBoard();
+        StringBuilder word = new StringBuilder();
+        // build the word from the board
+        for (char[] row: board) {
+            for (char c: row) {
+                if (c != '\0' && c != ' ') {
+                    word.append(c);
+                }
+                if (word.length() >= 2) {
+                    break;
+                }
+            }
+            if (word.length() >= 2) {
+                break;
+            }
+        }
+        updateMessage(tryNumberStr + "The word is \"" + word + "\"");
+        sleepForAWhile(SLEEP_TIME);
+        gameEngine.isWordValid(word.toString(), tryNumber);
     }
 }
