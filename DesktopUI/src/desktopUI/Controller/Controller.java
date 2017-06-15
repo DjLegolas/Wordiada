@@ -416,7 +416,12 @@ import java.util.Optional;
     }
 
     @FXML
+    public void restart() {
+
+    }
+
     //TODO: fix and put back the call in the button - i changed foe testing
+    @FXML
     public void help() {
         // Play turn
         String playTurnHelpTitle = "Instructions";
