@@ -348,6 +348,11 @@ public class Controller {
     }
 
     @FXML
+    public void restart() {
+
+    }
+
+    @FXML
     public void help() {
         // Play turn
         String playTurnHelpTitle = "Instructions";
