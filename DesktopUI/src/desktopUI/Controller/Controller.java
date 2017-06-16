@@ -16,7 +16,6 @@ import javafx.stage.Stage;
 import desktopUI.GameManager.GameManager;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -27,7 +26,6 @@ import java.util.Optional;
     private Stage primaryStage;
     private GameManager gameManager = new GameManager(this);
     private Board board;
-    private List<Button> pressedButtons = new ArrayList<>();
     private Map<Short, UserInfoController> userInfoControllerMap;
 
     @FXML private  GridPane boardPane;
@@ -45,7 +43,6 @@ import java.util.Optional;
     @FXML private  Label titleInfoGame;
     @FXML private  Label titlePlayerData;
     @FXML private VBox playerVBox;
-    @FXML private Button buildWord; //TODO: what's this?
     @FXML private Button checkWord;
     @FXML private Label buildWordLabel;
     @FXML private Label tryNumberLabel;
@@ -55,7 +52,6 @@ import java.util.Optional;
     @FXML private Button playAgainButton;
     @FXML private Button nextButton;
     @FXML private Button prevButton;
-
 
     private SimpleIntegerProperty selectedTurnNumber;
     private SimpleStringProperty selectedInitInfoGame;
@@ -130,6 +126,10 @@ import java.util.Optional;
         return prevButton;
     }
 
+    public SimpleStringProperty getWordBuildProperty() {
+        return wordBuildProperty;
+    }
+
     public Button getPlayAgainButton() {
         return playAgainButton;
     }
@@ -175,7 +175,7 @@ import java.util.Optional;
         diceValueProperty.set(0);
         //TODO: check if works
         if(gameManager.getIsFishMod()){
-          board.removeAllBoardButtons();
+            board.removeAllBoardButtons();
         }
     }
 
@@ -185,7 +185,9 @@ import java.util.Optional;
         fileChooser.setTitle("Choose xml file");
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("XML", "*.xml"));
         File noy = new File("C:\\Users\\noy\\Desktop\\לימודים\\IdeaProjects\\Wordiada");
+        File ido = new File("D:\\progrmming\\github\\Wordiada");
         if(noy.exists()) fileChooser.setInitialDirectory(noy);
+        else if (ido.exists()) fileChooser.setInitialDirectory(ido);
         File xmlFile = fileChooser.showOpenDialog(primaryStage);
         if (xmlFile == null) {
             return;
@@ -316,21 +318,26 @@ import java.util.Optional;
 
         moveButton.setDisable(true);
         checkWord.setDisable(false);
-        this.board.setPressedButtonsValues(board, this.board.getPressedButtons(), gameManager.getGameEngine().getCurrentGameData().getKupa());
+        this.board.setPressedButtonsValues(board, gameManager.getGameEngine().getCurrentGameData().getKupa());
+        // this.board.setPressedButtonsValues(board, this.board.getPressedButtons(), gameManager.getGameEngine().getCurrentGameData().getKupa());
         gameManager.setUnclickableButtons(this.board.getPressedButtons(), this.board.getBoardButtonList());
         gameManager.setDefaultStyle(this.board.getPressedButtons());
 
         this.board.buildWord(true, () -> {
-            wordBuildProperty.set(gameManager.buttonsToStr(this.board.getPressedButtons(),this.board.getButtonsMap(),gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown()));
+            wordBuildProperty.set(gameManager.buttonsToStr(this.board.getPressedButtons(), gameManager.getGameEngine().getBoard()));
             return Boolean.TRUE;
         });
+   }
+
+   public void savedBoardUpdate(char[][] board, List<Button> pressedButtons) {
+       this.board.updateFromSave(board, pressedButtons, gameManager.getGameEngine().getCurrentGameData().getKupa());
    }
 
     @FXML public void checkWord(){
 
         moveButton.setDisable(true);
 
-        String word = gameManager.buttonsToStr(board.getPressedButtons(),board.getButtonsMap(),gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown());
+        String word = gameManager.buttonsToStr(board.getPressedButtons(), gameManager.getGameEngine().getBoard());
         gameManager.checkWord(word);
 
         // num turn +
@@ -468,20 +475,31 @@ import java.util.Optional;
         newGameButton.setVisible(true);
         playAgainButton.setVisible(true);
         prevButton.setVisible(true);
+        prevButton.setDisable(true);
         nextButton.setVisible(true);
-        gameManager.getGameEngine().pointerForTurnData = gameManager.getGameEngine().getTurnData().size();
         board.resetAllButtons();
+        next();
+        prevButton.setDisable(true);
     }
 
     //TODO: init all data game to the start
     @FXML public void playAgain(){
 
     }
-    public void prev (){
-        gameManager.getGameEngine().pointerForTurnData --;
-        gameManager.getGameEngine().getSpesificTurn();
 
+    @FXML
+    public void prev(){
+        if (nextButton.isDisable()) {
+            nextButton.setDisable(false);
+        }
+        gameManager.prevSaveData();
     }
 
-
+     @FXML
+     public void next(){
+         if (prevButton.isDisable()) {
+             prevButton.setDisable(false);
+         }
+         gameManager.nextSaveData();
+     }
 }

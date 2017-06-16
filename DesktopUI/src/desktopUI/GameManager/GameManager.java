@@ -26,6 +26,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -141,6 +142,7 @@ public class GameManager {
         gameEngine.startGame();
         currentPlayerId = gameEngine.getCurrentPlayerId();
         isFishMod = gameEngine.getCurrentGameData().getGoldFishMod();
+        updateTurnNumber();
         return currentPlayerId;
     }
 
@@ -204,7 +206,7 @@ public class GameManager {
                 controller.playerRetired(retiredId);
                 nextTurn(false);
             } else {
-                endGame();
+                controller.endOfGameStatus();
             }
         }
     }
@@ -212,7 +214,6 @@ public class GameManager {
 
     //TODO: complete the func when no more tiles and then get to this endgame func + update the pointerToTurnData in this func
     private void endGame() {
-
     }
 
     public void exitGame() {
@@ -238,14 +239,14 @@ public class GameManager {
         }
     }
 
-    public String buttonsToStr(List<Button>letters, Map<Button, SingleLetterController>infoAboutLetters,char [][]signs) {
+    public String buttonsToStr(List<Button>letters, char [][]signs) {
 
-        int sizeListButtons = letters.size();
+        // int sizeListButtons = letters.size();
         //  List<Character> word = new ArrayList<>();
         StringBuilder word = new StringBuilder();
-        for (int i = 0; i < sizeListButtons; i++) {
-            int sizeIdButton = letters.get(i).getId().length();
-            String id = letters.get(i).getId();
+        for (Button letter : letters) {
+            int sizeIdButton = letter.getId().length();
+            String id = letter.getId();
             int col = id.getBytes()[sizeIdButton - 1] - 48 - 1;
             int row = id.getBytes()[sizeIdButton - 2] - 48 - 1;
             char sign = signs[row][col];
@@ -257,7 +258,7 @@ public class GameManager {
     //check if ita a good word and calc score if necessary
     public void checkWord(String word) {
         Alert alert;
-        switch (gameEngine.isWordValid(word, tryNumber)) {
+        switch (gameEngine.isWordValidWithCoordinates(word, tryNumber, new ArrayList<>(controller.getBoard().getPressedButtons()))) {
             case CORRECT:
                 alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Check Word");
@@ -299,13 +300,9 @@ public class GameManager {
                 alert.setContentText("Uhh..This word is Wrong.\nThat was your last try..  !");
                 alert.setHeaderText(null);
                 alert.show();
-                gameEngine.saveTheTurn(controller.getBoard().getPressedButtons());
                 nextTurn(false);
                 break;
         }
-
-
-
     }
 
     private void switchUser() {
@@ -330,7 +327,7 @@ public class GameManager {
         List<Point> lettersToRemove = controller.getBoard().fromSingleLetterToPoint();
         gameEngine.getBoardObject().removeLettersFromBoard(lettersToRemove);
         //update turn info
-        gameEngine.saveTheTurn(controller.getBoard().getPressedButtons());
+        // gameEngine.saveTheTurn(controller.getBoard().getPressedButtons());
     }
 
 
@@ -343,15 +340,27 @@ public class GameManager {
         return null;
     }
 
-    public void setTurnValues(CaptureTheMoment turnValues){
+    private void setTurnValues(CaptureTheMoment turnValues){
         int turnNum = turnValues.getTurnNumber();
         updateTurnNumber(turnNum);
         currentPlayerId = turnValues.getCurrentPlayer().getId();
         switchUser();
-
+        Platform.runLater(() -> controller.savedBoardUpdate(turnValues.getBoard(), turnValues.getSelectedBoardButtons()));
+        controller.getWordBuildProperty().set(buttonsToStr(turnValues.getSelectedBoardButtons(), turnValues.getBoard()));
     }
 
-
+    public void prevSaveData() {
+        setTurnValues(gameEngine.prevSaveData());
+        if (!gameEngine.havePrevSave()) {
+            controller.getPrevButton().setDisable(true);
+        }
+    }
+    public void nextSaveData() {
+        setTurnValues(gameEngine.nextSaveData());
+        if (!gameEngine.haveNextSave()) {
+            controller.getNextButton().setDisable(true);
+        }
+    }
 
 
 

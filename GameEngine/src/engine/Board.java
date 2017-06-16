@@ -243,18 +243,19 @@ public class Board {
          }
     }
 
-
-
-
-
-
     public void removeLettersFromBoard(List <java.awt.Point> pointsToRemove) {
         Random random = new Random();
         GameDataFromXml.DataLetter dataLetter;
 
         for(java.awt.Point point : pointsToRemove){
-            int row = (int)point.getY()- 1;
+            int row = (int)point.getY() - 1;
             int col = (int)point.getX() - 1;
+            for (Letter letter: initLetters.keySet()) {
+                if (letter.getSign().get(0).equals(board[row][col].sign)) {
+                    initLetters.get(letter).remove(new Point(col, row));
+                    break;
+                }
+            }
             do {
                 int letter = random.nextInt(initLetters.size());
                 dataLetter = kupa.get(letter);
