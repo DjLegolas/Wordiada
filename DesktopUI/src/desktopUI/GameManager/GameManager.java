@@ -343,7 +343,7 @@ public class GameManager {
     private void setTurnValues(CaptureTheMoment turnValues){
         int turnNum = turnValues.getTurnNumber();
         updateTurnNumber(turnNum);
-        currentPlayerId = turnValues.getCurrentPlayer().getId();
+        updatePlayerScore();
         switchUser();
         Platform.runLater(() -> controller.savedBoardUpdate(turnValues.getBoard(), turnValues.getSelectedBoardButtons()));
         controller.getWordBuildProperty().set(buttonsToStr(turnValues.getSelectedBoardButtons(), turnValues.getBoard()));
@@ -361,9 +361,5 @@ public class GameManager {
             controller.getNextButton().setDisable(true);
         }
     }
-
-
-
-
 }
 

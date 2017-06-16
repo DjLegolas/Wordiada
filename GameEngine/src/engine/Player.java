@@ -27,6 +27,15 @@ public class Player {
         words = new HashMap<>();
     }
 
+    Player(Player other) {
+        name = other.name;
+        id = other.id;
+        score = other.score;
+        type = other.type;
+        words = new HashMap<>();
+        words.putAll(other.words);
+    }
+
     public void updateScore(Dictionary.Word word, float score) {
         this.score += score;
         words.put(word, words.containsKey(word) ? words.get(word) + 1 : 1);

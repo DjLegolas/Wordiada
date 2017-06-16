@@ -146,7 +146,16 @@ import java.util.Optional;
         return tryNumberProperty;
     }
 
+    private void initScore() {
+        if (userInfoControllerMap != null) {
+            for (UserInfoController userInfoController : userInfoControllerMap.values()) {
+                userInfoController.setScoreProperty(0);
+            }
+        }
+    }
+
     private void reinitialize() {
+        initScore();
         board = null;
         userInfoControllerMap = null;
         boardPane.getChildren().clear();
@@ -225,20 +234,6 @@ import java.util.Optional;
     public Board getBoard() {
         return board;
     }
-
-
-    @FXML
-    public void startGame() {
-        gameManager.startGame();
-    }
-
-    @FXML public void diceThrow(){
-        Alert dieMessage = new Alert(Alert.AlertType.INFORMATION,"Please throw the die");
-        dieMessage.setTitle("Play Turn");
-        dieMessage.setHeaderText("Throwing die...");
-        dieMessage.show();
-    }
-
 
     @FXML public void playTurn() {
         // adding the pressed tile to the list:
@@ -422,11 +417,6 @@ import java.util.Optional;
         }
     }
 
-    @FXML
-    public void restart() {
-
-    }
-
     //TODO: fix and put back the call in the button - i changed foe testing
     @FXML
     public void help() {
@@ -480,6 +470,7 @@ import java.util.Optional;
         board.resetAllButtons();
         next();
         prevButton.setDisable(true);
+        initScore();
     }
 
     //TODO: init all data game to the start

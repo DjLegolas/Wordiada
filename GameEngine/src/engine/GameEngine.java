@@ -51,7 +51,15 @@ public class GameEngine {
         }
 
         public void setPlayers(List<Player> players) {
-            this.players = players;
+            this.players = new ArrayList<>();
+            for (Player player: players) {
+                if (player.getId() == currentPlayer.getId()) {
+                    this.players.add(currentPlayer);
+                }
+                else {
+                    this.players.add(new Player(player));
+                }
+            }
         }
 
         public void setSelectedBoardButtons(List<Button> selectedBoardButtons) {
@@ -195,7 +203,7 @@ public class GameEngine {
     }
 
     private boolean canRetry() {
-        return tryNumber <= currentGameData.getNumOfTries();
+        return tryNumber <= currentGameData.getNumOfTries() + 1;
     }
 
     public int getMaxRetries() {
@@ -368,8 +376,7 @@ public class GameEngine {
     //TODO: decide where to call this func - should be after each move
     public void saveTheTurn(List<Button> pressedButtons){
         CaptureTheMoment captureTheMoment = new CaptureTheMoment();
-        Player currentPlayer = this.currentPlayer;
-        captureTheMoment.setCurrentPlayer(currentPlayer);
+        captureTheMoment.setCurrentPlayer(new Player(currentPlayer));
         captureTheMoment.setPlayers(players);
         captureTheMoment.setTurnNumber(numberOfTurns);
         captureTheMoment.setSelectedBoardButtons(pressedButtons);
@@ -384,6 +391,7 @@ public class GameEngine {
     private CaptureTheMoment getCurrentSave() {
         CaptureTheMoment captureTheMoment = turnData.get(pointerForTurnData);
         currentPlayer = captureTheMoment.currentPlayer;
+        players = captureTheMoment.players;
         return captureTheMoment;
     }
 

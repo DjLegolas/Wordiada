@@ -1,9 +1,7 @@
 package desktopUI.Board;
 
-import desktopUI.Controller.Controller;
 import desktopUI.Tile.SingleLetterController;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.*;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -19,7 +17,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.Callable;
-import javafx.geometry.Point2D;
 
 public class Board {
 
@@ -260,6 +257,8 @@ public class Board {
     public void resetAllButtons(){
         for (Button button: buttonsMap.keySet()) {
             buttonsMap.get(button).setLetter("");
+            button.setStyle("");
+            button.setDisable(true);
         }
     }
 
