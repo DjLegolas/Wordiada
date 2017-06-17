@@ -3,6 +3,8 @@ package desktopUI.Controller;
 
 import desktopUI.Board.Board;
 import desktopUI.userInfo.UserInfoController;
+import engine.ComputerTask;
+import engine.Player;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -14,6 +16,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import desktopUI.GameManager.GameManager;
+import engine.Player.Type;
 
 import java.io.File;
 import java.util.List;
@@ -25,6 +28,7 @@ import java.util.Optional;
 
     private Stage primaryStage;
     private GameManager gameManager = new GameManager(this);
+    private ComputerTask computerTask;
     private Board board;
     private Map<Short, UserInfoController> userInfoControllerMap;
 
@@ -253,6 +257,12 @@ import java.util.Optional;
 
         alert.setHeaderText(null);
         alert.show();
+        if(gameManager.getGameEngine().getCurrentPlayer().getType().equals(Type.COMPUTER)){
+            setAllDisable();
+            computerTask = new ComputerTask(gameManager.getPlayerById(id, gameManager.getGameEngine().getPlayers()), gameManager.getGameEngine());
+            computerTask.run();
+            computerTask.getSelectedPoints();
+        }
     }
 
     public void selectPlayer(short prevId, short newId) {
@@ -265,6 +275,15 @@ import java.util.Optional;
         userController = userInfoControllerMap.get(newId);
         userController.setStyleProperty("-fx-font-weight: bold");
         userController.disableDetailsButton(false);
+    }
+    private void setAllDisable(){
+
+        loadXmlButton.setDisable(true);
+        startButton.setDisable(true);
+        diceButton.setDisable(true);
+        moveButton.setDisable(true);
+        retireButton.setDisable(true);
+        exitButton.setDisable(true);
     }
 
     @FXML public void makeMove() {

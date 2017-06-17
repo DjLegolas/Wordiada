@@ -149,15 +149,6 @@ public class GameEngine {
         currentGameData =  gdfx.get(gdfx.size() - 1);
         players = getPlayersList();
         numOfPlayers = players.size();
-
-
-        //IDO's code - dunno what it is
-
-
-        /*
-        while (players.size() < 2) {
-            players.add(new Player("Player" + players.size(),));
-        }*/
         currentPlayer = players.get(0);
         startTime = System.currentTimeMillis();
         tryNumber = 1;
@@ -374,7 +365,7 @@ public class GameEngine {
     }
 
     //TODO: decide where to call this func - should be after each move
-    public void saveTheTurn(List<Button> pressedButtons){
+    private void saveTheTurn(List<Button> pressedButtons){
         CaptureTheMoment captureTheMoment = new CaptureTheMoment();
         captureTheMoment.setCurrentPlayer(new Player(currentPlayer));
         captureTheMoment.setPlayers(players);

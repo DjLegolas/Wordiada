@@ -3,6 +3,7 @@ package engine;
 import engine.exceptions.OutOfBoardBoundariesException;
 import javafx.concurrent.Task;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -14,10 +15,26 @@ public class ComputerTask extends Task<Boolean> {
     private GameEngine gameEngine;
     private int diceValue;
     private int tryNumber;
+    private List<Button> currentSelectedButtons = new ArrayList<>(); // remove - No use
+    private String currentSelectedWord;
+    private List<int[]> selectedPoints = new ArrayList<>();
 
-    ComputerTask(Player player, GameEngine gameEngine) {
+
+    public ComputerTask(Player player, GameEngine gameEngine) {
         this.player = player;
         this.gameEngine = gameEngine;
+    }
+
+    public List<int[]> getSelectedPoints() {
+        return selectedPoints;
+    }
+
+    public void setCurrentSelectedButtons(List<Button> currentSelectedButtons) {
+        this.currentSelectedButtons = currentSelectedButtons;
+    }
+
+    public List<Button> getCurrentSelectedButtons() {
+        return currentSelectedButtons;
     }
 
     @Override
@@ -49,6 +66,7 @@ public class ComputerTask extends Task<Boolean> {
     }
 
     private void selectTilesToShow() {
+        selectedPoints.clear();
         updateMessage("Selecting " + diceValue + " tiles to show...");
         sleepForAWhile(SLEEP_TIME);
         List<Board.Point> points = gameEngine.getUnShownPoints();
@@ -62,8 +80,10 @@ public class ComputerTask extends Task<Boolean> {
                 p[0] = point.getY();
                 p[1] = point.getX();
             } while (!selectedPoints.contains(p));
+
             selectedPoints.add(p);
         }
+        this.selectedPoints = selectedPoints;
         try {
             gameEngine.updateBoard(selectedPoints);
         } catch (OutOfBoardBoundariesException e) {
@@ -93,8 +113,11 @@ public class ComputerTask extends Task<Boolean> {
                 break;
             }
         }
+        currentSelectedWord = word.toString();
         updateMessage(tryNumberStr + "The word is \"" + word + "\"");
         sleepForAWhile(SLEEP_TIME);
-        gameEngine.isWordValid(word.toString(), tryNumber);
+        //gameEngine.isWordValid(word.toString(), tryNumber);
+
     }
+
 }
