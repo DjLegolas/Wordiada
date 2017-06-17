@@ -48,10 +48,10 @@
            </VBox.margin>
         </Button>
         <Button fx:id="helpButton" onAction="#endOfGameStatus" text="?" />
-         <Button fx:id="newGameButton" mnemonicParsing="false" text="New Game" onAction="#loadXmlFile" visible="false" />
-         <Button fx:id="playAgainButton" mnemonicParsing="false" text="Play Again" onAction="#playAgain" visible="false" />
-         <Button fx:id="prevButton" mnemonicParsing="false" text="Prev" onAction="#prev" visible="false" />
-         <Button fx:id="nextButton" mnemonicParsing="false" text="Next" onAction="#next" visible="false" />
+        <Button fx:id="newGameButton" mnemonicParsing="false" text="New Game" onAction="#loadXmlFile" visible="false" />
+        <Button fx:id="playAgainButton" mnemonicParsing="false" text="Play Again" onAction="#playAgain" visible="false" />
+        <Button fx:id="prevButton" mnemonicParsing="false" text="Prev" onAction="#prev" visible="false" />
+        <Button fx:id="nextButton" mnemonicParsing="false" text="Next" onAction="#next" visible="false" />
       </VBox>
    </left>
    <center>
