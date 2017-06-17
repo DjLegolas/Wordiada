@@ -29,8 +29,8 @@ public class GameEngine {
     private long startTime;
     private int numberOfTurns = 0;
     private int tryNumber;
-    private Map <Integer, GameEngine.CaptureTheMoment> turnData = new HashMap<>();
-    public int pointerForTurnData = 0;
+    private Map <Integer, CaptureTheMoment> turnData = new HashMap<>();
+    private int pointerForTurnData = 0;
     public enum WordCheck {
             CORRECT, WRONG, WRONG_CANT_RETRY, CHARS_NOT_PRESENT, TRIES_DEPLETED
     }
@@ -42,6 +42,7 @@ public class GameEngine {
         private List<Button> selectedBoardButtons; //for showing the selected word
         private Player currentPlayer;
         private int turnNumber;
+        private char[][] board;
 
         public CaptureTheMoment(){}
 
@@ -50,7 +51,15 @@ public class GameEngine {
         }
 
         public void setPlayers(List<Player> players) {
-            this.players = players;
+            this.players = new ArrayList<>();
+            for (Player player: players) {
+                if (player.getId() == currentPlayer.getId()) {
+                    this.players.add(currentPlayer);
+                }
+                else {
+                    this.players.add(new Player(player));
+                }
+            }
         }
 
         public void setSelectedBoardButtons(List<Button> selectedBoardButtons) {
@@ -59,6 +68,14 @@ public class GameEngine {
 
         public void setTurnNumber(int turnNumber) {
             this.turnNumber = turnNumber;
+        }
+
+        void setBoard(char[][] board) {
+            this.board = board;
+        }
+
+        public char[][] getBoard() {
+            return board;
         }
 
         public Player getCurrentPlayer() {
@@ -178,7 +195,6 @@ public class GameEngine {
 
     public char[][] getBoard() {
         return currentGameData.getBoard().getBoard_onlySigns();
-
     }
 
     public short getBoardSize(){
@@ -187,7 +203,7 @@ public class GameEngine {
     }
 
     private boolean canRetry() {
-        return tryNumber <= currentGameData.getNumOfTries();
+        return tryNumber <= currentGameData.getNumOfTries() + 1;
     }
 
     public int getMaxRetries() {
@@ -195,6 +211,18 @@ public class GameEngine {
         return gameDataFromXml.getNumOfTries();
     }
 
+    public WordCheck isWordValidWithCoordinates(String word, int tries, List<Button> pressedButtons) {
+        WordCheck result = isWordValid(word, tries);
+        switch (result) {
+            case CORRECT:
+                saveTheTurn(pressedButtons);
+                break;
+            case WRONG_CANT_RETRY:
+            case TRIES_DEPLETED:
+                saveTheTurn(new ArrayList<>());
+        }
+        return result;
+    }
 
     public WordCheck isWordValid(String word, int tries) {
         if (tries == tryNumber && canRetry()) {
@@ -204,9 +232,11 @@ public class GameEngine {
             }
             Dictionary.Word dictWord = currentGameData.getDictionary().hasWord(word);
             if (dictWord != null) {
-                currentGameData.getBoard().removeLettersFromBoard(word);
+                // this was the old version
+                // currentGameData.getBoard().removeLettersFromBoard(word);
                 currentPlayer.updateScore(dictWord, currentGameData.calcScore(word));
                 tryNumber = 1;
+                numberOfTurns++;
                 return WordCheck.CORRECT;
             }
             tryNumber++;
@@ -230,7 +260,7 @@ public class GameEngine {
     }
 
     public Statistics getStatistics() {
-        return new Statistics(players, System.currentTimeMillis() - startTime, numberOfTurns, currentGameData);
+        return new Statistics(players, System.currentTimeMillis() - startTime, numberOfTurns + 1, currentGameData);
     }
 
     public List<Board.Point> getUnShownPoints(){
@@ -346,15 +376,40 @@ public class GameEngine {
     //TODO: decide where to call this func - should be after each move
     public void saveTheTurn(List<Button> pressedButtons){
         CaptureTheMoment captureTheMoment = new CaptureTheMoment();
-        Player currentPlayer = this.currentPlayer;
-        captureTheMoment.setCurrentPlayer(currentPlayer);
+        captureTheMoment.setCurrentPlayer(new Player(currentPlayer));
         captureTheMoment.setPlayers(players);
         captureTheMoment.setTurnNumber(numberOfTurns);
         captureTheMoment.setSelectedBoardButtons(pressedButtons);
-        turnData.put(diceValue,captureTheMoment);
+        captureTheMoment.setBoard(getBoard());
+        turnData.put(numberOfTurns, captureTheMoment);
     }
 
-    public CaptureTheMoment getSpesificTurn(){
+    public CaptureTheMoment getSpecificTurn(){
         return turnData.get(pointerForTurnData);
+    }
+
+    private CaptureTheMoment getCurrentSave() {
+        CaptureTheMoment captureTheMoment = turnData.get(pointerForTurnData);
+        currentPlayer = captureTheMoment.currentPlayer;
+        players = captureTheMoment.players;
+        return captureTheMoment;
+    }
+
+    public CaptureTheMoment prevSaveData() {
+        pointerForTurnData--;
+        return getCurrentSave();
+    }
+
+    public boolean havePrevSave() {
+        return pointerForTurnData > 1;
+    }
+
+    public CaptureTheMoment nextSaveData() {
+        pointerForTurnData++;
+        return getCurrentSave();
+    }
+
+    public boolean haveNextSave() {
+        return pointerForTurnData < turnData.size();
     }
 }

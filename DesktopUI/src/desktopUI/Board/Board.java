@@ -1,9 +1,7 @@
 package desktopUI.Board;
 
-import desktopUI.Controller.Controller;
 import desktopUI.Tile.SingleLetterController;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.*;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -19,7 +17,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.Callable;
-import javafx.geometry.Point2D;
 
 public class Board {
 
@@ -85,6 +82,41 @@ public class Board {
                 if(isButtonExist(pressedButtons,(Button)button)){
                     String setSign = String.format("%c (%d)", sign, dataLetter.getLetter().getScore());
                     buttonsMap.get(button).setLetter(setSign);
+                }
+            }
+        }
+    }
+
+    public void setPressedButtonsValues(char[][] boardView, List<DataLetter> dataLetterList){
+        for (Button button: pressedButtons) {
+            int row = GridPane.getRowIndex(button) - 1;
+            int col = GridPane.getColumnIndex(button) - 1;
+            char sign = boardView[row][col];
+            DataLetter dataLetter = findDataLetterBySign(sign, dataLetterList);
+            String setSign = String.format("%c (%d)", sign, dataLetter.getLetter().getScore());
+            buttonsMap.get(button).setLetter(setSign);
+        }
+    }
+
+    public void updateFromSave(char[][] boardView, List<Button> pressedButtons, List<DataLetter> dataLetterList) {
+        for(int i = 0 ; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                char sign = boardView[i][j];
+                Button button = (Button) getNodeByRowColumnIndex(i+1,j+1,boardGridPane);
+                DataLetter dataLetter = findDataLetterBySign(sign, dataLetterList);
+                if (sign == ' ') {
+                    buttonsMap.get(button).setLetter("");
+                }
+                else {
+                    String setSign = String.format("%c (%d)", sign, dataLetter.getLetter().getScore());
+                    buttonsMap.get(button).setLetter(setSign);
+                }
+                if (pressedButtons.contains(button)) {
+                    button.setStyle("-fx-border-color: blue;" +
+                            "-fx-background-color: aqua");
+                }
+                else {
+                    button.setStyle("");
                 }
             }
         }
@@ -225,6 +257,8 @@ public class Board {
     public void resetAllButtons(){
         for (Button button: buttonsMap.keySet()) {
             buttonsMap.get(button).setLetter("");
+            button.setStyle("");
+            button.setDisable(true);
         }
     }
 
@@ -244,7 +278,7 @@ public class Board {
             int sizeId = button.getId().length();
             int col = button.getId().charAt(sizeId-1) - 48;
             int row = button.getId().charAt(sizeId-2) - 48;
-            Point pointToAdd = new Point(row,col);
+            Point pointToAdd = new Point(col, row);
             points.add(pointToAdd);
         }
         return  points;
