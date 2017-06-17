@@ -477,11 +477,18 @@ import java.util.Optional;
     @FXML public void playAgain(){
 
     }
+    @FXML
     public void prev (){
         gameManager.getGameEngine().pointerForTurnData --;
-        gameManager.getGameEngine().getSpesificTurn();
+        gameManager.setTurnValues(gameManager.getGameEngine().getSpesificTurn());
 
     }
+    @FXML
+     public void next (){
+         gameManager.getGameEngine().pointerForTurnData ++;
+        gameManager.setTurnValues(gameManager.getGameEngine().getSpesificTurn());
+
+     }
 
 
 }
