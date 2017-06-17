@@ -294,6 +294,7 @@ import java.util.Optional;
             board.setAllDisable(false);
             return;
         }
+      
         gameManager.updateBoard(board.getPressedButtonsIndices());
 
         updateBoard(gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown());
