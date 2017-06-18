@@ -4,6 +4,8 @@ package desktopUI.Controller;
 import desktopUI.Board.Board;
 import desktopUI.userInfo.UserInfoController;
 import desktopUI.utils.Common;
+import engine.ComputerTask;
+import engine.Player;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -15,8 +17,10 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import desktopUI.GameManager.GameManager;
+import engine.Player.Type;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,6 +30,7 @@ import java.util.Optional;
 
     private Stage primaryStage;
     private GameManager gameManager = new GameManager(this);
+    private ComputerTask computerTask;
     private Board board;
     private Map<Short, UserInfoController> userInfoControllerMap;
 
@@ -193,6 +198,10 @@ import java.util.Optional;
         }
     }
 
+    public void resetBoard(char[][] board) {
+        this.board.updateFromSave(board, new ArrayList<>(), gameManager.getGameEngine().getCurrentGameData().getKupa());
+    }
+
     @FXML
     public void loadXmlFile(){
         FileChooser fileChooser = new FileChooser();
@@ -259,6 +268,14 @@ import java.util.Optional;
 
         alert.setHeaderText(null);
         alert.show();
+        /* TODO: noy's original
+        if(gameManager.getGameEngine().getCurrentPlayer().getType().equals(Type.COMPUTER)){
+            setAllDisable();
+            computerTask = new ComputerTask(gameManager.getPlayerById(id, gameManager.getGameEngine().getPlayers()), gameManager.getGameEngine());
+            computerTask.run();
+            computerTask.getSelectedPoints();
+        }
+        */
     }
 
     public void selectPlayer(short prevId, short newId) {
@@ -271,6 +288,23 @@ import java.util.Optional;
         userController = userInfoControllerMap.get(newId);
         userController.setStyleProperty("-fx-font-weight: bold");
         userController.disableDetailsButton(false);
+        checkComputer();
+    }
+
+    public void checkComputer() {
+        if (gameManager.isPlayerComputer()) {
+            gameManager.runComputer();
+        }
+    }
+
+    private void setAllDisable() {
+
+        loadXmlButton.setDisable(true);
+        startButton.setDisable(true);
+        diceButton.setDisable(true);
+        moveButton.setDisable(true);
+        retireButton.setDisable(true);
+        exitButton.setDisable(true);
     }
 
     @FXML public void makeMove() {
@@ -297,7 +331,7 @@ import java.util.Optional;
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Message");
         alert.setContentText(outputMessageValidMove);
-        alert.show();
+        alert.showAndWait();
 
         moveButton.setDisable(true);
         checkWord.setDisable(false);
@@ -314,8 +348,10 @@ import java.util.Optional;
         this.board.getPressedButtons().clear();
    }
 
-   public void savedBoardUpdate(char[][] board, List<Button> pressedButtons) {
-       this.board.updateFromSave(board, pressedButtons, gameManager.getGameEngine().getCurrentGameData().getKupa());
+   public void savedBoardUpdate(char[][] board, List<int[]> pressedButtonsIndices) {
+       List<Button> buttons = this.board.getButtonsFromIndices(pressedButtonsIndices);
+       this.board.updateFromSave(board, buttons, gameManager.getGameEngine().getCurrentGameData().getKupa());
+       wordBuildProperty.set(gameManager.buttonsToStr(buttons, board));
    }
 
     @FXML public void checkWord(){
@@ -342,7 +378,7 @@ import java.util.Optional;
                              "\nOnce you have a word in your mind, press on the letters by the order in which they appear in the word. (If you accidentally pressed the wrong order, that's fine, just press again, so the letters will be covered by a blue background).\n When you are done, press on the Make a Move button.\n\nGood Luch!!!");
 
         alert.setHeaderText(null);
-        alert.show();
+        alert.showAndWait();
         board.buildWord(true, () -> {
             wordBuildProperty.set(gameManager.buttonsToStr(board.getPressedButtons(),board.getButtonsMap(),gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown()));
             return Boolean.TRUE;
@@ -361,7 +397,7 @@ import java.util.Optional;
             alert.setTitle("Game is Over");
             alert.setContentText("Game's Over...\n Choose one of the buttons options");
             alert.setHeaderText(null);
-            alert.show();
+            alert.showAndWait();
             endOfGameStatus();
         }
 

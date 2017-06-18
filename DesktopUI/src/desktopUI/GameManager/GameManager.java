@@ -1,10 +1,15 @@
 package desktopUI.GameManager;
 
 import desktopUI.Controller.Controller;
+import desktopUI.TaskDialog.TaskDialog;
+import desktopUI.Tile.SingleLetterController;
 import desktopUI.scoreDetail.ScoreDetailController;
 import desktopUI.scoreDetail.WordDetails;
 import desktopUI.userInfo.UserInfoController;
 import desktopUI.utils.Common;
+import desktopUI.utils.HelperFuncs;
+import desktopUI.utils.HelperFuncs.*;
+import engine.ComputerTask;
 import engine.GameEngine;
 import engine.GameEngine.CaptureTheMoment;
 import engine.Player;
@@ -12,10 +17,15 @@ import engine.exceptions.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.DialogPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 import javafx.util.Pair;
 
 import java.awt.*;
@@ -252,14 +262,14 @@ public class GameManager {
     //check if ita a good word and calc score if necessary
     public void checkWord(String word) {
         Alert alert;
-        switch (gameEngine.isWordValidWithCoordinates(word, tryNumber, new ArrayList<>(controller.getBoard().getPressedButtons()))) {
+        switch (gameEngine.isWordValidWithCoordinates(word, tryNumber, new ArrayList<>(controller.getBoard().getPressedButtonsIndices()))) {
             case CORRECT:
                 alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Check Word");
                 alert.setContentText("Well done! your word \"" + word + "\" is correct!!!");
                 removeWordFromBoard();
                 alert.setHeaderText(null);
-                alert.show();
+                alert.showAndWait();
                 nextTurn(true);
                 break;
             case WRONG:
@@ -267,7 +277,7 @@ public class GameManager {
                 alert.setTitle("Check Word");
                 alert.setContentText("Uhh.. the word \"" + word + "\" is wrong!!!");
                 alert.setHeaderText(null);
-                alert.show();
+                alert.showAndWait();
                 tryNumber++;
                 controller.getTryNumberProperty().set(tryNumber);
                 break;
@@ -276,7 +286,7 @@ public class GameManager {
                 alert.setTitle("Check Word");
                 alert.setContentText("Oops.. you have got No more tries!!");
                 alert.setHeaderText(null);
-                alert.show();
+                alert.showAndWait();
                 nextTurn(false);
                 break;
             case CHARS_NOT_PRESENT:
@@ -284,7 +294,7 @@ public class GameManager {
                 alert.setTitle("Check Word");
                 alert.setContentText("Oops.. you enter INVALID chars!");
                 alert.setHeaderText(null);
-                alert.show();
+                alert.showAndWait();
                 tryNumber++;
                 controller.getTryNumberProperty().set(tryNumber);
                 break;
@@ -293,7 +303,7 @@ public class GameManager {
                 alert.setTitle("Check Word");
                 alert.setContentText("Uhh..This word is Wrong.\nThat was your last try..  !");
                 alert.setHeaderText(null);
-                alert.show();
+                alert.showAndWait();
                 nextTurn(false);
                 break;
         }
@@ -307,6 +317,44 @@ public class GameManager {
             Platform.runLater(() -> controller.selectPlayer(prevId, newId));
             currentPlayerId = newId;
         }
+        else {
+            controller.checkComputer();
+        }
+    }
+
+    public boolean isPlayerComputer() {
+        return gameEngine.isPlayerComputer();
+    }
+
+    public void runComputer() {
+        FXMLLoader loader = new FXMLLoader();
+        URL infoFXML = getClass().getResource("/desktopUI/TaskDialog/TaskDialog.fxml");
+        loader.setLocation(infoFXML);
+        AnchorPane root;
+        try {
+            root = loader.load();
+        }
+        catch (IOException e) {
+            Common.showError("Unable to show progress window");
+            return;
+        }
+
+
+        Stage stage = new Stage();
+        stage.setTitle("Computer Run - Wordiada");
+        stage.setScene(new Scene(root));
+
+        ComputerTask computerTask = new ComputerTask(gameEngine.getCurrentPlayer(), gameEngine);
+        TaskDialog taskDialog = loader.getController();
+        taskDialog.textProperty().bind(computerTask.messageProperty());
+        taskDialog.progressProperty().bind(computerTask.progressProperty());
+        computerTask.setOnSucceeded(workerStateEvent -> {
+            stage.close();
+            Platform.runLater(() -> controller.resetBoard(gameEngine.getBoard()));
+            nextTurn(computerTask.getValue());
+        });
+        new Thread(computerTask).start();
+        stage.showAndWait();
     }
 
     private void nextTurn(boolean clearButtons) {
