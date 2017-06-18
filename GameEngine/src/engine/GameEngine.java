@@ -5,14 +5,12 @@ import java.lang.String;
 
 import engine.exceptions.*;
 
-import java.sql.Struct;
 import java.util.*;
 
 import engine.Board.Point;
 import engine.GameDataFromXml.*;
 
 import engine.jaxb.schema.generated.Letter;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.util.Pair;
 
@@ -39,7 +37,7 @@ public class GameEngine {
     //TODO: we need also save dice value , num of tries?
     public static class CaptureTheMoment{
         private  List<Player> players;
-        private List<Button> selectedBoardButtons; //for showing the selected word
+        private List<int[]> selectedBoardButtons; //for showing the selected word
         private Player currentPlayer;
         private int turnNumber;
         private char[][] board;
@@ -62,7 +60,7 @@ public class GameEngine {
             }
         }
 
-        public void setSelectedBoardButtons(List<Button> selectedBoardButtons) {
+        public void setSelectedPoints(List<int[]> selectedBoardButtons) {
             this.selectedBoardButtons = selectedBoardButtons;
         }
 
@@ -90,7 +88,7 @@ public class GameEngine {
             return turnNumber;
         }
 
-        public List<Button> getSelectedBoardButtons() {
+        public List<int[]> getSelectedBoardButtons() {
             return selectedBoardButtons;
         }
     }
@@ -158,6 +156,10 @@ public class GameEngine {
         return currentPlayer;
     }
 
+    public boolean isPlayerComputer() {
+        return currentPlayer.isComputer();
+    }
+
     public Status getStatus() {
         GameDataFromXml gd = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
 
@@ -202,11 +204,11 @@ public class GameEngine {
         return gameDataFromXml.getNumOfTries();
     }
 
-    public WordCheck isWordValidWithCoordinates(String word, int tries, List<Button> pressedButtons) {
+    public WordCheck isWordValidWithCoordinates(String word, int tries, List<int[]> selectedPoints) {
         WordCheck result = isWordValid(word, tries);
         switch (result) {
             case CORRECT:
-                saveTheTurn(pressedButtons);
+                saveTheTurn(selectedPoints);
                 break;
             case WRONG_CANT_RETRY:
             case TRIES_DEPLETED:
@@ -365,12 +367,12 @@ public class GameEngine {
     }
 
     //TODO: decide where to call this func - should be after each move
-    private void saveTheTurn(List<Button> pressedButtons){
+    private void saveTheTurn(List<int[]> selectedPoints){
         CaptureTheMoment captureTheMoment = new CaptureTheMoment();
         captureTheMoment.setCurrentPlayer(new Player(currentPlayer));
         captureTheMoment.setPlayers(players);
         captureTheMoment.setTurnNumber(numberOfTurns);
-        captureTheMoment.setSelectedBoardButtons(pressedButtons);
+        captureTheMoment.setSelectedPoints(selectedPoints);
         captureTheMoment.setBoard(getBoard());
         turnData.put(numberOfTurns, captureTheMoment);
     }

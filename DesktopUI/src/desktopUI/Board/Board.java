@@ -51,6 +51,15 @@ public class Board {
         return indexList;
     }
 
+    public List<Button> getButtonsFromIndices(List<int[]> buttonsIndices) {
+        List<Button> list = new ArrayList<>();
+        for (int[] index: buttonsIndices) {
+            Button button = (Button)getNodeByRowColumnIndex(index[0], index[1], boardGridPane);
+            list.add(button);
+        }
+        return list;
+    }
+
     public Map<Button, SingleLetterController> getButtonsMap() {
         return buttonsMap;
     }
@@ -254,6 +263,7 @@ public class Board {
             buttonsMap.get(button).setLetter("");
         }
     }
+
     public void resetAllButtons(){
         for (Button button: buttonsMap.keySet()) {
             buttonsMap.get(button).setLetter("");

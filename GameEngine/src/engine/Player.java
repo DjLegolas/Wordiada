@@ -65,6 +65,10 @@ public class Player {
         this.isRetired = true;
     }
 
+    boolean isComputer() {
+        return type == Type.COMPUTER;
+    }
+
     Map<Dictionary.Word, Integer> getWords() {
         return new HashMap<>(this.words);
     }
