@@ -3,6 +3,7 @@ package desktopUI.Controller;
 
 import desktopUI.Board.Board;
 import desktopUI.userInfo.UserInfoController;
+import desktopUI.utils.Common;
 import engine.ComputerTask;
 import engine.Player;
 import javafx.beans.binding.Bindings;
@@ -151,6 +152,7 @@ import java.util.Optional;
         return tryNumberProperty;
     }
 
+    // init the score of all users to 0
     private void initScore() {
         if (userInfoControllerMap != null) {
             for (UserInfoController userInfoController : userInfoControllerMap.values()) {
@@ -159,6 +161,7 @@ import java.util.Optional;
         }
     }
 
+    // reset the gama ui
     private void reinitialize() {
         initScore();
         board = null;
@@ -166,12 +169,14 @@ import java.util.Optional;
         boardPane.getChildren().clear();
         selectedTurnNumber.set(0);
         selectedInitInfoGame.set("");
+        selectedTurnNumber.set(0);
         moveButton.setDisable(true);
         diceButton.setDisable(true);
         playerVBox.getChildren().clear();
         retireButton.setDisable(true);
     }
 
+    // init turn
     public void resetTurn(boolean clearButtons) {
         wordBuildProperty.set("");
         diceButton.setDisable(false);
@@ -213,6 +218,7 @@ import java.util.Optional;
         gameManager.loadXML(xmlFile);
     }
 
+    // init game
     public void initGame() {
         reinitialize();
         userInfoControllerMap = gameManager.getDataPlayers(playerVBox);
@@ -302,39 +308,21 @@ import java.util.Optional;
     }
 
     @FXML public void makeMove() {
-
-        //moveButton.setDisable(false);
         //TODO: check if enough tiles to choose tiles  as dice value
-        String outputMessageInValidMove1 = "You need to choose at least one letter!\n\nTry again.";
-        String outputMessageInValidMove2 = "You chose too many tiles! you need to choose only " +gameManager.getCurrentDiceValue() + " tiles \n\nTry again.";
-
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
+        String notEnoughTilesError = "You need to choose at least one letter!\n\nTry again.";
 
         if (board.getPressedButtons().isEmpty()) {
-            alert.setContentText(outputMessageInValidMove1);
-            alert.showAndWait();
             board.setAllDisable(false);
-            return;
-        }
-
-      //TODO: check the too many tiles error with the accepetion
-        if(board.getPressedButtons().size() > gameManager.getCurrentDiceValue()){
-            alert.setContentText(outputMessageInValidMove2);
-            alert.showAndWait();
-            board.setAllDisable(false);
+            Common.showError(notEnoughTilesError);
             return;
         }
       
         gameManager.updateBoard(board.getPressedButtonsIndices());
 
-        updateBoard(gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown());
-        board.getPressedButtons().clear();
-
-
+        // updateBoard(gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown());
     }
 
-    public void updateBoard(char[][] board){
+    public void updateBoard(char[][] board) {
         String outputMessageValidMove = "Now you can watch the hidden letters you chose to open!\n\n" +
                 "Try to build a word from those letter by pressing them by the order in which they apper. (If you" +
                 " accidentally pressed the wrong order, that's OK, just press again, so the letters will " +
@@ -356,6 +344,8 @@ import java.util.Optional;
             wordBuildProperty.set(gameManager.buttonsToStr(this.board.getPressedButtons(), gameManager.getGameEngine().getBoard()));
             return Boolean.TRUE;
         });
+
+        this.board.getPressedButtons().clear();
    }
 
    public void savedBoardUpdate(char[][] board, List<int[]> pressedButtonsIndices) {
@@ -375,9 +365,8 @@ import java.util.Optional;
 
     }
 
-    //TODO: remove if we remove the build button - dunno yet
-
     /*
+    //TODO: remove if we remove the build button - dunno yet
     @FXML public void buildWord(){
         checkWord.setDisable(false);
         board.getPressedButtons().clear();
@@ -398,7 +387,6 @@ import java.util.Optional;
     }*/
 
     @FXML
-    //TODO: make unclick the throw a dice button but keep the info about the value somewhere so the player can watch anytime
     public void throwDie() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         boolean allShown = false;
@@ -498,20 +486,30 @@ import java.util.Optional;
         moveButton.setDisable(true);
         retireButton.setDisable(true);
         checkWord.setDisable(true);
-        newGameButton.setVisible(true);
-        playAgainButton.setVisible(true);
-        prevButton.setVisible(true);
-        prevButton.setDisable(true);
-        nextButton.setVisible(true);
         board.resetAllButtons();
         next();
+        showEndGameControllers(true);
         prevButton.setDisable(true);
         initScore();
     }
 
-    //TODO: init all data game to the start
-    @FXML public void playAgain(){
+    private void showEndGameControllers(boolean show) {
+        newGameButton.setVisible(show);
+        playAgainButton.setVisible(show);
+        prevButton.setVisible(show);
+        nextButton.setVisible(show);
+    }
 
+    @FXML
+    public void loadNewXmlFile() {
+        showEndGameControllers(false);
+        loadXmlButton.setDisable(false);
+        loadXmlFile();
+    }
+
+    @FXML public void playAgain(){
+        showEndGameControllers(false);
+        gameManager.reset();
     }
 
     @FXML

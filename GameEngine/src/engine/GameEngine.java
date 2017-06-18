@@ -116,12 +116,12 @@ public class GameEngine {
         GameDataFromXml gd = new GameDataFromXml();
         gd.initializeDataFromXml(file);
         gdfx.add(gd);
-
-
-
-
     }
 
+    public void reset() {
+        numberOfTurns = 0;
+        currentGameData.resetBoard();
+    }
 
     public boolean isXmlLoaded() {
         return !gdfx.isEmpty();
@@ -275,9 +275,12 @@ public class GameEngine {
     }
 
     public boolean isGameEnded(boolean allTilesShown) {
-        return (currentGameData.getBoard().getKupaAmount() == 0) || allTilesShown;
+        if ((currentGameData.getBoard().getKupaAmount() == 0) || allTilesShown) {
+            isGameStarted = false;
+            return true;
+        }
+        return false;
     }
-
 
 
     public String getWinnerName(boolean userEnd) {
@@ -362,6 +365,7 @@ public class GameEngine {
             return false;
         }
         currentPlayer.retire();
+        numOfPlayers--;
         nextPlayer();
         return true;
     }
@@ -383,8 +387,8 @@ public class GameEngine {
 
     private CaptureTheMoment getCurrentSave() {
         CaptureTheMoment captureTheMoment = turnData.get(pointerForTurnData);
-        currentPlayer = captureTheMoment.currentPlayer;
-        players = captureTheMoment.players;
+        currentPlayer = captureTheMoment == null ? null : captureTheMoment.currentPlayer;
+        players = captureTheMoment == null ? null : captureTheMoment.players;
         return captureTheMoment;
     }
 

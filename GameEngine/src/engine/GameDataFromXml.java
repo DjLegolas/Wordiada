@@ -83,8 +83,7 @@ public class GameDataFromXml {
             NumberOfPlayersException, DuplicatePlayerIdException {
 
         loadXml(pathToXml);
-        Structure struct;
-        struct = gameDescriptor.getStructure();
+        Structure struct = gameDescriptor.getStructure();
         buildDataLetters(struct);
 
         //init gold fish mode
@@ -122,6 +121,16 @@ public class GameDataFromXml {
         
         //init score type
         initWinType();
+    }
+
+    void resetBoard() {
+        try {
+            Structure struct = gameDescriptor.getStructure();
+            buildDataLetters(struct);
+            initBoard();
+        }
+        catch (Exception e) {
+        }
     }
 
     //creates the xml details:

@@ -16,7 +16,6 @@ import engine.Player;
 import engine.exceptions.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -54,6 +53,7 @@ public class GameManager {
     public Boolean getIsFishMod() {
         return isFishMod;
     }
+
     public int getCurrentDiceValue() {
         return currentDiceValue;
     }
@@ -89,15 +89,17 @@ public class GameManager {
 
     public String getInitInfoGame(){
         //TODO: add the total amount of kupa tiles in the information!
-        return String.format("Size Board: %d x %d\n" +"\n"+
-                        "Score type: %s \n" +"\n"+
-                        "Gold Fish Mod: %s\n" + "\n"+
-                        "Top ten rare words: \n %s" +"\n"+
-                        "Frequency for each letter:\n %s",
-                        gameEngine.getBoardSize(), gameEngine.getBoardSize(),
-                        gameEngine.getWinScoreMod(),gameEngine.isInGoldFishMod().toString(),
-                        gameEngine.getTopTenRareWords(),gameEngine.getFreqEachLetter());
-
+        return String.format(
+                "Size Board: %d x %d\n" + "\n" +
+                "Score type: %s \n" + "\n" +
+                "Gold Fish Mod: %s\n" + "\n" +
+                "Top ten rare words: \n %s" + "\n" +
+                "Frequency for each letter:\n %s",
+                gameEngine.getBoardSize(), gameEngine.getBoardSize(),
+                gameEngine.getWinScoreMod(),
+                gameEngine.isInGoldFishMod().toString(),
+                gameEngine.getTopTenRareWords(),
+                gameEngine.getFreqEachLetter());
     }
 
     public int getMaxTries() {
@@ -198,10 +200,10 @@ public class GameManager {
         if (enoughTiles) {
 
             char[][] board = gameEngine.getBoard();
-          //  Platform.runLater(() -> controller.updateBoard(board));
+            Platform.runLater(() -> controller.updateBoard(board));
         }
         else {
-            Common.showError("You selected too many tiles. you need only " + currentDiceValue);
+            Common.showError("You chose too many tiles! you need to choose only " + currentDiceValue + " tiles \n\nTry again.");
 
         }
     }
@@ -216,11 +218,6 @@ public class GameManager {
                 controller.endOfGameStatus();
             }
         }
-    }
-
-
-    //TODO: complete the func when no more tiles and then get to this endgame func + update the pointerToTurnData in this func
-    private void endGame() {
     }
 
     public void exitGame() {
@@ -375,22 +372,31 @@ public class GameManager {
         // gameEngine.saveTheTurn(controller.getBoard().getPressedButtons());
     }
 
-
-    //TODO: probably not be useable - need to be removed!
-    public Player getPlayerById(short id,List<Player>players){
-        for(Player player : players){
-            if(player.getId() == id)
-                return player;
-        }
-        return null;
+    public void reset() {
+        new Thread(() -> {
+            gameEngine.reset();
+            tryNumber = 1;
+            Platform.runLater(() -> {
+                controller.initGame();
+                controller.playTurn();
+            });
+        }).start();
     }
 
     private void setTurnValues(CaptureTheMoment turnValues){
-        int turnNum = turnValues.getTurnNumber();
-        updateTurnNumber(turnNum);
-        updatePlayerScore();
-        switchUser();
-        Platform.runLater(() -> controller.savedBoardUpdate(turnValues.getBoard(), turnValues.getSelectedBoardButtons()));
+        if (turnValues != null) {
+            int turnNum = turnValues.getTurnNumber();
+            updateTurnNumber(turnNum);
+            updatePlayerScore();
+            switchUser();
+            Platform.runLater(() -> {
+                controller.savedBoardUpdate(turnValues.getBoard(), turnValues.getSelectedBoardButtons());
+                controller.getWordBuildProperty().set(buttonsToStr(turnValues.getSelectedBoardButtons(), turnValues.getBoard()));
+            });
+        }
+        else {
+            Platform.runLater(() -> controller.getNextButton().setDisable(true));
+        }
     }
 
     public void prevSaveData() {
