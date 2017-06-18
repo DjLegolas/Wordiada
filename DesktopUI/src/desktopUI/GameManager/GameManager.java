@@ -79,15 +79,17 @@ public class GameManager {
 
     public String getInitInfoGame(){
         //TODO: add the total amount of kupa tiles in the information!
-        return String.format("Size Board: %d x %d\n" +"\n"+
-                        "Score type: %s \n" +"\n"+
-                        "Gold Fish Mod: %s\n" + "\n"+
-                        "Top ten rare words: \n %s" +"\n"+
-                        "Frequency for each letter:\n %s",
-                        gameEngine.getBoardSize(), gameEngine.getBoardSize(),
-                        gameEngine.getWinScoreMod(),gameEngine.isInGoldFishMod().toString(),
-                        gameEngine.getTopTenRareWords(),gameEngine.getFreqEachLetter());
-
+        return String.format(
+                "Size Board: %d x %d\n" + "\n" +
+                "Score type: %s \n" + "\n" +
+                "Gold Fish Mod: %s\n" + "\n" +
+                "Top ten rare words: \n %s" + "\n" +
+                "Frequency for each letter:\n %s",
+                gameEngine.getBoardSize(), gameEngine.getBoardSize(),
+                gameEngine.getWinScoreMod(),
+                gameEngine.isInGoldFishMod().toString(),
+                gameEngine.getTopTenRareWords(),
+                gameEngine.getFreqEachLetter());
     }
 
     public int getMaxTries() {
@@ -188,10 +190,10 @@ public class GameManager {
         if (enoughTiles) {
 
             char[][] board = gameEngine.getBoard();
-          //  Platform.runLater(() -> controller.updateBoard(board));
+            Platform.runLater(() -> controller.updateBoard(board));
         }
         else {
-            Common.showError("You selected too many tiles. you need only " + currentDiceValue);
+            Common.showError("You chose too many tiles! you need to choose only " + currentDiceValue + " tiles \n\nTry again.");
 
         }
     }
@@ -330,7 +332,7 @@ public class GameManager {
                 controller.initGame();
                 controller.playTurn();
             });
-        }).run();
+        }).start();
     }
 
     private void setTurnValues(CaptureTheMoment turnValues){
