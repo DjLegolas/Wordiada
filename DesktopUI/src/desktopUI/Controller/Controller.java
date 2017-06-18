@@ -146,6 +146,7 @@ import java.util.Optional;
         return tryNumberProperty;
     }
 
+    // init the score of all users to 0
     private void initScore() {
         if (userInfoControllerMap != null) {
             for (UserInfoController userInfoController : userInfoControllerMap.values()) {
@@ -154,6 +155,7 @@ import java.util.Optional;
         }
     }
 
+    // reset the gama ui
     private void reinitialize() {
         initScore();
         board = null;
@@ -167,6 +169,7 @@ import java.util.Optional;
         retireButton.setDisable(true);
     }
 
+    // init turn
     public void resetTurn(boolean clearButtons) {
         wordBuildProperty.set("");
         diceButton.setDisable(false);
@@ -204,6 +207,7 @@ import java.util.Optional;
         gameManager.loadXML(xmlFile);
     }
 
+    // init game
     public void initGame() {
         reinitialize();
         userInfoControllerMap = gameManager.getDataPlayers(playerVBox);
@@ -462,20 +466,30 @@ import java.util.Optional;
         moveButton.setDisable(true);
         retireButton.setDisable(true);
         checkWord.setDisable(true);
-        newGameButton.setVisible(true);
-        playAgainButton.setVisible(true);
-        prevButton.setVisible(true);
-        prevButton.setDisable(true);
-        nextButton.setVisible(true);
         board.resetAllButtons();
         next();
+        showEndGameControllers(true);
         prevButton.setDisable(true);
         initScore();
     }
 
+    private void showEndGameControllers(boolean show) {
+        newGameButton.setVisible(show);
+        playAgainButton.setVisible(show);
+        prevButton.setVisible(show);
+        nextButton.setVisible(show);
+    }
+
+    @FXML
+    public void loadNewXmlFile() {
+        showEndGameControllers(false);
+        loadXmlButton.setDisable(false);
+        loadXmlFile();
+    }
+
     //TODO: init all data game to the start
     @FXML public void playAgain(){
-
+        gameManager.reset();
     }
 
     @FXML

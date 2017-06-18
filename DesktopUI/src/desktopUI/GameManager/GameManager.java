@@ -1,20 +1,16 @@
 package desktopUI.GameManager;
 
 import desktopUI.Controller.Controller;
-import desktopUI.Tile.SingleLetterController;
 import desktopUI.scoreDetail.ScoreDetailController;
 import desktopUI.scoreDetail.WordDetails;
 import desktopUI.userInfo.UserInfoController;
 import desktopUI.utils.Common;
-import desktopUI.utils.HelperFuncs;
-import desktopUI.utils.HelperFuncs.*;
 import engine.GameEngine;
 import engine.GameEngine.CaptureTheMoment;
 import engine.Player;
 import engine.exceptions.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -47,6 +43,7 @@ public class GameManager {
     public Boolean getIsFishMod() {
         return isFishMod;
     }
+
     public int getCurrentDiceValue() {
         return currentDiceValue;
     }
@@ -330,23 +327,29 @@ public class GameManager {
         // gameEngine.saveTheTurn(controller.getBoard().getPressedButtons());
     }
 
-
-    //TODO: probably not be useable - need to be removed!
-    public Player getPlayerById(short id,List<Player>players){
-        for(Player player : players){
-            if(player.getId() == id)
-                return player;
-        }
-        return null;
+    public void reset() {
+        gameEngine.resetBoard();
+        tryNumber = 1;
+        Platform.runLater(() -> {
+            controller.initGame();
+            controller.playTurn();
+        });
     }
 
     private void setTurnValues(CaptureTheMoment turnValues){
-        int turnNum = turnValues.getTurnNumber();
-        updateTurnNumber(turnNum);
-        updatePlayerScore();
-        switchUser();
-        Platform.runLater(() -> controller.savedBoardUpdate(turnValues.getBoard(), turnValues.getSelectedBoardButtons()));
-        controller.getWordBuildProperty().set(buttonsToStr(turnValues.getSelectedBoardButtons(), turnValues.getBoard()));
+        if (turnValues != null) {
+            int turnNum = turnValues.getTurnNumber();
+            updateTurnNumber(turnNum);
+            updatePlayerScore();
+            switchUser();
+            Platform.runLater(() -> {
+                controller.savedBoardUpdate(turnValues.getBoard(), turnValues.getSelectedBoardButtons());
+                controller.getWordBuildProperty().set(buttonsToStr(turnValues.getSelectedBoardButtons(), turnValues.getBoard()));
+            });
+        }
+        else {
+            Platform.runLater(() -> controller.getNextButton().setDisable(true));
+        }
     }
 
     public void prevSaveData() {

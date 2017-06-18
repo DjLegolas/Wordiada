@@ -124,6 +124,14 @@ public class GameDataFromXml {
         initWinType();
     }
 
+    void resetBoard() {
+        try {
+            initBoard();
+        }
+        catch (Exception e) {
+        }
+    }
+
     //creates the xml details:
     private static GameDescriptor deserializeFrom(InputStream in) throws JAXBException {
         JAXBContext jc = JAXBContext.newInstance(JAXB_XML_GAME_PACKAGE_NAME);
