@@ -389,10 +389,7 @@ public class GameManager {
             updateTurnNumber(turnNum);
             updatePlayerScore();
             switchUser();
-            Platform.runLater(() -> {
-                controller.savedBoardUpdate(turnValues.getBoard(), turnValues.getSelectedBoardButtons());
-                controller.getWordBuildProperty().set(buttonsToStr(turnValues.getSelectedBoardButtons(), turnValues.getBoard()));
-            });
+            Platform.runLater(() -> controller.savedBoardUpdate(turnValues.getBoard(), turnValues.getSelectedBoardButtons()));
         }
         else {
             Platform.runLater(() -> controller.getNextButton().setDisable(true));
