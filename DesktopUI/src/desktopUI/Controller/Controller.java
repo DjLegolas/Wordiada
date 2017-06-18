@@ -163,6 +163,7 @@ import java.util.Optional;
         boardPane.getChildren().clear();
         selectedTurnNumber.set(0);
         selectedInitInfoGame.set("");
+        selectedTurnNumber.set(0);
         moveButton.setDisable(true);
         diceButton.setDisable(true);
         playerVBox.getChildren().clear();
@@ -300,8 +301,6 @@ import java.util.Optional;
 
         updateBoard(gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown());
         board.getPressedButtons().clear();
-
-
     }
 
     public void updateBoard(char[][] board){
@@ -489,6 +488,7 @@ import java.util.Optional;
 
     //TODO: init all data game to the start
     @FXML public void playAgain(){
+        showEndGameControllers(false);
         gameManager.reset();
     }
 

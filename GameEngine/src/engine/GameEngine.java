@@ -120,7 +120,8 @@ public class GameEngine {
         gdfx.add(gd);
     }
 
-    public void resetBoard() {
+    public void reset() {
+        numberOfTurns = 0;
         currentGameData.resetBoard();
     }
 

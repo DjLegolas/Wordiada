@@ -208,11 +208,6 @@ public class GameManager {
         }
     }
 
-
-    //TODO: complete the func when no more tiles and then get to this endgame func + update the pointerToTurnData in this func
-    private void endGame() {
-    }
-
     public void exitGame() {
         Platform.exit();
     }
@@ -328,12 +323,14 @@ public class GameManager {
     }
 
     public void reset() {
-        gameEngine.resetBoard();
-        tryNumber = 1;
-        Platform.runLater(() -> {
-            controller.initGame();
-            controller.playTurn();
-        });
+        new Thread(() -> {
+            gameEngine.reset();
+            tryNumber = 1;
+            Platform.runLater(() -> {
+                controller.initGame();
+                controller.playTurn();
+            });
+        }).run();
     }
 
     private void setTurnValues(CaptureTheMoment turnValues){
