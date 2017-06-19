@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 public class GameManager {
     private int currentDiceValue;
@@ -267,7 +268,8 @@ public class GameManager {
                 alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Check Word");
                 alert.setContentText("Well done! your word \"" + word + "\" is correct!!!");
-                removeWordFromBoard();
+                // should no be here
+                // removeWordFromBoard();
                 alert.setHeaderText(null);
                 alert.showAndWait();
                 nextTurn(true);
@@ -348,13 +350,20 @@ public class GameManager {
         TaskDialog taskDialog = loader.getController();
         taskDialog.textProperty().bind(computerTask.messageProperty());
         taskDialog.progressProperty().bind(computerTask.progressProperty());
+        /*taskDialog.setRetire(() -> {
+                retire();
+                return null;
+            });*/
         computerTask.setOnSucceeded(workerStateEvent -> {
-            stage.close();
-            Platform.runLater(() -> controller.resetBoard(gameEngine.getBoard()));
+            Platform.runLater(() -> {
+                stage.hide();
+                stage.close();
+                controller.resetBoard(gameEngine.getBoard());
+            });
             nextTurn(computerTask.getValue());
         });
         new Thread(computerTask).start();
-        stage.showAndWait();
+        stage.show();
     }
 
     private void nextTurn(boolean clearButtons) {
@@ -365,12 +374,15 @@ public class GameManager {
         Platform.runLater(() -> controller.resetTurn(clearButtons));
     }
 
+    /*
+    // should not be here
     public void removeWordFromBoard(){
         List<Point> lettersToRemove = controller.getBoard().fromSingleLetterToPoint();
         gameEngine.getBoardObject().removeLettersFromBoard(lettersToRemove);
         //update turn info
         // gameEngine.saveTheTurn(controller.getBoard().getPressedButtons());
     }
+    */
 
     public void reset() {
         new Thread(() -> {

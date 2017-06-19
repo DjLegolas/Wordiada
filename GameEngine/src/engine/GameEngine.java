@@ -209,6 +209,7 @@ public class GameEngine {
         switch (result) {
             case CORRECT:
                 saveTheTurn(selectedPoints);
+                currentGameData.getBoard().removePointsFromBoard(selectedPoints);
                 break;
             case WRONG_CANT_RETRY:
             case TRIES_DEPLETED:
