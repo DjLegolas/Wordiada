@@ -195,7 +195,7 @@ public class Board {
     public Node createTile() {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("desktopUI/Tile/Tile.fxml"));
+            loader.setLocation(getClass().getResource("/desktopUI/Tile/Tile.fxml"));
             Button singleLetterTile = loader.load();
 
             SingleLetterController singleLetterController = loader.getController();

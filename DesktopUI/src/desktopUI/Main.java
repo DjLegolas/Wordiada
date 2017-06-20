@@ -26,9 +26,6 @@ public class Main extends Application {
         primaryStage.setMinHeight(root.getMinHeight());
         primaryStage.setMinWidth(root.getMinWidth());
         primaryStage.show();
-
-        //controller.loadXmlFile(primaryStage);
-        //   controller.showMenu(primaryStage);
     }
 
 

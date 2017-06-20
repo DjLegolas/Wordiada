@@ -34,6 +34,7 @@ public class Player {
         type = other.type;
         words = new HashMap<>();
         words.putAll(other.words);
+        isRetired = other.isRetired;
     }
 
     public void updateScore(Dictionary.Word word, float score) {
@@ -57,7 +58,7 @@ public class Player {
         return id;
     }
 
-    boolean isRetired() {
+    public boolean isRetired() {
         return isRetired;
     }
 
@@ -71,6 +72,12 @@ public class Player {
 
     Map<Dictionary.Word, Integer> getWords() {
         return new HashMap<>(this.words);
+    }
+
+    void reset() {
+        score = 0;
+        words.clear();
+        isRetired = false;
     }
 
     @Override

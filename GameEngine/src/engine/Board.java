@@ -243,6 +243,14 @@ public class Board {
          }
     }
 
+    public void removePointsFromBoard(List<int[]> pointToRemove) {
+        List<java.awt.Point> points = new ArrayList<>();
+        for (int[] point: pointToRemove) {
+            points.add(new java.awt.Point(point[1], point[0]));
+        }
+        removeLettersFromBoard(points);
+    }
+
     public void removeLettersFromBoard(List <java.awt.Point> pointsToRemove) {
         Random random = new Random();
         GameDataFromXml.DataLetter dataLetter;

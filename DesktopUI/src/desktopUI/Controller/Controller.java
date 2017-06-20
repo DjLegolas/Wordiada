@@ -4,8 +4,6 @@ package desktopUI.Controller;
 import desktopUI.Board.Board;
 import desktopUI.userInfo.UserInfoController;
 import desktopUI.utils.Common;
-import engine.ComputerTask;
-import engine.Player;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -17,7 +15,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import desktopUI.GameManager.GameManager;
-import engine.Player.Type;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,8 +26,7 @@ import java.util.Optional;
 
 
     private Stage primaryStage;
-    private GameManager gameManager = new GameManager(this);
-    private ComputerTask computerTask;
+    private GameManager gameManager;
     private Board board;
     private Map<Short, UserInfoController> userInfoControllerMap;
 
@@ -45,9 +41,9 @@ import java.util.Optional;
     @FXML private Button helpButton;
     @FXML private Label turnNumberLabel;
     @FXML private ScrollPane boardScrollPane;
-    @FXML private  Label initInfoGame;
-    @FXML private  Label titleInfoGame;
-    @FXML private  Label titlePlayerData;
+    @FXML private Label initInfoGame;
+    @FXML private Label titleInfoGame;
+    @FXML private Label titlePlayerData;
     @FXML private VBox playerVBox;
     @FXML private Button checkWord;
     @FXML private Label buildWordLabel;
@@ -78,6 +74,7 @@ import java.util.Optional;
         wordBuildProperty = new SimpleStringProperty();
         tryNumberProperty = new SimpleIntegerProperty();
         totalTriesProperty = new SimpleIntegerProperty();
+        gameManager= new GameManager(this);
    }
 
     @FXML
@@ -268,14 +265,6 @@ import java.util.Optional;
 
         alert.setHeaderText(null);
         alert.show();
-        /* TODO: noy's original
-        if(gameManager.getGameEngine().getCurrentPlayer().getType().equals(Type.COMPUTER)){
-            setAllDisable();
-            computerTask = new ComputerTask(gameManager.getPlayerById(id, gameManager.getGameEngine().getPlayers()), gameManager.getGameEngine());
-            computerTask.run();
-            computerTask.getSelectedPoints();
-        }
-        */
     }
 
     public void selectPlayer(short prevId, short newId) {
@@ -292,7 +281,7 @@ import java.util.Optional;
     }
 
     public void checkComputer() {
-        if (gameManager.isPlayerComputer()) {
+        if (!gameManager.getGameEngine().isGameEnded() && gameManager.isPlayerComputer()) {
             gameManager.runComputer();
         }
     }
@@ -316,17 +305,15 @@ import java.util.Optional;
             Common.showError(notEnoughTilesError);
             return;
         }
-      
+        tryNumberProperty.set(1);
         gameManager.updateBoard(board.getPressedButtonsIndices());
-
-        // updateBoard(gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown());
     }
 
     public void updateBoard(char[][] board) {
         String outputMessageValidMove = "Now you can watch the hidden letters you chose to open!\n\n" +
-                "Try to build a word from those letter by pressing them by the order in which they apper. (If you" +
+                "Try to build a word from those letter by pressing them by the order in which they appear. (If you" +
                 " accidentally pressed the wrong order, that's OK, just press again, so the letters will " +
-                "be covered by a blue background).\n When you have a word in your mind, press on the Check Word Button to continue.\n\nGood Luch!!!";
+                "be covered by a blue background).\n When you have a word in your mind, press on the Check Word Button to continue.\n\nGood Luck!!!";
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Message");
@@ -365,29 +352,8 @@ import java.util.Optional;
 
     }
 
-    /*
-    //TODO: remove if we remove the build button - dunno yet
-    @FXML public void buildWord(){
-        checkWord.setDisable(false);
-        board.getPressedButtons().clear();
-        moveButton.setDisable(true);
-        buildWord.setDisable(true);
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Instructions");
-        alert.setContentText("Now that you chose the letters, all you need is to create a word that combines them. It can combines all letters or part of them." +
-                             "\nOnce you have a word in your mind, press on the letters by the order in which they appear in the word. (If you accidentally pressed the wrong order, that's fine, just press again, so the letters will be covered by a blue background).\n When you are done, press on the Make a Move button.\n\nGood Luch!!!");
-
-        alert.setHeaderText(null);
-        alert.showAndWait();
-        board.buildWord(true, () -> {
-            wordBuildProperty.set(gameManager.buttonsToStr(board.getPressedButtons(),board.getButtonsMap(),gameManager.getGameEngine().getBoardObject().getBoardWithAllSignsShown()));
-            return Boolean.TRUE;
-        });
-        tryNumberProperty.set(1);
-    }*/
-
     @FXML
-    public void throwDie() {
+        public void throwDie() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         boolean allShown = false;
         if(!gameManager.getIsFishMod())
@@ -426,9 +392,9 @@ import java.util.Optional;
         }
     }
 
-    public void playerRetired(short retiredPlayerId) {
+    public void playerRetired(short retiredPlayerId, boolean isRetired) {
         UserInfoController userInfoController = userInfoControllerMap.get(retiredPlayerId);
-        userInfoController.setStrikeThrough();
+        userInfoController.setStrikeThrough(isRetired);
     }
 
     @FXML
@@ -454,9 +420,9 @@ import java.util.Optional;
         //update board
         String updateBoardHelpTitle = "Message";
         String updateBoardHelpContent = "Now you can watch the hidden letters you chose to open!\n\n" +
-                "Try to build a word from those letter by pressing them by the order in which they apper. (If you" +
+                "Try to build a word from those letter by pressing them by the order in which they appear. (If you" +
                 " accidentally pressed the wrong order, that's OK, just press again, so the letters will " +
-                "be covered by a blue background).\n When you have a word in your mind, press on the Check Word Button to continue.\n\nGood Luch!!!";
+                "be covered by a blue background).\n When you have a word in your mind, press on the Check Word Button to continue.\n\nGood Luck!!!";
 
         String title = null;
         String content = null;
@@ -487,10 +453,10 @@ import java.util.Optional;
         retireButton.setDisable(true);
         checkWord.setDisable(true);
         board.resetAllButtons();
+        initScore();
         next();
         showEndGameControllers(true);
         prevButton.setDisable(true);
-        initScore();
     }
 
     private void showEndGameControllers(boolean show) {
