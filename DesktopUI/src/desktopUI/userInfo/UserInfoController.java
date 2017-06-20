@@ -96,7 +96,13 @@ public class UserInfoController {
         stage.show();
     }
 
-    public void setStrikeThrough() {
-        userInfoHBox.getStylesheets().addAll(getClass().getResource("/desktopUI/userInfo/StrikeThrough.css").toExternalForm());
+    public void setStrikeThrough(boolean set) {
+        String css = getClass().getResource("/desktopUI/userInfo/StrikeThrough.css").toExternalForm();
+        if (set) {
+            userInfoHBox.getStylesheets().addAll(css);
+        }
+        else {
+            userInfoHBox.getStylesheets().removeAll(css);
+        }
     }
 }

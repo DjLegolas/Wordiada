@@ -28,7 +28,7 @@ public class GameEngine {
     private int numberOfTurns = 0;
     private int tryNumber;
     private Map <Integer, CaptureTheMoment> turnData = new HashMap<>();
-    private int pointerForTurnData = 0;
+    private int pointerForTurnData = -1;
     public enum WordCheck {
             CORRECT, WRONG, WRONG_CANT_RETRY, CHARS_NOT_PRESENT, TRIES_DEPLETED
     }
@@ -85,7 +85,7 @@ public class GameEngine {
         }
 
         public int getTurnNumber() {
-            return turnNumber;
+            return turnNumber + 1;
         }
 
         public List<int[]> getSelectedBoardButtons() {
@@ -119,7 +119,6 @@ public class GameEngine {
     }
 
     public void reset() {
-        numberOfTurns = 0;
         currentGameData.resetBoard();
     }
 
@@ -148,8 +147,11 @@ public class GameEngine {
         players = getPlayersList();
         numOfPlayers = players.size();
         currentPlayer = players.get(0);
-        startTime = System.currentTimeMillis();
         tryNumber = 1;
+        numberOfTurns = 0;
+        pointerForTurnData = -1;
+        turnData.clear();
+        startTime = System.currentTimeMillis();
     }
 
     public Player getCurrentPlayer() {
@@ -204,21 +206,11 @@ public class GameEngine {
         return gameDataFromXml.getNumOfTries();
     }
 
-    public WordCheck isWordValidWithCoordinates(String word, int tries, List<int[]> selectedPoints) {
-        WordCheck result = isWordValid(word, tries);
-        switch (result) {
-            case CORRECT:
-                saveTheTurn(selectedPoints);
-                currentGameData.getBoard().removePointsFromBoard(selectedPoints);
-                break;
-            case WRONG_CANT_RETRY:
-            case TRIES_DEPLETED:
-                saveTheTurn(new ArrayList<>());
-        }
-        return result;
+    public WordCheck isWordValid(String word, int tries) {
+        return isWordValidWithCoordinates(word, tries, null);
     }
 
-    public WordCheck isWordValid(String word, int tries) {
+    public WordCheck isWordValidWithCoordinates(String word, int tries, List<int[]> selectedPoints) {
         if (tries == tryNumber && canRetry()) {
             if (!currentGameData.getBoard().hasChars(word)) {
                 tryNumber++;
@@ -230,16 +222,20 @@ public class GameEngine {
                 // currentGameData.getBoard().removeLettersFromBoard(word);
                 currentPlayer.updateScore(dictWord, currentGameData.calcScore(word));
                 tryNumber = 1;
+                saveTheTurn(selectedPoints);
+                currentGameData.getBoard().removePointsFromBoard(selectedPoints);
                 numberOfTurns++;
                 return WordCheck.CORRECT;
             }
             tryNumber++;
             if (!canRetry()) {
+                saveTheTurn(new ArrayList<>());
                 nextPlayer();
                 return WordCheck.WRONG_CANT_RETRY;
             }
             return WordCheck.WRONG;
         }
+        saveTheTurn(new ArrayList<>());
         nextPlayer();
         return WordCheck.TRIES_DEPLETED;
     }
@@ -270,13 +266,17 @@ public class GameEngine {
             return unShownPoints;
     }
 
-    public boolean isGameEnded(){
+    public boolean isGameEnded() {
         //if no more left cards in kupa and all the tails in the board are shown
-        return (currentGameData.getBoard().getKupaAmount() == 0) || (getUnShownPoints().isEmpty());
+        if ((numOfPlayers < 2 || currentGameData.getBoard().getKupaAmount() == 0) || (getUnShownPoints().isEmpty())) {
+            isGameStarted = false;
+            return true;
+        }
+        return false;
     }
 
     public boolean isGameEnded(boolean allTilesShown) {
-        if ((currentGameData.getBoard().getKupaAmount() == 0) || allTilesShown) {
+        if ((numOfPlayers < 2 || currentGameData.getBoard().getKupaAmount() == 0) || allTilesShown) {
             isGameStarted = false;
             return true;
         }
@@ -307,7 +307,7 @@ public class GameEngine {
     }
 
     public short getCurrentPlayerId() {
-        return isGameStarted ? currentPlayer.getId() : 0;
+        return currentPlayer.getId();
     }
 
     public Board getBoardObject(){
@@ -362,11 +362,13 @@ public class GameEngine {
     }
 
     public boolean retirePlayer() {
-        if (numOfPlayers == 2) {
+        currentPlayer.retire();
+        saveTheTurn(new ArrayList<>());
+        numOfPlayers--;
+        if (numOfPlayers < 2) {
+            isGameStarted = false;
             return false;
         }
-        currentPlayer.retire();
-        numOfPlayers--;
         nextPlayer();
         return true;
     }
@@ -399,7 +401,7 @@ public class GameEngine {
     }
 
     public boolean havePrevSave() {
-        return pointerForTurnData > 1;
+        return pointerForTurnData > 0;
     }
 
     public CaptureTheMoment nextSaveData() {
@@ -408,6 +410,6 @@ public class GameEngine {
     }
 
     public boolean haveNextSave() {
-        return pointerForTurnData < turnData.size();
+        return pointerForTurnData < turnData.size() - 1;
     }
 }

@@ -208,7 +208,7 @@ public class GameDataFromXml {
 
     // initialize board after size check
     private void initBoard() throws BoardSizeException, NotEnoughLettersException {
-        if ((boardSize < Board.MIN_SIZE) && (boardSize > Board.MAX_SIZE)) {
+        if ((boardSize < Board.MIN_SIZE) || (boardSize > Board.MAX_SIZE)) {
             throw new BoardSizeException(boardSize, Board.MIN_SIZE, Board.MAX_SIZE);
         }
         if (totalAmountOfLetters < boardSize * boardSize) {

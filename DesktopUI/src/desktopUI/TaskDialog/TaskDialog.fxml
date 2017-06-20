@@ -14,5 +14,5 @@
       <ProgressBar fx:id="progressBar" prefHeight="18.0" prefWidth="485.0" progress="0.0" />
    </HBox>
    <Separator layoutY="110.0" prefHeight="0.0" prefWidth="619.0" />
-   <Button fx:id="cancelButton" layoutX="567.0" layoutY="113.0" mnemonicParsing="false" text="Cancel" onAction="#onCancel" tooltip="Enforces the computer to retire" />
+   <Button fx:id="cancelButton" layoutX="567.0" layoutY="113.0" mnemonicParsing="false" text="Cancel" onAction="#onCancel" />
 </AnchorPane>

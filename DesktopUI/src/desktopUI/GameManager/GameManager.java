@@ -2,13 +2,10 @@ package desktopUI.GameManager;
 
 import desktopUI.Controller.Controller;
 import desktopUI.TaskDialog.TaskDialog;
-import desktopUI.Tile.SingleLetterController;
 import desktopUI.scoreDetail.ScoreDetailController;
 import desktopUI.scoreDetail.WordDetails;
 import desktopUI.userInfo.UserInfoController;
 import desktopUI.utils.Common;
-import desktopUI.utils.HelperFuncs;
-import desktopUI.utils.HelperFuncs.*;
 import engine.ComputerTask;
 import engine.GameEngine;
 import engine.GameEngine.CaptureTheMoment;
@@ -20,15 +17,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.DialogPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -36,7 +30,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 public class GameManager {
     private int currentDiceValue;
@@ -44,11 +37,12 @@ public class GameManager {
     private short currentPlayerId;
     private boolean isFishMod;
 
-    private GameEngine gameEngine = new GameEngine();
+    private GameEngine gameEngine;
     private Controller controller;
 
     public GameManager(Controller controller) {
         this.controller = controller;
+         gameEngine = new GameEngine();
     }
 
     public Boolean getIsFishMod() {
@@ -65,7 +59,7 @@ public class GameManager {
 
     public Map<Short, UserInfoController> getDataPlayers(Pane node){
         Map<Short, UserInfoController> controllersMap = new HashMap<>();
-        URL infoFXML = getClass().getResource("../userInfo/UserInfo.fxml");
+        URL infoFXML = getClass().getResource("/desktopUI/userInfo/UserInfo.fxml");
         for(Player player : gameEngine.getPlayers()) {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(infoFXML);
@@ -119,32 +113,37 @@ public class GameManager {
                 Common.showError("Wrong path to Xml file!");
             }
             catch(DictionaryNotFoundException e) {
-                Common.showError("There is not dictinary file!");
+                Common.showError("There is not dictionary file name \"" + e.getFileName() + "\"!");
             }
             catch(BoardSizeException e) {
-                Common.showError("Invalid board size!");
+                Common.showError("Invalid board size!\n" +
+                        "Min size: " + e.getMinSize() + "\n" +
+                        "Max size: " + e.getMaxSize() + "\n" +
+                        "Actual size: " + e.getSize());
             }
             catch(NotXmlFileException e) {
                 Common.showError("This is not an XML file! ");
             }
             catch(DuplicateLetterException e) {
-                Common.showError("Duplicate letter Error!");
+                Common.showError("The letter \'" + e.getLetter() + "\' has a duplicate entry!");
             }
             catch(NotValidXmlFileException e) {
                 Common.showError("Not valid Xml file!");
             }
             catch(WinTypeException e) {
-                Common.showError("Not entered win score mod!");
+                Common.showError("Win mod \"" + e.getWinType() + "\" is not supported!");
             }
             catch(NotEnoughLettersException e) {
-                Common.showError("Not enough letters!");
+                Common.showError("Not enough letters!\n" +
+                        "Need " + e.getExpectedAmount() + " but only have " + e.getCurrentAmount());
             }
             catch (NumberOfPlayersException e) {
                 Common.showError("Number of players needs to be between " + e.getMinPlayers() + " to " +
-                            e.getMinPlayers() + ", and you entered "  + e.getActualNumOfPlayers() + "!");
+                            e.getMaxPlayers() + ", and you entered "  + e.getActualNumOfPlayers() + "!");
             }
             catch (DuplicatePlayerIdException e) {
-                Common.showError("Duplicate Id player Error! " + e.getDuplicateId());
+                Common.showError("Duplicate Id player Error!\n" +
+                        "ID number " + e.getDuplicateId() + " is duplicated!");
         }}).start();
     }
 
@@ -213,7 +212,7 @@ public class GameManager {
         if (gameEngine.isStarted()) {
             if (gameEngine.retirePlayer()) {
                 short retiredId = currentPlayerId;
-                controller.playerRetired(retiredId);
+                controller.playerRetired(retiredId, true);
                 nextTurn(false);
             } else {
                 controller.endOfGameStatus();
@@ -346,6 +345,7 @@ public class GameManager {
         stage.setTitle("Computer Run - Wordiada");
         stage.setScene(new Scene(root));
 
+        controller.getDiceButton().setDisable(true);
         ComputerTask computerTask = new ComputerTask(gameEngine.getCurrentPlayer(), gameEngine);
         TaskDialog taskDialog = loader.getController();
         taskDialog.textProperty().bind(computerTask.messageProperty());
@@ -367,11 +367,16 @@ public class GameManager {
     }
 
     private void nextTurn(boolean clearButtons) {
-        updatePlayerScore();
-        switchUser();
-        updateTurnNumber();
         tryNumber = 1;
-        Platform.runLater(() -> controller.resetTurn(clearButtons));
+        updatePlayerScore();
+        if (gameEngine.isGameEnded()) {
+            controller.endOfGameStatus();
+        }
+        else {
+            switchUser();
+            updateTurnNumber();
+            Platform.runLater(() -> controller.resetTurn(clearButtons));
+        }
     }
 
     /*
@@ -397,9 +402,9 @@ public class GameManager {
 
     private void setTurnValues(CaptureTheMoment turnValues){
         if (turnValues != null) {
-            int turnNum = turnValues.getTurnNumber();
-            updateTurnNumber(turnNum);
+            updateTurnNumber(turnValues.getTurnNumber());
             updatePlayerScore();
+            updateRetires(turnValues.getPlayers());
             switchUser();
             Platform.runLater(() -> controller.savedBoardUpdate(turnValues.getBoard(), turnValues.getSelectedBoardButtons()));
         }
@@ -418,6 +423,12 @@ public class GameManager {
         setTurnValues(gameEngine.nextSaveData());
         if (!gameEngine.haveNextSave()) {
             controller.getNextButton().setDisable(true);
+        }
+    }
+
+    private void updateRetires(List<Player> players) {
+        for (Player player: players) {
+            Platform.runLater(() -> controller.playerRetired(player.getId(), player.isRetired()));
         }
     }
 }
