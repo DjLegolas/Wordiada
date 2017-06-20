@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.cell.*?>
+
+<VBox prefHeight="300.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="desktopUI.scoreDetail.ScoreDetailController">
+  <HBox>
+    <Label text="Number of words:" />
+    <Label fx:id="wordCountLabel" text="0">
+       <HBox.margin>
+          <Insets left="5.0" />
+       </HBox.margin>
+    </Label>
+    <VBox.margin>
+        <Insets bottom="5.0" left="5.0" top="5.0" />
+    </VBox.margin>
+  </HBox>
+  <Separator prefWidth="200.0" />
+  <TableView fx:id="wordsTableView">
+    <columns>
+      <TableColumn text="Word">
+         <cellValueFactory><PropertyValueFactory property="word" />
+         </cellValueFactory>
+      </TableColumn>
+      <TableColumn text="Amount">
+         <cellValueFactory><PropertyValueFactory property="amount" />
+         </cellValueFactory>
+      </TableColumn>
+      <TableColumn fx:id="scoreTableColumn" text="Score">
+         <cellValueFactory><PropertyValueFactory property="score" />
+         </cellValueFactory>
+      </TableColumn>
+    </columns>
+  </TableView>
+</VBox>

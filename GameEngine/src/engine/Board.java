@@ -3,6 +3,9 @@ package engine;
 import engine.exceptions.OutOfBoardBoundariesException;
 import engine.jaxb.schema.generated.Letter;
 
+import javax.xml.soap.Node;
+import java.awt.*;
+import java.util.List;
 import java.util.Random;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +13,7 @@ import java.util.*;
 
 public class Board {
 
-    public static class Point{
+      static class Point{
         private int x;
         private int y;
 
@@ -73,7 +76,7 @@ public class Board {
     static final short MAX_SIZE = 50;
     static final short MIN_SIZE = 5;
 
-    char[][] getBoard_onlySigns() {
+    public char[][] getBoard_onlySigns() {
         char[][] board = new char[size][size];
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
@@ -82,9 +85,19 @@ public class Board {
         }
         return board;
     }
+    public Cell [][] getBoardFullDetails(){
+        return board;
+    }
 
-    Cell[][] getFullBoardDetails(){return board;}
-
+    public char [][] getBoardWithAllSignsShown(){
+        char[][] reSBoard = new char[size][size];
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
+                reSBoard[row][col] = this.board[row][col].sign.toCharArray()[0];
+            }
+        }
+            return reSBoard;
+    }
 
     //C'tor
     Board(short _size, List<GameDataFromXml.DataLetter> letters, int totalAmountLetters){
@@ -121,6 +134,7 @@ public class Board {
         kupa.addAll(letters);
     }
 
+    public Map <Letter,List<Point>> getInitLetters(){return  initLetters;}
     private Point getRandomPoint() {
         int x,y;
         Random xy = new Random();
@@ -228,4 +242,43 @@ public class Board {
             }
          }
     }
+
+    public void removePointsFromBoard(List<int[]> pointToRemove) {
+        List<java.awt.Point> points = new ArrayList<>();
+        for (int[] point: pointToRemove) {
+            points.add(new java.awt.Point(point[1], point[0]));
+        }
+        removeLettersFromBoard(points);
+    }
+
+    public void removeLettersFromBoard(List <java.awt.Point> pointsToRemove) {
+        Random random = new Random();
+        GameDataFromXml.DataLetter dataLetter;
+
+        for(java.awt.Point point : pointsToRemove){
+            int row = (int)point.getY() - 1;
+            int col = (int)point.getX() - 1;
+            for (Letter letter: initLetters.keySet()) {
+                if (letter.getSign().get(0).equals(board[row][col].sign)) {
+                    initLetters.get(letter).remove(new Point(col, row));
+                    break;
+                }
+            }
+            do {
+                int letter = random.nextInt(initLetters.size());
+                dataLetter = kupa.get(letter);
+            } while(!(dataLetter.getAmount() > 0));
+            Letter letter = dataLetter.getLetter();
+            initLetters.get(letter).add(new Point(col, row));
+            dataLetter.setAmount(dataLetter.getAmount() - 1);
+            board[row][col].sign = letter.getSign().get(0);
+            board[row][col].isShown = false;
+            leftCards--;
+        }
+    }
+
+    public Cell getCellByPos(int x, int y){
+        return board[y][x];
+    }
+
 }

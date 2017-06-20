@@ -2,6 +2,7 @@ package engine;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Statistics {
 
@@ -24,8 +25,13 @@ public class Statistics {
         }
 
         public List<String> getWords() {
-
-            return player.getWords();
+            List<String> list = new ArrayList<>();
+            for (Map.Entry<Dictionary.Word, Integer> entry: player.getWords().entrySet()) {
+                for (int i = 0; i < entry.getValue(); i++) {
+                    list.add(entry.getKey().getWord());
+                }
+            }
+            return list;
         }
 
         public float getScore() {
@@ -85,7 +91,8 @@ public class Statistics {
     }
 
     public long getWordCount(String word) {
-        return dict.hasWord(word) ? dict.getWordAmount(word) : 0;
+        Dictionary.Word dictWord = dict.hasWord(word);
+        return dictWord != null ? dict.getWordAmount(word) : 0;
     }
 
     public List<Letter> getLetters() {

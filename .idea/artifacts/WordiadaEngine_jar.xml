@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact name="WordiadaEngine:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/WordiadaEngine_jar</output-path>
+    <root id="root">
+      <element id="archive" name="WordiadaEngine.jar">
+        <element id="module-output" name="GameEngine" />
+      </element>
+    </root>
+  </artifact>
+</component>

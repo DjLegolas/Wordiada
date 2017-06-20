@@ -16,7 +16,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 
-class GameDataFromXml {
+public class GameDataFromXml {
 
     public class DataLetter{
        private Letter letter; // sign , score, freq
@@ -40,6 +40,7 @@ class GameDataFromXml {
         }
     }
 
+    private boolean isGoldFishMode;
     private GameDescriptor gameDescriptor;
     private List<DataLetter> letters = new ArrayList<>();
     private int totalAmountOfLetters = 0;
@@ -51,9 +52,9 @@ class GameDataFromXml {
     private short totalTargetDeckSize; //כמות אריחים
     private final static String JAXB_XML_GAME_PACKAGE_NAME = "engine.jaxb.schema.generated";
     private Board board;
-    private Players players;
+    private Map<Short, Player> players = new HashMap<>();
     private Dictionary dictionary;
-    private enum WinAccordingTo {WORD_COUNT, WORD_SCORE}
+    public enum WinAccordingTo {WORD_COUNT, WORD_SCORE}
     private WinAccordingTo winAccordingTo;
 
     // get and set funcs:
@@ -64,15 +65,34 @@ class GameDataFromXml {
         return numOfTries;
     }
 
+    void initializeDataFromXml(File file) {
+        // TODO: add and fix code
+    }
+
+    public WinAccordingTo getWinAccordingTo(){
+        return winAccordingTo;
+    }
+    public boolean getGoldFishMod(){
+        return isGoldFishMode;
+    }
+
+
     void initializeDataFromXml(String pathToXml)
             throws WrongPathException, NotValidXmlFileException, DictionaryNotFoundException, WinTypeException,
-            NotXmlFileException, BoardSizeException, DuplicateLetterException, NotEnoughLettersException {
+            NotXmlFileException, BoardSizeException, DuplicateLetterException, NotEnoughLettersException,
+            NumberOfPlayersException, DuplicatePlayerIdException {
 
         loadXml(pathToXml);
-        Structure struct;
-        struct = gameDescriptor.getStructure();
+        Structure struct = gameDescriptor.getStructure();
         buildDataLetters(struct);
 
+        //init gold fish mode
+        try {
+            isGoldFishMode = gameDescriptor.getGameType().isGoldFishMode();
+        }
+        catch (NullPointerException e) {
+            isGoldFishMode = false;
+        }
         //init board size
         boardSize = struct.getBoardSize();
         //init num of wings
@@ -82,13 +102,35 @@ class GameDataFromXml {
         //init dictionary file name
         dictFileName = struct.getDictionaryFileName();
 
-        initDictionary(pathToXml);
+        initDictionary(pathToXml, struct);
         initBoard();
 
         //init players
-        players = gameDescriptor.getPlayers();
 
+        List<Player> players = gameDescriptor.getPlayers().getPlayer();
+        if ((players.size() < engine.Player.MIN_PLAYERS) || (players.size() > engine.Player.MAX_PLAYERS)) {
+            throw new NumberOfPlayersException(players.size(), engine.Player.MIN_PLAYERS, engine.Player.MAX_PLAYERS);
+        }
+        for (Player player: players) {
+            short id = player.getId();
+            if (this.players.containsKey(id)) {
+                throw new DuplicatePlayerIdException(id);
+            }
+            this.players.put(id, player);
+        }
+        
+        //init score type
         initWinType();
+    }
+
+    void resetBoard() {
+        try {
+            Structure struct = gameDescriptor.getStructure();
+            buildDataLetters(struct);
+            initBoard();
+        }
+        catch (Exception e) {
+        }
     }
 
     //creates the xml details:
@@ -117,6 +159,7 @@ class GameDataFromXml {
             throw new NotValidXmlFileException();
         }
     }
+
 
     // builds the letters variable and calculates the each letter's frequency
     private void buildDataLetters(Structure struct) throws DuplicateLetterException {
@@ -153,18 +196,19 @@ class GameDataFromXml {
     }
 
     // check if dictionary exists and pars it
-    private void initDictionary(String pathToXml) throws DictionaryNotFoundException {
+    private void initDictionary(String pathToXml, Structure struct) throws DictionaryNotFoundException {
         pathToXml = pathToXml.substring(0, pathToXml.length() - 4); // minus 4 for ".xml"
         while (!pathToXml.endsWith("\\")) {
             pathToXml = pathToXml.substring(0, pathToXml.length() - 1);
         }
         dictFilePath = pathToXml + "dictionary\\" + dictFileName;
         dictionary = new Dictionary(dictFilePath);
+        dictionary.calcWordsScore(struct.getLetters().getLetter());
     }
 
     // initialize board after size check
     private void initBoard() throws BoardSizeException, NotEnoughLettersException {
-        if ((boardSize < Board.MIN_SIZE) && (boardSize > Board.MAX_SIZE)) {
+        if ((boardSize < Board.MIN_SIZE) || (boardSize > Board.MAX_SIZE)) {
             throw new BoardSizeException(boardSize, Board.MIN_SIZE, Board.MAX_SIZE);
         }
         if (totalAmountOfLetters < boardSize * boardSize) {
@@ -194,7 +238,7 @@ class GameDataFromXml {
         return board;
     }
 
-    Dictionary getDictionary() {
+    public Dictionary getDictionary() {
         return dictionary;
     }
 
@@ -202,25 +246,21 @@ class GameDataFromXml {
         board.update(points);
     }
 
-    List<engine.jaxb.schema.generated.Player> getPlayers() throws NumberOfPlayersException{
-        List<Player> players;
+    List<engine.jaxb.schema.generated.Player> getPlayers(){
+        List<Player> players = new ArrayList<>();
         if (this.players == null) {
             return new ArrayList<>();
         }
-        players = this.players.getPlayer();
-        if (players.size() > 2) {
-            //TODO: fix when supporting more than 2
-            throw new NumberOfPlayersException(players.size(), engine.Player.MIN_PLAYERS, engine.Player.MIN_PLAYERS);
-        }
+        players.addAll(this.players.values());
         return players;
     }
 
-    float calcScore(String word) {
+    public float calcScore(String word) {
         if (winAccordingTo == WinAccordingTo.WORD_COUNT) {
             return 1;
         }
         else if (winAccordingTo == WinAccordingTo.WORD_SCORE) {
-            return 1;
+            return dictionary.getScore(word);
         }
         else {
             return 0;
@@ -231,10 +271,8 @@ class GameDataFromXml {
         return board.getKupaAmount();
     }
 
-    List<DataLetter> getKupa() {
+    public List<DataLetter> getKupa() {
         return board.getKupa();
     }
-    Board getBoardClass(){
-        return board;
-    }
+
 }

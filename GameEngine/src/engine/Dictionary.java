@@ -1,25 +1,45 @@
 package engine;
 
 import engine.exceptions.DictionaryNotFoundException;
+import engine.jaxb.schema.generated.Letter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
-class Dictionary {
+public class Dictionary {
     private long numberOfWords = 0;
     private Map<String, Word> words = new HashMap<>();
+    private List<String> top10RareWords = new ArrayList<>();
+    enum FreqSegment { COMMON, LESS_COMMON, RARE }
 
-    private class Word {
+    public class Word {
         private String word;
         private long count = 0;
         private float frequency;
+        private FreqSegment freqSegment;
+        private int score = 0;
 
-        private Word(String word) {
+        public Word(String word) {
             this.word = word;
             count = 1;
+        }
+
+        public void setWord(String word) {
+            this.word = word;
+        }
+
+        public void setCount(long count) {
+            this.count = count;
+        }
+
+
+        int getScore() {
+            return score;
+        }
+
+        public String getWord() {
+            return word;
         }
 
         private long getCount() {
@@ -36,6 +56,10 @@ class Dictionary {
 
         private void advanceCount() {
             count++;
+        }
+
+        private void setScore(int score) {
+            this.score = score;
         }
 
         @Override
@@ -87,11 +111,14 @@ class Dictionary {
             }
         }
         calcFrequency();
+        setSegment();
     }
 
-
-    boolean hasWord(String word) {
-        return words.containsKey(word);
+    public Word stringToWord(String word){
+        return new Word(word);
+    }
+    Word hasWord(String word) {
+        return words.getOrDefault(word, null);
     }
 
     long getNumberOfWords() {
@@ -107,5 +134,71 @@ class Dictionary {
             float freq = word.getCount() / numberOfWords * 100;
             word.setFrequency(freq);
         }
+    }
+
+    private void setSegment() {
+        long firstSegmentSize = numberOfWords / 3;
+        long secondSegmentSize = firstSegmentSize * 2;
+        long totalWordsProcessed = 0;
+        long totalDistinctWordsProcessed = 0;
+        FreqSegment currentSegment = FreqSegment.COMMON;
+        List<Word> wordList = new ArrayList<>();
+        wordList.addAll(words.values());
+        wordList.sort(Comparator.comparing(word -> (-word.count)));
+        for (Word word: wordList) {
+            totalDistinctWordsProcessed++;
+            if (totalWordsProcessed > secondSegmentSize) {
+                currentSegment = FreqSegment.RARE;
+            }
+            else if (totalWordsProcessed > firstSegmentSize) {
+                currentSegment = FreqSegment.LESS_COMMON;
+            }
+            word.freqSegment = currentSegment;
+            totalWordsProcessed += word.count;
+            if (totalDistinctWordsProcessed >= words.size() - 10) {
+                top10RareWords.add(word.word);
+            }
+        }
+    }
+
+    private int getSegmentScore(String strWord) {
+        Word word = words.get(strWord);
+        switch (word.freqSegment){
+            case COMMON:
+                return 1;
+            case LESS_COMMON:
+                return 2;
+            case RARE:
+                return 3;
+            default:
+                return 0;
+        }
+    }
+
+    void calcWordsScore(List<Letter> letters) {
+        for (Map.Entry<String, Word> entry: words.entrySet()) {
+            Word word = entry.getValue();
+            for(Character ch: entry.getKey().toCharArray()) {
+                for (Letter letter : letters) {
+                    if (letter.getSign().get(0).equals(ch.toString())) {
+                        word.score += letter.getScore();
+                        break;
+                    }
+                }
+            }
+            word.score *= getSegmentScore(entry.getKey());
+        }
+    }
+
+    float getScore(String word) {
+        return words.get(word).score;
+    }
+
+    public String getTop10RareWords() {
+        StringBuilder topTenRareWords = new StringBuilder();
+        for(String letter : top10RareWords){
+            topTenRareWords.append(letter + "\n");
+        }
+        return topTenRareWords.toString();
     }
 }
