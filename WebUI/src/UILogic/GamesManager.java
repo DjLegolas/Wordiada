@@ -1,12 +1,11 @@
 package UILogic;
 
-import Generated.GameDescriptor;
+import engine.jaxb.schema.generated.GameDescriptor;
 import logic.AdvancedGame;
 import logic.BasicGame;
 import logic.Game;
 import shared.GameInfo;
 import shared.Validator;
-import sharedStructures.eColor;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;

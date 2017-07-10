@@ -1,6 +1,6 @@
 package UILogic;
 
-import sharedStructures.PlayerData;
+import SharedStructures.PlayerData;
 
 import java.util.ArrayList;
 import java.util.Collections;
