@@ -1,0 +1,62 @@
+.toggler.selected{
+    border: 1px solid red;
+}
+
+.toggler {
+    border: 1px solid #040404;
+}
+
+td {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+}
+
+.myTable {
+    border-collapse: separate;
+    white-space: nowrap;
+}
+
+.undefined{
+    background-color:  gray;
+}
+
+.boardBtn{
+    width: 32px;
+    height: 32px;
+}
+
+.orangeBtn{
+    background-color:  orange;
+}
+
+.blackBtn{
+
+}
+
+.blueBtn{
+    background-color:  blue;
+}
+
+.redBtn{
+    background-color:  red;
+}
+
+.greenBtn{
+    background-color:  springgreen;
+}
+
+
+.mangentaBtn{
+    background-color:  magenta;
+
+}
+
+.purpleBtn{
+    background-color:  purple;
+}
+
+.greyBtn{
+    background-color:  lightgrey;
+
+}

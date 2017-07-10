@@ -1,0 +1,52 @@
+
+body {
+    background-image: url("../../../../לימודים/IdeaProjects/Wordiada/WebUI/web/images/gameBG.png");
+    font-family: 'Shadows Into Light', cursive;
+}
+
+#chatarea{
+    height: 200px;
+    border: darkgray 1px solid;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    overflow-y: auto;
+    padding: 5px;
+}
+
+.table {
+    margin-top: 2%;
+}
+
+.lobbyBtns{
+    color: #f0f0f1;
+    background-color: #660033;
+    border: solid 1px #555;
+    border-radius: 4px;
+}
+
+.sectionTitle {
+    font-size: 2em;
+    color: #660033;
+}
+
+.tableColTitle {
+    background-color: white;
+}
+
+#onlinePlayers {
+    width: 16%;
+    position: absolute;
+    left:0;
+    margin: 0 2%;
+}
+
+#gameList {
+    width: 70%;
+    position: absolute;
+    right:0;
+    margin: 0 2%;
+}
+
+#xmlFileDiv input{
+    display: none;
+}
