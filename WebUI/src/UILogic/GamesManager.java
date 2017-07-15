@@ -1,17 +1,18 @@
 package UILogic;
 
-import engine.jaxb.schema.generated.GameDescriptor;
 import logic.AdvancedGame;
 import logic.BasicGame;
 import logic.Game;
 import shared.GameInfo;
 import shared.Validator;
+import SharedStructures.eColor;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.InputStream;
 import java.util.HashMap;
+import engine.jaxb.schema.GameDescriptor;
 import java.util.List;
 
 public class GamesManager {
