@@ -9,6 +9,7 @@
         </element>
         <element id="directory" name="lib">
           <element id="artifact" artifact-name="WordiadaEngine:jar" />
+          <element id="library" level="project" name="com.google.code.gson:gson:2.8.1" />
         </element>
       </element>
     </root>
