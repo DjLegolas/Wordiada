@@ -2,6 +2,7 @@ package logic;
 
 import shared.GameInfo;
 import SharedStructures.PlayerData;
+import SharedStructures.eColor;
 import engine.Player.Type;
 import java.util.ArrayList;
 
@@ -55,7 +56,7 @@ public class BasicGame extends Game {
         m_Players = new ArrayList<Player>();
         String name = "Row player";
         for(int i = 0; i < m_GameInfo.getNumOfPlayers(); i++){
-            m_Players.add(new Player(i, name, Type.HUMAN));
+            m_Players.add(new HumanPlayer(i, name, Type.HUMAN, eColor.BLACK));
             name = "Column player";
         }
 
@@ -64,7 +65,7 @@ public class BasicGame extends Game {
 
     private void loadPlayersToGameInfo() {
         for(int i = 0; i < m_GameInfo.getNumOfPlayers(); i++){
-            m_GameInfo.getPlayers().add(new PlayerData(m_Players.get(i).getName(), m_Players.get(i).getID(),m_Players.get(i).getPlayerType(), m_Players.get(i).getPlayerScore()));
+            m_GameInfo.getPlayers().add(new PlayerData(m_Players.get(i).getName(), m_Players.get(i).getID(), m_Players.get(i).getColor(),m_Players.get(i).getPlayerType(), m_Players.get(i).getPlayerScore()));
         }
     }
 

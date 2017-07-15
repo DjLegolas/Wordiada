@@ -20,7 +20,7 @@ public class PlayerData {
 
     public PlayerData(String i_Name, String i_PlayerType){
         m_Name = i_Name;
-        m_PlayerType = Type.valueOf(i_PlayerType);
+        m_PlayerType = Type.valueOf(i_PlayerType.toUpperCase());
     }
 
     public PlayerData() {}

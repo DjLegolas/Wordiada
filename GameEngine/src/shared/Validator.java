@@ -1,6 +1,6 @@
 package shared;
 
-import engine.jaxb.schema.generated.GameDescriptor;
+import engine.jaxb.schema.GameDescriptor;
 import SharedStructures.PlayerData;
 import SharedStructures.SquareData;
 

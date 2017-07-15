@@ -4,9 +4,9 @@ package engine.jaxb.schema;
 
 //import examples.jaxb.schema.generated.Countries;
 
-import engine.jaxb.schema.generated.GameDescriptor;
 import engine.jaxb.schema.generated.Letters;
 import engine.jaxb.schema.generated.Structure;
+import engine.jaxb.schema.generated.GameDescriptor;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -20,7 +20,7 @@ public class SchemaBasedJAXBMain {
     public static void main(String[] args) {
         InputStream inputStream = SchemaBasedJAXBMain.class.getResourceAsStream("/resources/master.xml");
         try {
-            GameDescriptor gd = deserializeFromletter(inputStream);
+            engine.jaxb.schema.generated.GameDescriptor gd = deserializeFromletter(inputStream);
             Structure struct = gd.getStructure();
             Letters letters = struct.getLetters();
           //  System.out.println("sign of first letter is: " + letters.getLetter().get(0).getSign());

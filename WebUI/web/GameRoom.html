@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Game Room</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Shadows+Into+Light');
+    </style>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+
+    <script src="script/gameRoom.js"></script>
+    <script src="script/board.js"></script>
+    <script src="script/createBoard.js"></script>
+
+
+
+
+    <script src="script/lobby.js"></script>
+
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/gameRoom.css">
+    <link rel="stylesheet" href="css/board.css">
+    <link rel="stylesheet" href="css/popup.css">
+    <link rel="stylesheet" href="css/icons.css">
+
+</head>
+
+<body>
+<div class="container-fluid">
+
+    <div id="menuSection">
+
+        <div id="info" class="section">
+
+            <div class="sectionTitle" id="loggedinUser"></div>
+
+
+            <div class="sectionTitle">Game information</div>
+
+            <span class="infoSubTitle">Game Title:</span>
+            <span id="lableGameTitle"></span>
+            <br>
+            <span class="infoSubTitle">Current Player:</span>
+            <span id="lableCurrentPlayer"></span>
+            <br>
+            <span class="infoSubTitle">Move:</span>
+            <span id="lableCurrentMove"></span>
+        </div>
+
+        <input type="button" value="Quit" id="buttonQuit" class="btn btn-danger"/>
+
+        <div id="playersTable" class="section">
+            <div class="sectionTitle"> Online Players</div>
+            <table class="table" >
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th style="width: 30%">Type</th>
+                    <th style="width: 20%">Color</th>
+                    <th style="width: 20%">Score</th>
+                </tr>
+                </thead>
+                <tbody id="playingUsersTable">
+
+                </tbody>
+            </table>
+        </div>
+
+        <div id="visitorsTable" class="section">
+            <div class="sectionTitle">Visitors</div>
+            <table class ="table">
+                <thead>
+                <tr>
+                    <th>   </th>
+                    <th>Name</th>
+                </tr>
+                </thead>
+                <tbody id="allVisitors">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="bord">
+        <div id="gameBoard">
+            <table id="board"></table>
+        </div>
+    </div>
+</div>
+
+<div id="popup">
+    <div id="popupBg" onclick="closePopup()"/>
+    <div id="message"></div>
+</div>
+
+
+
+</body>
+</html>

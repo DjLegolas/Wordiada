@@ -1,4 +1,4 @@
-package Servlet;
+package Servelet;
 
 import UILogic.UserManager;
 import SharedStructures.PlayerData;
