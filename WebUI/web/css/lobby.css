@@ -50,3 +50,7 @@ body {
 #xmlFileDiv input{
     display: none;
 }
+
+#dictFileDiv input{
+    display: none;
+}

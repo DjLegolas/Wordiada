@@ -41,12 +41,19 @@
 
     <span id="gameList">
         <div class="sectionTitle">Game List</div>
-        <div id="xmlFileDiv">
-        <input type="file" accept=".xml" id="xmlFile" name="xmlFileName"> </input>
+        <div id="uploadFiles">
+            <div id="xmlFileDiv">
+                <input type="file" accept=".xml" id="xmlFile" name="xmlFileName" />
+                <button id="xmlSelectionButton" class="lobbyBtns"> Select XML File </button>
+            </div>
+            <div id="dictFileDiv">
+                <input type="file" accept=".txt" id="dictFile" name="dictFileName" />
+                <button id="dictSelectionButton" class="lobbyBtns"> Select Dictionary File </button>
+            </div>
+            <button id="uploadButton" class="lobbyBtns"> Upload New Game Files </button>
         </div>
-        <button id="uploadButton" class="lobbyBtns"> Upload New Game </button>
-        <input type="button" id="joinGameButton" value="Join Game" class="lobbyBtns">  </input>
-        <input type="button" id="showBoard" value="Show Board" class="lobbyBtns">  </input>
+        <input type="button" id="joinGameButton" value="Join Game" class="lobbyBtns" />
+        <input type="button" id="showBoard" value="Show Board" class="lobbyBtns" />
 
         <table class="table">
             <thead>

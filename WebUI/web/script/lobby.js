@@ -4,29 +4,44 @@ $(document).ready(function () {
     ajaxIsAlreadyPlaying();
 
     $.ajaxSetup({cache: false});
-    $('#joinGameButton').hide();
-    $('#showBoard').hide();
+    $('#joinGameButton').hide().on("click", joinGame);
+    $('#showBoard').hide().on("click",openPopupWithBoard);
 
 
     ajaxUsersAndGameList();
     setInterval(ajaxUsersAndGameList, refreshRate);
 
-    $('#joinGameButton').on("click", joinGame);
-    $('#showBoard').on("click",openPopupWithBoard);
+    //$('#joinGameButton').on("click", joinGame);
+    //$('#showBoard').on("click",openPopupWithBoard);
     $('#buttonLogOut').on("click", logOut);
 
-
-    $('#uploadButton').on("click", function (event) {
+    $('#xmlSelectionButton').on("click", function (event) {
         event.preventDefault();
         $('#xmlFile').trigger('click');
     });
 
+    $('#dictSelectionButton').on("click", function (event) {
+        event.preventDefault();
+        $('#dictFile').trigger('click');
+    });
+
+    $('#uploadButton').on("click", function (event) {
+        event.preventDefault();
+        if(valideFileExtension([$("#xmlFile").val(), $('#dictFile').val()])){
+            uploadFile();
+            $('#xmlFile').val("");
+            $('#dictFile').val("");
+        }
+    });
+
+    /*
     $('#xmlFile').change(function () {
         if(valideFileExtension($("#xmlFile").val())){
             uploadFile();
             $('#xmlFile').val("");
         }
     })
+    */
 
 });
 
@@ -38,16 +53,22 @@ $(document).on("click", "#gameTable tr", function(e){
 });
 
 
-function valideFileExtension(file) {
+function valideFileExtension(filesArray) {
+    var arrayExtensions = ["xml", "txt"];
+    for (i = 0; i < filesArray.length; i++) {
+        var ext = filesArray.getAsFile().split(".");
+        ext = ext[ext.length - 1].toLocaleLowerCase();
 
-    var ext = file.split(".");
-    ext = ext[ext.length-1].toLocaleLowerCase();
-    var arrayExtensions = ["xml"];
-
-    if(arrayExtensions.lastIndexOf(ext) == -1){
-        $('#xmlFile').val("");
-        openPopup("not support this files");
-        return false;
+        if (i === 0 && arrayExtensions.lastIndexOf(ext) !== 0) {
+            $('#xmlFile').val("");
+            openPopup("not xml file");
+            return false;
+        }
+        else if (i === 1 && arrayExtensions.lastIndexOf(ext) !== 1) {
+            $('#dictFile').val("");
+            openPopup("not dictionary file");
+            return false;
+        }
     }
     return true;
 }
@@ -200,6 +221,7 @@ function uploadFile() {
 
     var formData = new FormData();
     formData.append('xmlFileName', $('#xmlFile')[0].files[0]);
+    formData.append('dictFileName', $('#dictFile')[0].files[0]);
 
     $.ajax({
         url: "lobby",

@@ -7,7 +7,7 @@ public class Constants  {
     public static final String GAME_TITLE = "gameTitle";
     public static final String USER_TYPE = "usertype";
     public static final String USER_MANAGER_ATTRIBUTE_NAME = "userManager";
-    public static final String GAMES_MANAGER_ATTRIBUTE_NAME = "gamesManager";
+    public static final String GAMES_MANAGER_ATTRIBUTE_NAME = "gamesEngine";
 
     // user type
     public static final String HUMAN = "Human";
@@ -27,6 +27,7 @@ public class Constants  {
     public static final String JOIN_GAME = "JoinGame";
     public static final String CHECK_USER_PLAYING = "CheckUserPlaying";
     public static final String XML_FILE = "xmlFileName";
+    public static final String DICT_FILE = "dictFileName";
     public static final String JOIN_AS_VISITOR="joinGameVisitor";
 
     // game room servlet

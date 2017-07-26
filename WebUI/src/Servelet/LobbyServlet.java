@@ -141,10 +141,12 @@ public class LobbyServlet extends HttpServlet {
         response.setContentType("application/json");
 
         Part myPart = request.getPart(Constants.XML_FILE);
-        InputStream file = myPart.getInputStream();
+        InputStream xmlFile = myPart.getInputStream();
+        myPart = request.getPart(Constants.DICT_FILE);
+        InputStream dictFile = myPart.getInputStream();
         GamesManager gamesManager = ServletUtils.getGamesManager(getServletContext());
         PlayerData userFromSession = SessionUtils.getLoginUser(request);
-        String result = gamesManager.addNewGame(file, userFromSession.getName());
+        String result = gamesManager.addNewGame(xmlFile, dictFile, userFromSession.getName());
 
         Gson gson = new Gson();
 

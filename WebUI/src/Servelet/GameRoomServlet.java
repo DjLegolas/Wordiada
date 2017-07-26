@@ -3,14 +3,15 @@ package Servelet;
 
 import UILogic.GamesManager;
 import com.google.gson.Gson;
-import javafx_ui.gamePane.GameController;
+// import javafx_ui.gamePane.GameController;
+import engine.GameEngine;
 import logic.Game;
 import logic.Player;
 import shared.GameInfo;
-import sharedStructures.PlayerData;
-import utils.Constants;
-import utils.ServletUtils;
-import utils.SessionUtils;
+import SharedStructures.PlayerData;
+import Utils.Constants;
+import Utils.ServletUtils;
+import Utils.SessionUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 
 @WebServlet(name = "GameRoomServlet", urlPatterns = {"/gamingRoom"})
 public class GameRoomServlet extends HttpServlet {
-    GameController controller = new GameController();
+    GameEngine controller;
     private boolean m_GameFull = false;
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -84,7 +85,7 @@ public class GameRoomServlet extends HttpServlet {
             String responseCanPlay = canPlayerPlay(request,currGame);
 
             if(responseCanPlay.equals("true")){
-                controller.makeMoveClicked(currGame);
+                //controller.makeMoveClicked(currGame);
             }
             else{
                 currGame.getGameInfo().setErrorFound(true);
@@ -163,7 +164,7 @@ public class GameRoomServlet extends HttpServlet {
            isGameStarted = "true";
            currGame.setIsActiveGame(true);
            controller.setGameStarted(true);
-           controller.startGameClicked(currGame);
+           //controller.startGameClicked(currGame);
        }
 
        response.getWriter().write(isGameStarted);
@@ -177,7 +178,7 @@ public class GameRoomServlet extends HttpServlet {
        Game currGame = getGame(request);
        PlayerData userFromSession = SessionUtils.getLoginUser(request);
 
-       controller.quitButtonClicked(currGame, controller.getGameStarted(),userFromSession.getName());
+       //controller.quitButtonClicked(currGame, controller.getGameStarted(),userFromSession.getName());
        request.getSession(true).removeAttribute(Constants.GAME_TITLE);
        userFromSession.setIsPlaying(false);
    }

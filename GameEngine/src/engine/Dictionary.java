@@ -5,6 +5,7 @@ import engine.jaxb.schema.generated.Letter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.*;
 
 public class Dictionary {
@@ -95,6 +96,15 @@ public class Dictionary {
             throw new DictionaryNotFoundException(pathToDict);
         }
 
+        initDict(scanner);
+    }
+
+    Dictionary(InputStream dictStream) {
+        initDict(new Scanner(dictStream));
+    }
+
+    private void initDict(Scanner scanner)
+    {
         String currentWord;
         String toRemove = " !?,.:;-_=+*\"'\\(\\)\\{\\}\\[\\]%$";
         while (scanner.hasNext()) {
