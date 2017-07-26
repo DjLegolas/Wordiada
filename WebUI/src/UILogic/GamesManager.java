@@ -35,7 +35,6 @@ public class GamesManager {
         String res = "success";
         try {
             gameEngine.loadXml(xmlStream, dictStream, userNameFromSession);
-            // TODO - decide how to store uploaded games
             // gamesMap.put();
         }
         catch(Exception e){

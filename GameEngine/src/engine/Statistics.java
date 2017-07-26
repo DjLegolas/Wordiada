@@ -12,6 +12,7 @@ public class Statistics {
     private int leftBoxTiles;
     private long playTime;
     private Dictionary dict;
+    private String gameTitle;
 
     public class PlayerData {
         private Player player;

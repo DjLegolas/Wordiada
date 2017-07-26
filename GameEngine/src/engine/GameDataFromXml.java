@@ -40,6 +40,7 @@ public class GameDataFromXml {
         }
     }
 
+    private String gameTitle;
     private boolean isGoldFishMode;
     private GameDescriptor gameDescriptor;
     private List<DataLetter> letters = new ArrayList<>();
