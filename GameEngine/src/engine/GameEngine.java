@@ -1,6 +1,7 @@
 package  engine;
 
 import java.io.File;
+import java.io.InputStream;
 import java.lang.String;
 
 import engine.exceptions.*;
@@ -32,6 +33,7 @@ public class GameEngine {
     public enum WordCheck {
             CORRECT, WRONG, WRONG_CANT_RETRY, CHARS_NOT_PRESENT, TRIES_DEPLETED
     }
+    private String creatorName;
 
 
     //TODO: we need also save dice value , num of tries?
@@ -110,9 +112,21 @@ public class GameEngine {
         gdfx.add(gd);
     }
 
+
+    public void loadXml(InputStream file, InputStream dictFile, String userNameFromSession)
+            throws WrongPathException, DictionaryNotFoundException, BoardSizeException, NotXmlFileException,
+            DuplicateLetterException, NotValidXmlFileException, WinTypeException, NotEnoughLettersException,
+            NumberOfPlayersException, DuplicatePlayerIdException {
+        GameDataFromXml gd = new GameDataFromXml();
+        gd.initializeDataFromXml(file, dictFile);
+        creatorName = userNameFromSession;
+        gdfx.add(gd);
+    }
+
     public void loadXml(File file)
             throws WrongPathException, DictionaryNotFoundException, BoardSizeException, NotXmlFileException,
-            DuplicateLetterException, NotValidXmlFileException, WinTypeException, NotEnoughLettersException {
+            DuplicateLetterException, NotValidXmlFileException, WinTypeException, NotEnoughLettersException,
+            NumberOfPlayersException, DuplicatePlayerIdException {
         GameDataFromXml gd = new GameDataFromXml();
         gd.initializeDataFromXml(file);
         gdfx.add(gd);

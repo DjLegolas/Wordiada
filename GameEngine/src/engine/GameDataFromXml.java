@@ -82,7 +82,26 @@ public class GameDataFromXml {
             NotXmlFileException, BoardSizeException, DuplicateLetterException, NotEnoughLettersException,
             NumberOfPlayersException, DuplicatePlayerIdException {
 
-        loadXml(pathToXml);
+        if (!pathToXml.toLowerCase().endsWith(".xml")) {
+            throw new NotXmlFileException();
+        }
+        InputStream inputStream;
+
+        try {
+            inputStream = new FileInputStream(pathToXml);
+        } catch (FileNotFoundException e) {
+            throw new WrongPathException();
+        }
+
+        setData(inputStream, pathToXml, null);
+    }
+
+    private void setData(InputStream xmlStream, String pathToXml, InputStream dictStream)
+            throws WrongPathException, NotValidXmlFileException, DictionaryNotFoundException, WinTypeException,
+            NotXmlFileException, BoardSizeException, DuplicateLetterException, NotEnoughLettersException,
+            NumberOfPlayersException, DuplicatePlayerIdException {
+
+        loadXml(xmlStream);
         Structure struct = gameDescriptor.getStructure();
         buildDataLetters(struct);
 
@@ -102,25 +121,26 @@ public class GameDataFromXml {
         //init dictionary file name
         dictFileName = struct.getDictionaryFileName();
 
-        initDictionary(pathToXml, struct);
+        if (dictStream == null) {
+            initDictionary(pathToXml, struct);
+        } else {
+            initDictionary(dictStream, struct);
+        }
+
         initBoard();
 
-        //init players
-
-        List<Player> players = gameDescriptor.getPlayers().getPlayer();
-        if ((players.size() < engine.Player.MIN_PLAYERS) || (players.size() > engine.Player.MAX_PLAYERS)) {
-            throw new NumberOfPlayersException(players.size(), engine.Player.MIN_PLAYERS, engine.Player.MAX_PLAYERS);
-        }
-        for (Player player: players) {
-            short id = player.getId();
-            if (this.players.containsKey(id)) {
-                throw new DuplicatePlayerIdException(id);
-            }
-            this.players.put(id, player);
-        }
+        initPlayers();
         
         //init score type
         initWinType();
+    }
+
+    void initializeDataFromXml(InputStream xmlStream, InputStream dictStream)
+            throws WrongPathException, NotValidXmlFileException, DictionaryNotFoundException, WinTypeException,
+            NotXmlFileException, BoardSizeException, DuplicateLetterException, NotEnoughLettersException,
+            NumberOfPlayersException, DuplicatePlayerIdException {
+
+        setData(xmlStream, null, dictStream);
     }
 
     void resetBoard() {
@@ -141,25 +161,13 @@ public class GameDataFromXml {
     }
 
     // load the xml to gameDescriptor
-    private void loadXml(String pathToXml) throws NotXmlFileException, WrongPathException, NotValidXmlFileException {
-        if (!pathToXml.toLowerCase().endsWith(".xml")) {
-            throw new NotXmlFileException();
-        }
-        InputStream inputStream;
-
+    private void loadXml(InputStream xmlStream) throws NotValidXmlFileException {
         try {
-            inputStream = new FileInputStream(pathToXml);
-        } catch (FileNotFoundException e) {
-            throw new WrongPathException();
-        }
-
-        try {
-            gameDescriptor = deserializeFrom(inputStream);
+            gameDescriptor = deserializeFrom(xmlStream);
         } catch (JAXBException e) {
             throw new NotValidXmlFileException();
         }
     }
-
 
     // builds the letters variable and calculates the each letter's frequency
     private void buildDataLetters(Structure struct) throws DuplicateLetterException {
@@ -206,6 +214,12 @@ public class GameDataFromXml {
         dictionary.calcWordsScore(struct.getLetters().getLetter());
     }
 
+    private void initDictionary(InputStream dictStream, Structure struct) {
+        dictFilePath = null;
+        dictionary = new Dictionary(dictStream);
+        dictionary.calcWordsScore(struct.getLetters().getLetter());
+    }
+
     // initialize board after size check
     private void initBoard() throws BoardSizeException, NotEnoughLettersException {
         if ((boardSize < Board.MIN_SIZE) || (boardSize > Board.MAX_SIZE)) {
@@ -216,6 +230,21 @@ public class GameDataFromXml {
         }
         //init board
         board = new Board(boardSize, letters, totalAmountOfLetters);
+    }
+
+    private void initPlayers() throws NumberOfPlayersException, DuplicatePlayerIdException {
+        List<Player> players = gameDescriptor.getPlayers().getPlayer();
+        if ((players.size() < engine.Player.MIN_PLAYERS) || (players.size() > engine.Player.MAX_PLAYERS)) {
+            throw new NumberOfPlayersException(players.size(), engine.Player.MIN_PLAYERS, engine.Player.MAX_PLAYERS);
+        }
+        for (Player player: players) {
+            short id = player.getId();
+            if (this.players.containsKey(id)) {
+                throw new DuplicatePlayerIdException(id);
+            }
+            this.players.put(id, player);
+        }
+
     }
 
     // gets win type
