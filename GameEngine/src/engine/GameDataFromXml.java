@@ -41,6 +41,8 @@ public class GameDataFromXml {
     }
 
     private String gameTitle;
+    private boolean isDynamic;
+    private int totalPlayers;
     private boolean isGoldFishMode;
     private GameDescriptor gameDescriptor;
     private List<DataLetter> letters = new ArrayList<>();
@@ -81,7 +83,7 @@ public class GameDataFromXml {
     void initializeDataFromXml(String pathToXml)
             throws WrongPathException, NotValidXmlFileException, DictionaryNotFoundException, WinTypeException,
             NotXmlFileException, BoardSizeException, DuplicateLetterException, NotEnoughLettersException,
-            NumberOfPlayersException, DuplicatePlayerIdException {
+            NumberOfPlayersException, DuplicatePlayerIdException, NoTitleException {
 
         if (!pathToXml.toLowerCase().endsWith(".xml")) {
             throw new NotXmlFileException();
@@ -100,11 +102,21 @@ public class GameDataFromXml {
     private void setData(InputStream xmlStream, String pathToXml, InputStream dictStream)
             throws WrongPathException, NotValidXmlFileException, DictionaryNotFoundException, WinTypeException,
             NotXmlFileException, BoardSizeException, DuplicateLetterException, NotEnoughLettersException,
-            NumberOfPlayersException, DuplicatePlayerIdException {
+            NumberOfPlayersException, DuplicatePlayerIdException, NoTitleException {
 
         loadXml(xmlStream);
         Structure struct = gameDescriptor.getStructure();
         buildDataLetters(struct);
+
+        // init dynamic players
+        try {
+            gameTitle = gameDescriptor.getDynamicPlayers().getGameTitle().get(0);
+        }
+        catch (NullPointerException e) {
+            throw new NoTitleException();
+        }
+        totalPlayers = gameDescriptor.getDynamicPlayers().getTotalPlayers();
+        isDynamic = true;
 
         //init gold fish mode
         try {
@@ -139,7 +151,7 @@ public class GameDataFromXml {
     void initializeDataFromXml(InputStream xmlStream, InputStream dictStream)
             throws WrongPathException, NotValidXmlFileException, DictionaryNotFoundException, WinTypeException,
             NotXmlFileException, BoardSizeException, DuplicateLetterException, NotEnoughLettersException,
-            NumberOfPlayersException, DuplicatePlayerIdException {
+            NumberOfPlayersException, DuplicatePlayerIdException, NoTitleException {
 
         setData(xmlStream, null, dictStream);
     }
@@ -234,18 +246,19 @@ public class GameDataFromXml {
     }
 
     private void initPlayers() throws NumberOfPlayersException, DuplicatePlayerIdException {
-        List<Player> players = gameDescriptor.getPlayers().getPlayer();
-        if ((players.size() < engine.Player.MIN_PLAYERS) || (players.size() > engine.Player.MAX_PLAYERS)) {
-            throw new NumberOfPlayersException(players.size(), engine.Player.MIN_PLAYERS, engine.Player.MAX_PLAYERS);
-        }
-        for (Player player: players) {
-            short id = player.getId();
-            if (this.players.containsKey(id)) {
-                throw new DuplicatePlayerIdException(id);
+        if (!isDynamic) {
+            List<Player> players = gameDescriptor.getPlayers().getPlayer();
+            if ((players.size() < engine.Player.MIN_PLAYERS) || (players.size() > engine.Player.MAX_PLAYERS)) {
+                throw new NumberOfPlayersException(players.size(), engine.Player.MIN_PLAYERS, engine.Player.MAX_PLAYERS);
             }
-            this.players.put(id, player);
+            for (Player player : players) {
+                short id = player.getId();
+                if (this.players.containsKey(id)) {
+                    throw new DuplicatePlayerIdException(id);
+                }
+                this.players.put(id, player);
+            }
         }
-
     }
 
     // gets win type
@@ -305,4 +318,17 @@ public class GameDataFromXml {
         return board.getKupa();
     }
 
+
+
+    public String getGameTitle() {
+        return gameTitle;
+    }
+
+    public boolean isDynamic() {
+        return isDynamic;
+    }
+
+    public int getTotalPlayers() {
+        return totalPlayers;
+    }
 }

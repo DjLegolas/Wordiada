@@ -27,22 +27,12 @@ $(document).ready(function () {
 
     $('#uploadButton').on("click", function (event) {
         event.preventDefault();
-        if(valideFileExtension([$("#xmlFile").val(), $('#dictFile').val()])){
+        if(validFileExtension([$("#xmlFile").val(), $('#dictFile').val()])){
             uploadFile();
             $('#xmlFile').val("");
             $('#dictFile').val("");
         }
     });
-
-    /*
-    $('#xmlFile').change(function () {
-        if(valideFileExtension($("#xmlFile").val())){
-            uploadFile();
-            $('#xmlFile').val("");
-        }
-    })
-    */
-
 });
 
 $(document).on("click", "#gameTable tr", function(e){
@@ -53,10 +43,11 @@ $(document).on("click", "#gameTable tr", function(e){
 });
 
 
-function valideFileExtension(filesArray) {
+function validFileExtension(filesArray) {
     var arrayExtensions = ["xml", "txt"];
     for (i = 0; i < filesArray.length; i++) {
-        var ext = filesArray.getAsFile().split(".");
+        var file = filesArray[i];
+        var ext = file.split(".");
         ext = ext[ext.length - 1].toLocaleLowerCase();
 
         if (i === 0 && arrayExtensions.lastIndexOf(ext) !== 0) {
@@ -152,11 +143,11 @@ function refreshGameList(games) {
     $.each(games || [], function (gameKey, gameValue)
     {
         var gameList = $('<tr value="'+gameKey+'"> </tr>');
-        var bordSize = gameValue.m_BoardSize;
-        var players = gameValue.m_TotalPlayers;
-        var signedUpPlayers = gameValue.m_Players.length ;
+        var bordSize = gameValue.boardSize;
+        var players = gameValue.totalPlayers;
+        var signedUpPlayers = gameValue.players.length ;
         var gameStatus;
-        if(!gameValue.m_isGameActive && gameValue.m_Players.length < gameValue.m_TotalPlayers){
+        if(!gameValue.isGameActive && gameValue.players.length < gameValue.totalPlayers){
             gameStatus = "Available"
         }else {
             gameStatus = "Not Available"
@@ -164,7 +155,7 @@ function refreshGameList(games) {
 
 
         $('<th>' + gameKey + '</th>').appendTo(gameList);
-        $('<th>' + gameValue.m_Organizer + '</th>').appendTo(gameList);
+        $('<th>' + gameValue.organizer + '</th>').appendTo(gameList);
         $('<th>' + players + '</th>').appendTo(gameList);
         $('<th>' + signedUpPlayers + '</th>').appendTo(gameList);
         $('<th>' + bordSize + '</th>').appendTo(gameList);
@@ -192,7 +183,7 @@ function refreshUsersList(users){
             icon = "<span class='MachineIcon'></span>"
         }
 
-        var userList = $('<tr class="active"> </tr>')
+        var userList = $('<tr class="active"> </tr>');
         $('<th>' + user.m_Name + '</th>').appendTo(userList);
         $('<th>' + icon + '</th>').appendTo(userList);
         userList.appendTo($("#usersTable"));

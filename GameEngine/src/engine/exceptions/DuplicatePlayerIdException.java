@@ -4,7 +4,7 @@ public class DuplicatePlayerIdException extends Exception {
     private short duplicateId;
 
     public DuplicatePlayerIdException(short duplicateId) {
-        super();
+        super("Player ID " + duplicateId + "already exists");
         this.duplicateId = duplicateId;
     }
 

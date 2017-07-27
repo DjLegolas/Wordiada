@@ -3,8 +3,9 @@ package Servelet;
 import UILogic.GamesManager;
 import UILogic.UserManager;
 import com.google.gson.Gson;
+import engine.GameEngine;
+import engine.Statistics;
 import logic.Game;
-import shared.GameInfo;
 import SharedStructures.PlayerData;
 import Utils.Constants;
 import Utils.ServletUtils;
@@ -19,8 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 
 @WebServlet(name = "LobbyServlet", urlPatterns = {"/lobby"})
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 1024 * 1024 * 5, maxRequestSize = 1024 * 1024 * 5 * 5)
@@ -39,33 +39,25 @@ public class LobbyServlet extends HttpServlet {
         response.getWriter().flush();
     }
 
-    private void gameAndUserLists(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException    {
-        GameInfo gameInfo;
-
+    private void gameAndUserLists(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
 
         UserManager userManager = ServletUtils.getUserManager(getServletContext());
         GamesManager gamesManager = ServletUtils.getGamesManager(getServletContext());
         Gson gson = new Gson();
 
-        HashMap<String, GameInfo> gamesInfo = gamesManager.getGamesInfosMap();
-        HashMap<String, Game> games = gamesManager.getGamesMap();
+        Map<String, GameEngine> games = gamesManager.getGamesMap();
 
-        Set<String> titles = gamesInfo.keySet();
-
-        for(String title: titles) {
-            gameInfo = gamesInfo.get(title);
-            if(gameInfo.getGameEmptyOfPlayers()){
-                gamesInfo.remove(title);
-                games.remove(title);
-            }
+        Map<String, Statistics> gamesStatistics = new HashMap<>();
+        for (GameEngine game: games.values()) {
+            gamesStatistics.put(game.getGameTitle() ,game.getStatistics());
         }
 
 
         String usersJson = gson.toJson(userManager.getUsers());
-        String gameDetalisJson = gson.toJson(gamesManager.getGamesInfosMap());
+        String gameDetailsJson = gson.toJson(gamesStatistics);
 
-        String bothJson = "["+usersJson+","+gameDetalisJson+"]"; //Put both objects in an array of 2 elements
+        String bothJson = "[" + usersJson + "," + gameDetailsJson + "]"; //Put both objects in an array of 2 elements
         response.getWriter().write(bothJson);
         response.getWriter().flush();
     }
@@ -79,7 +71,7 @@ public class LobbyServlet extends HttpServlet {
         GamesManager gamesManager = ServletUtils.getGamesManager(getServletContext());
 
         String gameTitle = request.getParameter(Constants.GAME_TITLE);
-        Game gameToJoin = gamesManager.getSpecificGame(gameTitle);
+        Game gameToJoin = null; //gamesManager.getSpecificGame(gameTitle);
         if(gameToJoin != null)
         {
             String playerName = userFromSession.getName();

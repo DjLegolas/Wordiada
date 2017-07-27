@@ -13,6 +13,11 @@ public class Statistics {
     private long playTime;
     private Dictionary dict;
     private String gameTitle;
+    private int totalPlayers;
+    private int boardSize;
+    private char[][] board;
+    private boolean isGameActive;
+    private String organizer;
 
     public class PlayerData {
         private Player player;
@@ -56,19 +61,25 @@ public class Statistics {
         }
     }
 
-    Statistics(List <Player> inputPlayer, long playTime, int turnsPlayed, GameDataFromXml gd){
+    Statistics(boolean isStarted, GameDataFromXml gd, String organizer, List<Player> inputPlayer, long playTime, int turnsPlayed){
         players = new ArrayList<>();
         for (Player player: inputPlayer) {
             players.add(new PlayerData(player));
         }
         letters = new ArrayList<>();
-        for (GameDataFromXml.DataLetter l: gd.getKupa()) {
-            letters.add(new Letter(l));
+        for (GameDataFromXml.DataLetter letter: gd.getKupa()) {
+            letters.add(new Letter(letter));
         }
         this.playTime = playTime / 1000;
         numOfTurns = turnsPlayed;
         leftBoxTiles = gd.getKupaAmount();
         dict = gd.getDictionary();
+        gameTitle = gd.getGameTitle();
+        totalPlayers = gd.getTotalPlayers();
+        boardSize = gd.getBoard().getBoardSize();
+        board = gd.getBoard().getBoard_onlySigns();
+        this.isGameActive = isStarted;
+        this.organizer = organizer;
     }
 
     public long getTime() {
@@ -98,5 +109,25 @@ public class Statistics {
 
     public List<Letter> getLetters() {
         return letters;
+    }
+
+    public String getGameTitle() {
+        return gameTitle;
+    }
+
+    public int getTotalPlayers() {
+        return totalPlayers;
+    }
+
+    public int getBoardSize() {
+        return boardSize;
+    }
+
+    public boolean isGameActive() {
+        return isGameActive;
+    }
+
+    public char[][] getBoard() {
+        return board;
     }
 }

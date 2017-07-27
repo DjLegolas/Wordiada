@@ -12,7 +12,6 @@ import engine.Board.Point;
 import engine.GameDataFromXml.*;
 
 import engine.jaxb.schema.generated.Letter;
-import javafx.scene.control.Button;
 import javafx.util.Pair;
 
 public class GameEngine {
@@ -33,10 +32,8 @@ public class GameEngine {
     public enum WordCheck {
             CORRECT, WRONG, WRONG_CANT_RETRY, CHARS_NOT_PRESENT, TRIES_DEPLETED
     }
-    private String creatorName;
+    private String uploaderName;
 
-
-    //TODO: we need also save dice value , num of tries?
     public static class CaptureTheMoment{
         private  List<Player> players;
         private List<int[]> selectedBoardButtons; //for showing the selected word
@@ -106,7 +103,7 @@ public class GameEngine {
     public void loadXml(String pathToXml)
             throws WrongPathException, DictionaryNotFoundException, BoardSizeException, NotXmlFileException,
             DuplicateLetterException, NotValidXmlFileException, WinTypeException, NotEnoughLettersException,
-            NumberOfPlayersException, DuplicatePlayerIdException {
+            NumberOfPlayersException, DuplicatePlayerIdException, NoTitleException {
         GameDataFromXml gd = new GameDataFromXml();
         gd.initializeDataFromXml(pathToXml);
         gdfx.add(gd);
@@ -116,11 +113,12 @@ public class GameEngine {
     public void loadXml(InputStream file, InputStream dictFile, String userNameFromSession)
             throws WrongPathException, DictionaryNotFoundException, BoardSizeException, NotXmlFileException,
             DuplicateLetterException, NotValidXmlFileException, WinTypeException, NotEnoughLettersException,
-            NumberOfPlayersException, DuplicatePlayerIdException {
+            NumberOfPlayersException, DuplicatePlayerIdException, NoTitleException {
         GameDataFromXml gd = new GameDataFromXml();
         gd.initializeDataFromXml(file, dictFile);
-        creatorName = userNameFromSession;
+        uploaderName = userNameFromSession;
         gdfx.add(gd);
+        players = new ArrayList<>();
     }
 
     public void loadXml(File file)
@@ -130,6 +128,14 @@ public class GameEngine {
         GameDataFromXml gd = new GameDataFromXml();
         gd.initializeDataFromXml(file);
         gdfx.add(gd);
+    }
+
+    public String getUploaderName() {
+        return uploaderName;
+    }
+
+    public String getGameTitle() {
+        return isGameStarted ? currentGameData.getGameTitle() : gdfx.get(gdfx.size() - 1).getGameTitle();
     }
 
     public void reset() {
@@ -145,12 +151,19 @@ public class GameEngine {
     }
 
     private List<Player> getPlayersList() {
-        List<Player> players = new ArrayList<>();
+        List<Player> players;
         GameDataFromXml gd = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
-        List<engine.jaxb.schema.generated.Player> _players = gd.getPlayers();
 
-        for (engine.jaxb.schema.generated.Player p: _players) {
-            players.add(new Player(p.getName().get(0), p.getId(),p.getType()));
+        if (!gd.isDynamic()) {
+            players = new ArrayList<>();
+            List<engine.jaxb.schema.generated.Player> _players = gd.getPlayers();
+
+            for (engine.jaxb.schema.generated.Player p : _players) {
+                players.add(new Player(p.getName().get(0), p.getId(), p.getType()));
+            }
+        }
+        else {
+            players = this.players;
         }
         return players;
     }
@@ -203,7 +216,13 @@ public class GameEngine {
     }
 
     public char[][] getBoard() {
-        return currentGameData.getBoard().getBoard_onlySigns();
+        GameDataFromXml gd = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
+        return gd.getBoard().getBoard_onlySigns();
+    }
+
+    public Board.Cell[][] getBoardAsCells() {
+        GameDataFromXml gd = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
+        return gd.getBoard().getBoard();
     }
 
     public short getBoardSize(){
@@ -264,7 +283,10 @@ public class GameEngine {
     }
 
     public Statistics getStatistics() {
-        return new Statistics(players, System.currentTimeMillis() - startTime, numberOfTurns + 1, currentGameData);
+        if (isGameStarted) {
+            return new Statistics(isGameStarted, currentGameData, uploaderName, players, System.currentTimeMillis() - startTime, numberOfTurns + 1);
+        }
+        return new Statistics(isGameStarted, gdfx.get(gdfx.size() - 1), uploaderName, getPlayersList(), 0, 0);
     }
 
     public List<Board.Point> getUnShownPoints(){

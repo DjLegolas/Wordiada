@@ -6,7 +6,7 @@ public class DictionaryNotFoundException extends FileNotFoundException {
     private String fileName;
 
     public DictionaryNotFoundException (String fileName) {
-        super ();
+        super("There is no dictionary file name \"" + fileName + "\"");
         this.fileName = fileName;
     }
 
