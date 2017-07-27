@@ -9,7 +9,6 @@ import java.util.List;
 public class UserManager {
 
     private final ArrayList<PlayerData> m_UsersList;
-    private final Object lockObj = new Object();
 
     public UserManager() {
         m_UsersList = new ArrayList<PlayerData>();

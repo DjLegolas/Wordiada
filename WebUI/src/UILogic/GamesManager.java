@@ -6,11 +6,12 @@ import shared.GameInfo;
 
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Map;
 
 public class GamesManager {
 
-    private final HashMap<String, GameInfo> gamesInfoMap;
-    private final HashMap<String, GameEngine> gamesMap;
+    private final Map<String, GameInfo> gamesInfoMap;
+    private final Map<String, GameEngine> gamesMap;
 
     public GamesManager()
     {
@@ -35,8 +36,7 @@ public class GamesManager {
         String res = "success";
         try {
             gameEngine.loadXml(xmlStream, dictStream, userNameFromSession);
-            // TODO - decide how to store uploaded games
-            // gamesMap.put();
+            gamesMap.put(gameEngine.getGameTitle(), gameEngine);
         }
         catch(Exception e){
             res =  e.getMessage();
@@ -46,11 +46,11 @@ public class GamesManager {
         }
     }
 
-    public HashMap<String, GameInfo> getGamesInfosMap() {
+    public Map<String, GameInfo> getGamesInfosMap() {
         return gamesInfoMap;
     }
 
-    public HashMap<String, GameEngine> getGamesMap() {
+    public Map<String, GameEngine> getGamesMap() {
         return gamesMap;
     }
 

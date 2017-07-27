@@ -2,5 +2,7 @@ package engine.exceptions;
 
 public class WrongPathException extends Exception {
 
-    public WrongPathException () {}
+    public WrongPathException () {
+        super("Wrong path to Xml file!");
+    }
 }

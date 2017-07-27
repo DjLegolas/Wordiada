@@ -60,12 +60,19 @@ public class Board {
     public class Cell{
         boolean isShown;
         String sign;
+        byte score;
 
-        Cell(String _sign, boolean _isShown) {
-            isShown = _isShown;
-            sign = _sign;
+        Cell() {
+            isShown = false;
+            sign = "";
+            score = 0;
         }
 
+        Cell(String _sign, byte _score, boolean _isShown) {
+            isShown = _isShown;
+            sign = _sign;
+            score = score;
+        }
     }
 
     private int leftCards;
@@ -85,7 +92,19 @@ public class Board {
         }
         return board;
     }
-    public Cell [][] getBoardFullDetails(){
+
+    Cell[][] getBoard() {
+        Cell[][] tempBoard = new Cell[size][size];
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
+                Cell currCell = board[row][col];
+                tempBoard[row][col] = currCell.isShown ? currCell : new Cell();
+            }
+        }
+        return tempBoard;
+    }
+
+    public Cell[][] getBoardFullDetails(){
         return board;
     }
 
@@ -123,7 +142,7 @@ public class Board {
                     }
                     p = getRandomPoint();
                     initLetters.get(toAdd).add(p);
-                    board[p.getY()][p.getX()] = new Cell(toAdd.getSign().get(0), false);
+                    board[p.getY()][p.getX()] = new Cell(toAdd.getSign().get(0), toAdd.getScore(), false);
                     letter.setAmount(letter.getAmount() - 1);
                     leftCards--;
                     numOfInsertions++;
@@ -134,7 +153,7 @@ public class Board {
         kupa.addAll(letters);
     }
 
-    public Map <Letter,List<Point>> getInitLetters(){return  initLetters;}
+    public Map<Letter,List<Point>> getInitLetters(){return  initLetters;}
     private Point getRandomPoint() {
         int x,y;
         Random xy = new Random();
@@ -280,5 +299,4 @@ public class Board {
     public Cell getCellByPos(int x, int y){
         return board[y][x];
     }
-
 }

@@ -1,10 +1,10 @@
 package engine.exceptions;
 
 public class DuplicateLetterException extends Exception {
-    String letter;
+    private String letter;
 
     public DuplicateLetterException(String letter) {
-        super ();
+        super("The letter \'" + letter + "\' has a duplicate entry!");
         this.letter = letter;
     }
 

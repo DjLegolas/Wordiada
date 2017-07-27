@@ -4,7 +4,7 @@ public class WinTypeException extends Exception {
     private String winType;
 
     public WinTypeException(String winType) {
-        super();
+        super("Win mod \"" + winType + "\" is not supported!");
         this.winType = winType;
     }
 

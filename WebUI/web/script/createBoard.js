@@ -2,12 +2,12 @@
 function getShowBoard(table){
 
     var actionType = "getShowBoard";
-    var gamettl = $("#gameTable").find("tr.success").attr('value');
+    var gameTitle = $("#gameTable").find("tr.success").attr('value');
 
     $.ajax({
         url: "gamingRoom",
         data: {
-            "gameTitle": gamettl,
+            "gameTitle": gameTitle,
             "ActionType": actionType
         },
         success: function (board) {
@@ -48,8 +48,8 @@ function createBoard(theBoard,table,actionType) {
 
 
 function createBoardButtons(board, table, action) {
-    var columns = board.m_BoardSize;
-    var rows = board.m_BoardSize;
+    var columns = board.length;
+    var rows = board.length;
 
     for (var row = 0; row < rows; row++) {
 
@@ -68,10 +68,10 @@ function createBoardButtons(board, table, action) {
                 $(btn).on("click", ajaxBoardBtnClicked);
             }
 
-            var boardBtn = board.m_Board[row][column];
+            var boardBtn = board[row][column];
 
             setButtonColor(boardBtn , btn);
-            setButtonSymbol( boardBtn , btn );
+            setButtonSymbol(boardBtn , btn);
 
             td.appendChild(btn);
             tr.appendChild(td);
@@ -116,7 +116,10 @@ function setButtonColor(buttonObject, btn){
 }
 
 function setButtonSymbol(buttonObject, btn){
-
-    btn.innerText = buttonObject.m_SquareSymbol;
-
+    if (buttonObject.isShown === true) {
+        btn.innerText = buttonObject.sign + "(" + buttonObject.score + ")";
+    }
+    else {
+        btn.innerText = "";
+    }
 }

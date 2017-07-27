@@ -31,7 +31,7 @@ public class GameInfo {
     private String m_GameType;
     private String m_BoardStructure;
     private int m_GameMode;
-    private ArrayList<PlayerData> m_Players = new ArrayList<PlayerData>();
+    private ArrayList<PlayerData> m_Players = new ArrayList<>();
     private  int m_NumOfPlayers ;
     private int m_ChosenRow;
     private int m_ChosenCol;
