@@ -10,6 +10,7 @@ import engine.exceptions.*;
 
 import engine.jaxb.schema.generated.*;
 import engine.jaxb.schema.generated.Player;
+import logic.Game;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -59,6 +60,8 @@ public class GameDataFromXml {
     private Dictionary dictionary;
     public enum WinAccordingTo {WORD_COUNT, WORD_SCORE}
     private WinAccordingTo winAccordingTo;
+    public enum GameType {BASIC, MULTI_PLAYER, DYNAMIC_MULTI_PLAYER}
+    private GameType gameType;
 
     // get and set funcs:
     int getNumOfCubeWigs() {
@@ -107,6 +110,22 @@ public class GameDataFromXml {
         loadXml(xmlStream);
         Structure struct = gameDescriptor.getStructure();
         buildDataLetters(struct);
+
+        // get game type
+        switch (gameDescriptor.getGameType().getValue()) {
+            case "Basic":
+                gameType = GameType.BASIC;
+                break;
+            case "MultiPlayer":
+                gameType = GameType.MULTI_PLAYER;
+                break;
+            case "DynamicMultiPlayer":
+                gameType = GameType.DYNAMIC_MULTI_PLAYER;
+        }
+
+        if (gameType != GameType.DYNAMIC_MULTI_PLAYER) {
+            throw new NotValidXmlFileException("Game type is not \"DynamicMultiPlayer\"");
+        }
 
         // init dynamic players
         try {

@@ -71,7 +71,7 @@ public class LobbyServlet extends HttpServlet {
         GamesManager gamesManager = ServletUtils.getGamesManager(getServletContext());
 
         String gameTitle = request.getParameter(Constants.GAME_TITLE);
-        Game gameToJoin = null; //gamesManager.getSpecificGame(gameTitle);
+        GameEngine gameToJoin = gamesManager.getSpecificGame(gameTitle);
         if(gameToJoin != null)
         {
             String playerName = userFromSession.getName();
