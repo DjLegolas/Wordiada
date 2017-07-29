@@ -16,6 +16,14 @@ public class Player {
     static final short MAX_PLAYERS = 6;
     static final short MIN_PLAYERS = 2;
 
+    Player(String name, short id, Type type) {
+        this.name = name;
+        this.id = id;
+        this.score = 0;
+        this.type = type;
+        words = new HashMap<>();
+    }
+
     Player(String name, short id, String type) {
         this.name = name;
         this.id = id;

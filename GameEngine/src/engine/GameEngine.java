@@ -109,7 +109,6 @@ public class GameEngine {
         gdfx.add(gd);
     }
 
-
     public void loadXml(InputStream file, InputStream dictFile, String userNameFromSession)
             throws WrongPathException, DictionaryNotFoundException, BoardSizeException, NotXmlFileException,
             DuplicateLetterException, NotValidXmlFileException, WinTypeException, NotEnoughLettersException,
@@ -138,6 +137,10 @@ public class GameEngine {
         return isGameStarted ? currentGameData.getGameTitle() : gdfx.get(gdfx.size() - 1).getGameTitle();
     }
 
+    private GameDataFromXml getGameData() {
+        return isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
+    }
+
     public void reset() {
         currentGameData.resetBoard();
     }
@@ -151,21 +154,24 @@ public class GameEngine {
     }
 
     private List<Player> getPlayersList() {
-        List<Player> players;
-        GameDataFromXml gd = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
+        GameDataFromXml gd = getGameData();
 
         if (!gd.isDynamic()) {
-            players = new ArrayList<>();
+            List<Player> players = new ArrayList<>();
             List<engine.jaxb.schema.generated.Player> _players = gd.getPlayers();
 
             for (engine.jaxb.schema.generated.Player p : _players) {
                 players.add(new Player(p.getName().get(0), p.getId(), p.getType()));
             }
+            return players;
         }
-        else {
-            players = this.players;
-        }
+
         return players;
+    }
+
+    public boolean isFull() {
+        GameDataFromXml gd = getGameData();
+        return players.size() == gd.getTotalPlayers();
     }
 
     public void startGame() {
@@ -190,7 +196,7 @@ public class GameEngine {
     }
 
     public Status getStatus() {
-        GameDataFromXml gd = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
+        GameDataFromXml gd = getGameData();
 
         return new Status(
                 gd.getBoard().getBoard_onlySigns(),
@@ -216,17 +222,17 @@ public class GameEngine {
     }
 
     public char[][] getBoard() {
-        GameDataFromXml gd = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
+        GameDataFromXml gd = getGameData();
         return gd.getBoard().getBoard_onlySigns();
     }
 
     public Board.Cell[][] getBoardAsCells() {
-        GameDataFromXml gd = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
+        GameDataFromXml gd = getGameData();
         return gd.getBoard().getBoard();
     }
 
     public short getBoardSize(){
-        GameDataFromXml gameDataFromXml = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
+        GameDataFromXml gameDataFromXml = getGameData();
         return gameDataFromXml.getBoard().getBoardSize();
     }
 
@@ -235,7 +241,7 @@ public class GameEngine {
     }
 
     public int getMaxRetries() {
-        GameDataFromXml gameDataFromXml = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
+        GameDataFromXml gameDataFromXml = getGameData();
         return gameDataFromXml.getNumOfTries();
     }
 
@@ -284,9 +290,9 @@ public class GameEngine {
 
     public Statistics getStatistics() {
         if (isGameStarted) {
-            return new Statistics(isGameStarted, currentGameData, uploaderName, players, System.currentTimeMillis() - startTime, numberOfTurns + 1);
+            return new Statistics(isGameStarted, currentGameData, uploaderName, currentPlayer, players, System.currentTimeMillis() - startTime, numberOfTurns + 1);
         }
-        return new Statistics(isGameStarted, gdfx.get(gdfx.size() - 1), uploaderName, getPlayersList(), 0, 0);
+        return new Statistics(isGameStarted, gdfx.get(gdfx.size() - 1), uploaderName, null, getPlayersList(), 0, 0);
     }
 
     public List<Board.Point> getUnShownPoints(){
@@ -351,22 +357,22 @@ public class GameEngine {
     }
 
     public Boolean isInGoldFishMod(){
-        GameDataFromXml gameDataFromXml = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
+        GameDataFromXml gameDataFromXml = getGameData();
         return gameDataFromXml.getGoldFishMod();
     }
 
     public WinAccordingTo getWinScoreMod(){
-        GameDataFromXml gameDataFromXml = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
+        GameDataFromXml gameDataFromXml = getGameData();
         return gameDataFromXml.getWinAccordingTo();
     }
 
     public boolean isWordScore(){
-        GameDataFromXml gameDataFromXml = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
+        GameDataFromXml gameDataFromXml = getGameData();
         return gameDataFromXml.getWinAccordingTo().equals(WinAccordingTo.WORD_SCORE);
     }
 
     public String getFreqEachLetter(){
-        GameDataFromXml gameDataFromXml = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
+        GameDataFromXml gameDataFromXml = getGameData();
         StringBuilder freqLetters = new StringBuilder();
         for(Letter letter : gameDataFromXml.getBoard().getInitLetters().keySet()) {
             freqLetters.append(letter.getSign().get(0) + " : " + letter.getFrequency()+ "\n");
@@ -375,7 +381,7 @@ public class GameEngine {
     }
 
     public String getTopTenRareWords(){
-        GameDataFromXml gameDataFromXml = isGameStarted ? currentGameData : gdfx.get(gdfx.size() - 1);
+        GameDataFromXml gameDataFromXml = getGameData();
         return gameDataFromXml.getDictionary().getTop10RareWords();
     }
     public GameDataFromXml getCurrentGameData(){
@@ -397,16 +403,42 @@ public class GameEngine {
         return null;
     }
 
-    public boolean retirePlayer() {
-        currentPlayer.retire();
-        saveTheTurn(new ArrayList<>());
+    private boolean doRetire(Player retiredPlayer) {
+        retiredPlayer.retire();
         numOfPlayers--;
         if (numOfPlayers < 2) {
             isGameStarted = false;
             return false;
         }
-        nextPlayer();
+        if (retiredPlayer == currentPlayer){
+            nextPlayer();
+        }
         return true;
+    }
+
+    public boolean retirePlayer() {
+        return doRetire(currentPlayer);
+    }
+
+    public String retirePlayer(String playerName) {
+        Player player = null;
+        for (Player _player: players) {
+            if (!isGameStarted) {
+                players.remove(_player);
+                return null;
+            }
+            if (_player.getName().equals(playerName)) {
+                player = _player;
+            }
+        }
+        Boolean ret;
+        try {
+            ret = doRetire(player);
+        }
+        catch (NullPointerException e) {
+            return "No player with name \"" + playerName + "\"";
+        }
+        return ret.toString();
     }
 
     //TODO: decide where to call this func - should be after each move
@@ -447,5 +479,17 @@ public class GameEngine {
 
     public boolean haveNextSave() {
         return pointerForTurnData < turnData.size() - 1;
+    }
+
+    public boolean isPlayerInGame(String playerName) {
+        for (Player player: players) {
+            if (player.getName().equals(playerName))
+                return true;
+        }
+        return false;
+    }
+
+    public void addPlayer(String playerName, Player.Type playerType) {
+        players.add(new Player(playerName, (short)players.size(), playerType));
     }
 }

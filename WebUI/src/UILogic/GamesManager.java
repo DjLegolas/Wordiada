@@ -30,8 +30,7 @@ public class GamesManager {
         return gameLoaded;
     }
 
-    public String loadXML(InputStream xmlStream, InputStream dictStream, String userNameFromSession) {
-        GameInfo newGameInfo = new GameInfo();
+    private String loadXML(InputStream xmlStream, InputStream dictStream, String userNameFromSession) {
         GameEngine gameEngine = new GameEngine();
         String res = "success";
         try {
@@ -41,9 +40,7 @@ public class GamesManager {
         catch(Exception e){
             res =  e.getMessage();
         }
-        finally {
-            return res;
-        }
+        return res;
     }
 
     public Map<String, GameInfo> getGamesInfosMap() {
