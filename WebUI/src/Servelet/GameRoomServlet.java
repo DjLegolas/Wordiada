@@ -3,8 +3,8 @@ package Servelet;
 
 import UILogic.GamesManager;
 import com.google.gson.Gson;
-// import javafx_ui.gamePane.GameController;
 import engine.GameEngine;
+import engine.Statistics;
 import logic.Game;
 import engine.Player;
 import shared.GameInfo;
@@ -24,7 +24,6 @@ import java.util.List;
 
 @WebServlet(name = "GameRoomServlet", urlPatterns = {"/gamingRoom"})
 public class GameRoomServlet extends HttpServlet {
-    private boolean m_GameFull = false;
 
     private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
@@ -86,9 +85,10 @@ public class GameRoomServlet extends HttpServlet {
         else{
             currGame.getGameInfo().setErrorFound(true);
             currGame.getGameInfo().setErrorMsg(responseCanPlay);
-        }
+        }*/
 
-        String gameInfo = gson.toJson(currGame.getGameInfo());
+        //String gameInfo = gson.toJson(currGame.getGameInfo());
+        String gameInfo = "";
         String board = gson.toJson(currGame.getBoard());
 
         String bothJson = "[" + gameInfo + "," + board + "]";
@@ -96,16 +96,16 @@ public class GameRoomServlet extends HttpServlet {
         response.getWriter().write(bothJson);
         response.getWriter().flush();
 
-        currGame.getGameInfo().setErrorFound(false);
-        currGame.getGameInfo().setErrorMsg("");
-        */
+        //currGame.getGameInfo().setErrorFound(false);
+        //currGame.getGameInfo().setErrorMsg("");
+
     }
 
-    private String canPlayerPlay(HttpServletRequest request, Game currGame) {
+    private String canPlayerPlay(HttpServletRequest request, GameEngine currGame) {
 
         String retPair = "true";
 
-        if (m_GameFull){
+        if (currGame.isStarted()){
             PlayerData userFromSession = SessionUtils.getLoginUser(request);
             if(!userFromSession.getName().equals(currGame.getCurrentPlayer().getName())) {
                 retPair = "Not Your Turn";
@@ -155,17 +155,14 @@ public class GameRoomServlet extends HttpServlet {
        String isGameStarted = "false";
        GameEngine currGame = getGame(request);
 
-       /*if(currGame.isFull()){
+       if(currGame.isFull()){
            isGameStarted = "true";
-           currGame.setIsActiveGame(true);
-           controller.setGameStarted(true);
-           //controller.startGameClicked(currGame);
-       }*/
+           currGame.startGame();
+       }
 
        response.getWriter().write(isGameStarted);
        response.getWriter().flush();
    }
-
 
    private void exitGame(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException    {
 
@@ -173,11 +170,10 @@ public class GameRoomServlet extends HttpServlet {
        GameEngine currGame = getGame(request);
        PlayerData userFromSession = SessionUtils.getLoginUser(request);
 
-       //controller.quitButtonClicked(currGame, controller.getGameStarted(),userFromSession.getName());
+       currGame.retirePlayer(userFromSession.getName());
        request.getSession(true).removeAttribute(Constants.GAME_TITLE);
        userFromSession.setIsPlaying(false);
    }
-
 
     private void gameStatus(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -186,24 +182,19 @@ public class GameRoomServlet extends HttpServlet {
 
         String usersJson, gameDetailsJson;
         GameEngine currGame = getGame(request);
-        GameInfo currGameInfo = getGameInfo(request);
+        Statistics currGameStatistics = currGame.getStatistics();
         List<Player> gamePlayers = currGame.getPlayers();
-
-        //if(currGame.getGameInfo().getTotalPlayers() == gamePlayers.size()){
-        //    m_GameFull = true;
-        //}
 
         Gson gson = new Gson();
 
         usersJson = gson.toJson(gamePlayers);
-        gameDetailsJson = gson.toJson(currGameInfo);
+        gameDetailsJson = gson.toJson(currGameStatistics);
         String board = gson.toJson(currGame.getBoard());
 
         String bothJson = "[" + usersJson + "," + gameDetailsJson + "," + nameJson + "," + board + "]"; //Put both objects in an array of 3 elements
         response.getWriter().write(bothJson);
         response.getWriter().flush();
     }
-
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

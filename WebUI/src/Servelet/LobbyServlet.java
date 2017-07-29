@@ -5,7 +5,6 @@ import UILogic.UserManager;
 import com.google.gson.Gson;
 import engine.GameEngine;
 import engine.Statistics;
-import logic.Game;
 import SharedStructures.PlayerData;
 import Utils.Constants;
 import Utils.ServletUtils;
@@ -70,13 +69,13 @@ public class LobbyServlet extends HttpServlet {
         GamesManager gamesManager = ServletUtils.getGamesManager(getServletContext());
 
         String gameTitle = request.getParameter(Constants.GAME_TITLE);
-        Game gameToJoin = null; //gamesManager.getSpecificGame(gameTitle);
+        GameEngine gameToJoin = gamesManager.getSpecificGame(gameTitle);
         if(gameToJoin != null)
         {
             String playerName = userFromSession.getName();
-            if(!gameToJoin.isActiveGame() && !gameToJoin.isPlayerInGame(playerName) && !gameToJoin.isFull())
+            if(!gameToJoin.isStarted() && !gameToJoin.isPlayerInGame(playerName) && !gameToJoin.isFull())
             {
-                gameToJoin.addPlayer(playerName, userFromSession.getType().name().equals(Constants.HUMAN));
+                gameToJoin.addPlayer(playerName, userFromSession.getType());
                 request.getSession(true).setAttribute(Constants.GAME_TITLE, gameTitle);
                 userFromSession.setIsPlaying(true);
             }

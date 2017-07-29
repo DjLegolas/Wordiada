@@ -18,7 +18,6 @@ $(document).ready(function () {
     realPlayer();
 });
 
-
 function ajaxBoardBtnClicked(btnClicked) {
 
     var actionType = "doMove";
@@ -54,7 +53,6 @@ function ajaxGameDone() {
         }
     });
 }
-
 
 function announceWinner (gameDetails) {
 
@@ -161,7 +159,7 @@ function ajaxGamesDeatilsAndPlayers() {
     });
 }
 
-function refreshPlayerList(players, PlayerFromSesion) {
+function refreshPlayerList(players, PlayerFromSession) {
     $("#playingUsersTable").empty();
     $.each(players || [], function (index, user) {
         var icon;
@@ -172,14 +170,14 @@ function refreshPlayerList(players, PlayerFromSesion) {
             icon = "<span class='MachineIcon'></span>"
         }
 
-        var userList = $('<tr> </tr>');
-        $('<th>' + user.m_Name + '</th>').appendTo(userList);
+        var userList = $('<tr></tr>');
+        $('<th>' + user['name'] + '</th>').appendTo(userList);
         $('<th>' + icon + '</th>').appendTo(userList);
         $('<th>' + user.m_Color + '</th>').appendTo(userList);
-        $('<th>' + user.m_Score + '</th>').appendTo(userList);
+        $('<th>' + user['score'] + '</th>').appendTo(userList);
         userList.appendTo($("#playingUsersTable"));
 
-        if (PlayerFromSesion == user.userName) {
+        if (PlayerFromSession === user['name']) {
             userList.addClass('success');
         }
     });
@@ -189,9 +187,9 @@ function refreshPlayerList(players, PlayerFromSesion) {
 function refreshGameDeatils(gameDetails, PlayerFromSesion) {
 
     $('#loggedinUser').text("Welcome " + PlayerFromSesion);
-    $('#lableGameTitle').text(gameDetails.m_GameTitle);
-    $('#lableCurrentPlayer').text(gameDetails.m_CurrentPlayer.m_Name);
-    $('#lableCurrentMove').text( gameDetails.m_NumOfMoves);
+    $('#lableGameTitle').text(gameDetails.gameTitle);
+    $('#lableCurrentPlayer').text(gameDetails.currentPlayer.player['name']);
+    $('#lableCurrentMove').text( gameDetails.numOfTurns);
 
 }
 

@@ -8,6 +8,7 @@ public class Statistics {
 
     private List<PlayerData> players ;
     private List<Letter> letters;
+    private PlayerData currentPlayer;
     private int numOfTurns;
     private int leftBoxTiles;
     private long playTime;
@@ -64,10 +65,15 @@ public class Statistics {
         }
     }
 
-    Statistics(boolean isStarted, GameDataFromXml gd, String organizer, List<Player> inputPlayer, long playTime, int turnsPlayed){
+    Statistics(boolean isStarted, GameDataFromXml gd, String organizer, Player currentPlayer, List<Player> inputPlayer, long playTime, int turnsPlayed){
         players = new ArrayList<>();
+        this.currentPlayer = null;
         for (Player player: inputPlayer) {
-            players.add(new PlayerData(player));
+            PlayerData playerData = new PlayerData(player);
+            players.add(playerData);
+            //if (player == currentPlayer) {
+                this.currentPlayer = playerData;
+            //}
         }
         letters = new ArrayList<>();
         for (GameDataFromXml.DataLetter letter: gd.getKupa()) {
