@@ -18,6 +18,9 @@ public class Statistics {
     private char[][] board;
     private boolean isGameActive;
     private String organizer;
+    private String dictName;
+    private int lettersAmount;
+
 
     public class PlayerData {
         private Player player;
@@ -70,10 +73,12 @@ public class Statistics {
         for (GameDataFromXml.DataLetter letter: gd.getKupa()) {
             letters.add(new Letter(letter));
         }
+        this.lettersAmount = letters.size();
         this.playTime = playTime / 1000;
         numOfTurns = turnsPlayed;
         leftBoxTiles = gd.getKupaAmount();
         dict = gd.getDictionary();
+        this.dictName = gd.getDictFileName();
         gameTitle = gd.getGameTitle();
         totalPlayers = gd.getTotalPlayers();
         boardSize = gd.getBoard().getBoardSize();
