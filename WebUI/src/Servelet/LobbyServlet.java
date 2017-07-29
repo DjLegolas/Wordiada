@@ -53,7 +53,6 @@ public class LobbyServlet extends HttpServlet {
             gamesStatistics.put(game.getGameTitle() ,game.getStatistics());
         }
 
-
         String usersJson = gson.toJson(userManager.getUsers());
         String gameDetailsJson = gson.toJson(gamesStatistics);
 

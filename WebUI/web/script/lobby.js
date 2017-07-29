@@ -152,6 +152,8 @@ function refreshGameList(games) {
         }else {
             gameStatus = "Not Available"
         }
+        var dictName = gameValue.dictName;
+        var lettersAmount = gameValue.lettersAmount;
 
 
         $('<th>' + gameKey + '</th>').appendTo(gameList);
@@ -160,6 +162,9 @@ function refreshGameList(games) {
         $('<th>' + signedUpPlayers + '</th>').appendTo(gameList);
         $('<th>' + bordSize + '</th>').appendTo(gameList);
         $('<th>' + gameStatus + '</th>').appendTo(gameList);
+        $('<th>' + dictName + '</th>').appendTo(gameList);
+        $('<th>' + lettersAmount + '</th>').appendTo(gameList);
+
         gameList.appendTo($("#gameTable"));
 
         if(gameKey == selected) {

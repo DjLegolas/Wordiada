@@ -99,6 +99,10 @@ public class GameDataFromXml {
         setData(inputStream, pathToXml, null);
     }
 
+    public String getDictFileName() {
+        return dictFileName;
+    }
+
     private void setData(InputStream xmlStream, String pathToXml, InputStream dictStream)
             throws WrongPathException, NotValidXmlFileException, DictionaryNotFoundException, WinTypeException,
             NotXmlFileException, BoardSizeException, DuplicateLetterException, NotEnoughLettersException,
