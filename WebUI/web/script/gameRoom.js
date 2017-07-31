@@ -9,6 +9,7 @@ $(document).ready(function () {
 
     $('#buttonQuit').on("click", ajaxQuitGame);
     $('.boardBtn').on("click", ajaxBoardBtnClicked);
+    $('#buttonDice').on("click", ajaxThrowDice);
 
     ajaxGamesDeatilsAndPlayers();
     GamesDeatilsAndPlayers = setInterval(ajaxGamesDeatilsAndPlayers, refreshRate);
@@ -203,6 +204,25 @@ function ajaxQuitGame() {
         },
         success: function (data) {
             window.location.replace("lobby.html");
+        },
+        error: function (data) {
+            console.log(data);
+        }
+    });
+}
+
+function ajaxThrowDice() {
+    var actionType = "throwDice";
+
+    $.ajax({
+        url: "gamingRoom",
+        data: {
+            "ActionType": actionType
+        },
+        success: function (data) {
+            var val = data;
+            openPopup("Dice value is: " + val);
+
         },
         error: function (data) {
             console.log(data);

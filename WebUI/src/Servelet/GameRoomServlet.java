@@ -51,6 +51,9 @@ public class GameRoomServlet extends HttpServlet {
             case Constants.IS_GAME_DONE:
                 isGameDone(request,response);
                 break;
+            case Constants.THROW_DICE:
+                throwDice(request,response);
+                break;
         }
     }
 
@@ -174,6 +177,15 @@ public class GameRoomServlet extends HttpServlet {
        request.getSession(true).removeAttribute(Constants.GAME_TITLE);
        userFromSession.setIsPlaying(false);
    }
+
+    private void throwDice(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException    {
+        response.setContentType("application/json");
+        GameEngine ge = getGame(request);
+        String diceValue = new Gson().toJson(ge.getDiceValue());
+        response.getWriter().write(diceValue);
+        response.getWriter().flush();
+
+    }
 
     private void gameStatus(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
