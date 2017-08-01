@@ -1,4 +1,4 @@
-
+list = [];
 function getShowBoard(table){
 
     var actionType = "getShowBoard";
@@ -62,10 +62,11 @@ function createBoardButtons(board, table, action) {
             setRowCol(td, row, column);
 
             var btn = document.createElement("button");
-            setRowCol(btn, row, column);
-            $(btn).addClass( "boardBtn");
-            if(action != "getShowBoard") {
-                $(btn).on("click", ajaxBoardBtnClicked);
+            setRowCol(btn, row + 1, column + 1);
+            $(btn).addClass("boardBtn");
+            $(btn).attr("id", "buttonBoard" + row + "_" + column);
+            if(action !== "getShowBoard") {
+                setButtonOnClickFunc(btn, row, column);
             }
 
             var boardBtn = board[row][column];
@@ -90,28 +91,28 @@ function setButtonColor(buttonObject, btn){
 
     switch(buttonObject.m_Color) {
         case "BLACK":
-            $(btn).addClass( "blackBtn");
+            $(btn).addClass("blackBtn");
             break;
         case "BLUE":
-            $(btn).addClass( "blueBtn");
+            $(btn).addClass("blueBtn");
             break;
         case "RED":
-            $(btn).addClass( "redBtn");
+            $(btn).addClass("redBtn");
             break;
         case "GREEN":
-            $(btn).addClass( "greenBtn");
+            $(btn).addClass("greenBtn");
             break;
         case "MAGENTA":
-            $(btn).addClass( "mangentaBtn");
+            $(btn).addClass("mangentaBtn");
             break;
         case "ORANGE":
-            $(btn).addClass( "orangeBtn");
+            $(btn).addClass("orangeBtn");
             break;
         case "PURPLE":
-            $(btn).addClass( "purpleBtn");
+            $(btn).addClass("purpleBtn");
             break;
         default:
-            $(btn).addClass( "greyBtn");
+            $(btn).addClass("greyBtn");
     }
 }
 
@@ -121,5 +122,55 @@ function setButtonSymbol(buttonObject, btn){
     }
     else {
         btn.innerText = "";
+    }
+}
+
+function addToList(btnClicked) {
+    var btn = btnClicked.currentTarget;
+    list.push([btn.getAttribute("row"), btn.getAttribute("column")]);
+    btn.classList.add("blueColor");
+    btn.on("click", removeFromList);
+}
+
+function removeFromList(btnClicked) {
+    var btn = btnClicked.currentTarget;
+    var loc = [btn.getAttribute("row"), btn.getAttribute("column")];
+    var index = indexOf(list, btn.getAttribute("row"), btn.getAttribute("column"));
+    if (index >= 0) {
+        list.removeChild(index);
+        btn.classList.add("blueColor");
+    }
+    btn.on("click", addToList);
+}
+
+function updateBoard_(board) {
+    var columns = board.length;
+    var rows = board.length;
+
+    for (var row = 0; row < rows; row++) {
+        for (var column = 0; column < columns; column++) {
+            var btn = document.getElementById("buttonBoard" + row + "_" + column);
+            var boardBtn = board[row][column];
+            setButtonSymbol(boardBtn, btn);
+            setButtonOnClickFunc(btn, row, column);
+        }
+    }
+}
+
+function indexOf(list, row, col) {
+    for (var i = 0; i < list.length; i++) {
+        if (list[i][0] === row + 1 && list[i][1] === col + 1) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+function setButtonOnClickFunc(btn, row, column) {
+    if (indexOf(list, row, column) >= 0) {
+        $(btn).on("click", removeFromList);
+    }
+    else {
+        $(btn).on("click", addToList);
     }
 }

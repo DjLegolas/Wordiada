@@ -45,7 +45,7 @@ function ajaxPassTurn() {
             "ActionType": actionType
         },
         success: function (result) {
-            if (result === false    ) {
+            if (result === false) {
                 openPopup("its not your turn");
             }
         },
@@ -118,7 +118,7 @@ function handleUndoRedo(undoOrRedo) {
 function updateBoard(move) {
 
     var lenMoves = move.length;
-    for (i = 0; i < lenMoves; i++) {
+    for (var i = 0; i < lenMoves; i++) {
         var td = $('[row="' + move[i].row + '"][column="' + move[i].col + '"]');
         td.removeClass(td.attr('class').split(' ').pop());
         td.addClass(move[i].cellType.toLowerCase());

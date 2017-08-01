@@ -45,7 +45,7 @@ $(document).on("click", "#gameTable tr", function(e){
 
 function validFileExtension(filesArray) {
     var arrayExtensions = ["xml", "txt"];
-    for (i = 0; i < filesArray.length; i++) {
+    for (var i = 0; i < filesArray.length; i++) {
         var file = filesArray[i];
         var ext = file.split(".");
         ext = ext[ext.length - 1].toLocaleLowerCase();

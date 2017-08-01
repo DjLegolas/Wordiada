@@ -3,8 +3,10 @@ package Servelet;
 
 import UILogic.GamesManager;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import engine.GameEngine;
 import engine.Statistics;
+import engine.exceptions.OutOfBoardBoundariesException;
 import logic.Game;
 import engine.Player;
 import shared.GameInfo;
@@ -19,13 +21,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
 @WebServlet(name = "GameRoomServlet", urlPatterns = {"/gamingRoom"})
 public class GameRoomServlet extends HttpServlet {
 
-    private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         response.setContentType("application/json");
         //response.setContentType("text/html");
         String action = request.getParameter(Constants.ACTION_TYPE);
@@ -54,10 +58,14 @@ public class GameRoomServlet extends HttpServlet {
             case Constants.THROW_DICE:
                 throwDice(request,response);
                 break;
+            case Constants.UPDATE_BOARD:
+                updateBoard(request,response);
+                break;
         }
     }
 
-    private void getShowBoard(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void getShowBoard(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         response.setContentType("application/json");
 
         GamesManager gamesManager = ServletUtils.getGamesManager(getServletContext());
@@ -70,7 +78,8 @@ public class GameRoomServlet extends HttpServlet {
     }
 
 
-    private void handleDoMove(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void handleDoMove(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
         response.setContentType("application/json");
         Gson gson = new Gson();
@@ -135,7 +144,8 @@ public class GameRoomServlet extends HttpServlet {
         return gamesManager.getSpecificGameInfo(currGameTile);
     }
 
-    private void isGameDone(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void isGameDone(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         response.setContentType("application/json");
         GameEngine currGame = getGame(request);
         String gameInfo = new Gson().toJson(currGame.getStatistics());
@@ -145,7 +155,8 @@ public class GameRoomServlet extends HttpServlet {
     }
 
 
-   private void getBoard(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException   {
+   private void getBoard(HttpServletRequest request, HttpServletResponse response)
+           throws ServletException, IOException {
        response.setContentType("application/json");
        GameEngine currGame = getGame(request);
        String boardJson = new Gson().toJson(currGame.getBoard());
@@ -153,7 +164,8 @@ public class GameRoomServlet extends HttpServlet {
        response.getWriter().flush();
    }
 
-   private void isGameStarted(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException    {
+   private void isGameStarted(HttpServletRequest request, HttpServletResponse response)
+           throws ServletException, IOException {
        response.setContentType("application/json");
        String isGameStarted = "false";
        GameEngine currGame = getGame(request);
@@ -167,7 +179,8 @@ public class GameRoomServlet extends HttpServlet {
        response.getWriter().flush();
    }
 
-   private void exitGame(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException    {
+   private void exitGame(HttpServletRequest request, HttpServletResponse response)
+           throws ServletException, IOException {
 
        response.setContentType("text/html");
        GameEngine currGame = getGame(request);
@@ -178,16 +191,38 @@ public class GameRoomServlet extends HttpServlet {
        userFromSession.setIsPlaying(false);
    }
 
-    private void throwDice(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException    {
+    private void throwDice(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         response.setContentType("application/json");
         GameEngine ge = getGame(request);
         String diceValue = new Gson().toJson(ge.getDiceValue());
         response.getWriter().write(diceValue);
         response.getWriter().flush();
-
     }
 
-    private void gameStatus(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void updateBoard(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("application/json");
+        String tilesStr = request.getParameter(Constants.TILES_LIST);
+        String res[] = {"false", "false"};
+        GameEngine currGame = getGame(request);
+        List<int[]> tilesList = new Gson().fromJson(tilesStr, new TypeToken<ArrayList<int[]>>(){}.getType());
+
+        try {
+            if (currGame.updateBoard(tilesList)) {
+                res[0] = "true";
+            }
+        }
+        catch (OutOfBoardBoundariesException e) {
+            res[1] = "true";
+        }
+        String _res = "[" + res[0] + "," + res[1] + "]";
+        response.getWriter().write(_res);
+        response.getWriter().flush();
+    }
+
+    private void gameStatus(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
         response.setContentType("application/json");
         String nameJson = new Gson().toJson(((PlayerData) request.getSession(false).getAttribute(Constants.LOGIN_USER)).getName());
@@ -201,7 +236,7 @@ public class GameRoomServlet extends HttpServlet {
 
         usersJson = gson.toJson(gamePlayers);
         gameDetailsJson = gson.toJson(currGameStatistics);
-        String board = gson.toJson(currGame.getBoard());
+        String board = gson.toJson(currGame.getBoardAsCells());
 
         String bothJson = "[" + usersJson + "," + gameDetailsJson + "," + nameJson + "," + board + "]"; //Put both objects in an array of 3 elements
         response.getWriter().write(bothJson);

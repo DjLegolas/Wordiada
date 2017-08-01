@@ -1,5 +1,7 @@
 var refreshRate = 300; //miliseconds
 
+var diceValue;
+
 $(document).ready(function () {
     $.ajaxSetup({cache: false});
 
@@ -8,11 +10,12 @@ $(document).ready(function () {
     $('#visitorsTable').hide();
 
     $('#buttonQuit').on("click", ajaxQuitGame);
-    $('.boardBtn').on("click", ajaxBoardBtnClicked);
+    // $('.boardBtn').on("click", ajaxBoardBtnClicked);
     $('#buttonDice').on("click", ajaxThrowDice);
+    $('#buttonShowTiles').on("click", ajaxShowTiles);
 
-    ajaxGamesDeatilsAndPlayers();
-    GamesDeatilsAndPlayers = setInterval(ajaxGamesDeatilsAndPlayers, refreshRate);
+    ajaxGamesDetailsAndPlayers();
+    GamesDeatilsAndPlayers = setInterval(ajaxGamesDetailsAndPlayers, refreshRate);
 
     getBoard($('#board'));
 
@@ -131,7 +134,7 @@ function ajaxBoard() {
     });
 }
 
-function ajaxGamesDeatilsAndPlayers() {
+function ajaxGamesDetailsAndPlayers() {
     var actionType = "GameStatus";
 
     $.ajax({
@@ -142,13 +145,18 @@ function ajaxGamesDeatilsAndPlayers() {
         success: function (data) {
             var players = data[0];
             var gameDetails = data[1];
-            var PlayerFromSesion = data[2];
+            var PlayerFromSession = data[2];
             var board = data[3];
 
-            refreshGameDeatils(gameDetails,PlayerFromSesion );
-            refreshPlayerList(players, PlayerFromSesion);
-            $('#board').empty();
-            createBoard(board, $('#board'), actionType);
+            refreshGameDetails(gameDetails,PlayerFromSession );
+            refreshPlayerList(players, PlayerFromSession);
+            //$('#board').empty();
+            if ($('#board').childElementCount === 0) {
+                createBoard(board, $('#board'), actionType);
+            }
+            else {
+                updateBoard_(board);
+            }
 
             /*
             if(gameDone && !gameDoneHappened) {
@@ -182,10 +190,9 @@ function refreshPlayerList(players, PlayerFromSession) {
             userList.addClass('success');
         }
     });
-
 }
 
-function refreshGameDeatils(gameDetails, PlayerFromSesion) {
+function refreshGameDetails(gameDetails, PlayerFromSesion) {
 
     $('#loggedinUser').text("Welcome " + PlayerFromSesion);
     $('#lableGameTitle').text(gameDetails.gameTitle);
@@ -212,7 +219,7 @@ function ajaxQuitGame() {
 }
 
 function ajaxThrowDice() {
-    var actionType = "throwDice";
+    var actionType = "ThrowDice";
 
     $.ajax({
         url: "gamingRoom",
@@ -220,9 +227,36 @@ function ajaxThrowDice() {
             "ActionType": actionType
         },
         success: function (data) {
-            var val = data;
-            openPopup("Dice value is: " + val);
+            diceValue = data;
+            openPopup("Dice value is: " + diceValue);
+            list = [];
+        },
+        error: function (data) {
+            console.log(data);
+        }
+    });
+}
 
+function ajaxShowTiles() {
+    var actionType = "UpdateBoard";
+
+    $.ajax({
+        url: "gamingRoom",
+        data: {
+            "ActionType": actionType,
+            "TilesList": JSON.stringify(list)
+        },
+        success: function (data) {
+            if (data[0] === true) {
+                list = [];
+                //ajaxBoard();
+            }
+            else if (data[1] === false) {
+                openPopup("You chose too many tiles! you need to choose only " + diceValue + " tiles \n\nTry again.");
+            }
+            else {
+                openPopup("You have selected at least one tile out of bounds!");
+            }
         },
         error: function (data) {
             console.log(data);
@@ -247,7 +281,7 @@ function ajaxIsGameStarted() {
                 gameDone = setInterval(ajaxGameDone, refreshRate);
                 startIfFirstPlayerComputer();
             }
-        },
+        }
     });
 }
 
