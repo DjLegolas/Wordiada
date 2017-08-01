@@ -128,8 +128,9 @@ function setButtonSymbol(buttonObject, btn){
 function addToList(btnClicked) {
     var btn = btnClicked.currentTarget;
     list.push([btn.getAttribute("row"), btn.getAttribute("column")]);
-    btn.classList.add("blueColor");
-    btn.on("click", removeFromList);
+    btn.classList.remove("greyBtn");
+    btn.classList.add("blueBtn");
+    btn.onclick(removeFromList);
 }
 
 function removeFromList(btnClicked) {
@@ -138,9 +139,10 @@ function removeFromList(btnClicked) {
     var index = indexOf(list, btn.getAttribute("row"), btn.getAttribute("column"));
     if (index >= 0) {
         list.removeChild(index);
-        btn.classList.add("blueColor");
+        btn.classList.remove("blueBtn");
+        btn.classList.add("greyBtn");
     }
-    btn.on("click", addToList);
+    btn.onclick = addToList;
 }
 
 function updateBoard_(board) {
