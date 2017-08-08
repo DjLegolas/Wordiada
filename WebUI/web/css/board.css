@@ -8,8 +8,8 @@
 
 td {
     display: inline-block;
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
 }
 
 .myTable {
@@ -22,8 +22,9 @@ td {
 }
 
 .boardBtn{
-    width: 32px;
-    height: 32px;
+    width: 35px;
+    height: 35px;
+    padding: inherit;
 }
 
 .orangeBtn{

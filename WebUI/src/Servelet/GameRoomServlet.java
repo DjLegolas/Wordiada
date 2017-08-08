@@ -31,12 +31,8 @@ public class GameRoomServlet extends HttpServlet {
     private void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
-        //response.setContentType("text/html");
         String action = request.getParameter(Constants.ACTION_TYPE);
         switch (action) {
-            case Constants.DO_MOVE:
-                handleDoMove(request,response);
-                break;
             case Constants.GAME_STATUS:
                 gameStatus(request, response);
                 break;
@@ -61,6 +57,9 @@ public class GameRoomServlet extends HttpServlet {
             case Constants.UPDATE_BOARD:
                 updateBoard(request,response);
                 break;
+            case Constants.CHECK_WORD:
+                checkWord(request, response);
+                break;
         }
     }
 
@@ -78,39 +77,28 @@ public class GameRoomServlet extends HttpServlet {
     }
 
 
-    private void handleDoMove(HttpServletRequest request, HttpServletResponse response)
+    private void checkWord(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         response.setContentType("application/json");
         Gson gson = new Gson();
         GameEngine currGame = getGame(request);
 
-        /*//load chosen move to game info
-        currGame.getGameInfo().setChosenRow(Integer.parseInt(request.getParameter("row")));
-        currGame.getGameInfo().setChosenCol(Integer.parseInt(request.getParameter("column")));
-
         String responseCanPlay = canPlayerPlay(request,currGame);
 
+        String responseJson;
         if(responseCanPlay.equals("true")){
-            //controller.makeMoveClicked(currGame);
+            String word = request.getParameter(Constants.WORD);
+            List<int[]> tilesList = jsonToList(request);
+            int tryNumber = new Integer(request.getParameter(Constants.TRY_NUMBER));
+            responseJson = "{\"canPlay\":true,\"data\":" + gson.toJson(currGame.isWordValidWithCoordinates(word, tryNumber, tilesList)) + "}";
         }
         else{
-            currGame.getGameInfo().setErrorFound(true);
-            currGame.getGameInfo().setErrorMsg(responseCanPlay);
-        }*/
+            responseJson = "{\"canPlay\":false,\"message\":" + gson.toJson(responseCanPlay) + "}";
+        }
 
-        //String gameInfo = gson.toJson(currGame.getGameInfo());
-        String gameInfo = "";
-        String board = gson.toJson(currGame.getBoard());
-
-        String bothJson = "[" + gameInfo + "," + board + "]";
-
-        response.getWriter().write(bothJson);
+        response.getWriter().write(responseJson);
         response.getWriter().flush();
-
-        //currGame.getGameInfo().setErrorFound(false);
-        //currGame.getGameInfo().setErrorMsg("");
-
     }
 
     private String canPlayerPlay(HttpServletRequest request, GameEngine currGame) {
@@ -137,23 +125,17 @@ public class GameRoomServlet extends HttpServlet {
         return gamesManager.getSpecificGame(currGameTile);
     }
 
-    private GameInfo getGameInfo(HttpServletRequest request) {
-
-        String currGameTile = (String) request.getSession(false).getAttribute(Constants.GAME_TITLE);
-        GamesManager gamesManager = ServletUtils.getGamesManager(getServletContext());
-        return gamesManager.getSpecificGameInfo(currGameTile);
-    }
-
     private void isGameDone(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
         GameEngine currGame = getGame(request);
         String gameInfo = new Gson().toJson(currGame.getStatistics());
+        boolean isEnded = currGame.isGameEnded();
+        String responseJson = "{\"isEnded\":" + isEnded + (isEnded ? ",\"data\":" + gameInfo : "") + "}";
 
-        response.getWriter().write(gameInfo);
+        response.getWriter().write(responseJson);
         response.getWriter().flush();
     }
-
 
    private void getBoard(HttpServletRequest request, HttpServletResponse response)
            throws ServletException, IOException {
@@ -194,30 +176,48 @@ public class GameRoomServlet extends HttpServlet {
     private void throwDice(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
-        GameEngine ge = getGame(request);
-        String diceValue = new Gson().toJson(ge.getDiceValue());
-        response.getWriter().write(diceValue);
+        GameEngine currGame = getGame(request);
+
+        String responseCanPlay = canPlayerPlay(request, currGame);
+        String responseJson;
+        if (responseCanPlay.equals("true")) {
+            responseJson = "{\"canPlay\":true," + "\"data\":" + currGame.getDiceValue() + "}";
+        }
+        else {
+            responseJson = "{\"canPlay\":false," + "\"message\":" + new Gson().toJson(responseCanPlay) + "}";
+        }
+
+        response.getWriter().write(responseJson);
         response.getWriter().flush();
     }
 
     private void updateBoard(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
-        String tilesStr = request.getParameter(Constants.TILES_LIST);
-        String res[] = {"false", "false"};
+        boolean res[] = {false, false};
         GameEngine currGame = getGame(request);
-        List<int[]> tilesList = new Gson().fromJson(tilesStr, new TypeToken<ArrayList<int[]>>(){}.getType());
+        List<int[]> tilesList = jsonToList(request);
 
-        try {
-            if (currGame.updateBoard(tilesList)) {
-                res[0] = "true";
+        Gson gson = new Gson();
+
+        String responseCanPlay = canPlayerPlay(request, currGame);
+        String responseJson;
+        if (responseCanPlay.equals("true")) {
+            try {
+                if (currGame.updateBoard(tilesList)) {
+                    res[0] = true;
+                }
             }
+            catch (OutOfBoardBoundariesException e) {
+                res[1] = true;
+            }
+            responseJson = "{\"canPlay\":true," + "\"data\":" + gson.toJson(res) + "}";
         }
-        catch (OutOfBoardBoundariesException e) {
-            res[1] = "true";
+        else {
+            responseJson = gson.toJson("{\"canPlay\":false," + "\"message\":" + gson.toJson(responseCanPlay) + "}");
         }
-        String _res = "[" + res[0] + "," + res[1] + "]";
-        response.getWriter().write(_res);
+
+        response.getWriter().write(responseJson);
         response.getWriter().flush();
     }
 
@@ -241,6 +241,11 @@ public class GameRoomServlet extends HttpServlet {
         String bothJson = "[" + usersJson + "," + gameDetailsJson + "," + nameJson + "," + board + "]"; //Put both objects in an array of 3 elements
         response.getWriter().write(bothJson);
         response.getWriter().flush();
+    }
+
+    private List<int[]> jsonToList(HttpServletRequest request) {
+        String jsonTilesList = request.getParameter(Constants.TILES_LIST);
+        return new Gson().fromJson(jsonTilesList, new TypeToken<ArrayList<int[]>>(){}.getType());
     }
 
     @Override

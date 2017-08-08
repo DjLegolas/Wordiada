@@ -7,26 +7,18 @@
         @import url('https://fonts.googleapis.com/css?family=Shadows+Into+Light');
     </style>
 
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-
 
     <script src="script/gameRoom.js"></script>
     <script src="script/board.js"></script>
     <script src="script/createBoard.js"></script>
-
-
-
-
     <script src="script/lobby.js"></script>
-
 
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/gameRoom.css">
     <link rel="stylesheet" href="css/board.css">
     <link rel="stylesheet" href="css/popup.css">
     <link rel="stylesheet" href="css/icons.css">
-
 </head>
 
 <body>
@@ -36,24 +28,29 @@
 
         <div id="info" class="section">
 
-            <div class="sectionTitle" id="loggedinUser"></div>
-
-
+            <div class="sectionTitle" id="loggedInUser"></div>
             <div class="sectionTitle">Game information</div>
-
             <span class="infoSubTitle">Game Title:</span>
-            <span id="lableGameTitle"></span>
+            <span id="labelGameTitle"></span>
             <br>
             <span class="infoSubTitle">Current Player:</span>
-            <span id="lableCurrentPlayer"></span>
+            <span id="labelCurrentPlayer"></span>
             <br>
             <span class="infoSubTitle">Move:</span>
-            <span id="lableCurrentMove"></span>
+            <span id="labelCurrentMove"></span>
+            <br>
+            <span class="infoSubTitle">Try #:</span>
+            <span id="labelCurrentTry"></span>
+            <div id="selectedWordDiv">
+                <span class="infoSubTitle">Selected Word:</span>
+                <span id="labelSelectedWord"></span>
+            </div>
         </div>
 
+        <input type="button" value="Throw dice" id="buttonDice" class="btn btn-primary" />
+        <input type="button" value="Reveal Tiles" id="buttonShowTiles" class="btn btn-warning" />
+        <input type="button" value="Make Move" id="buttonMakeMove" class="btn btn-success" />
         <input type="button" value="Quit" id="buttonQuit" class="btn btn-danger"/>
-        <input type="button" value="Throw dice" id="buttonDice" class="btn btn-danger"/>
-        <input type="button" value="Reveal Tiles" id="buttonShowTiles" class="btn btn-danger"/>
 
         <div id="playersTable" class="section">
             <div class="sectionTitle"> Online Players</div>
@@ -96,7 +93,7 @@
 </div>
 
 <div id="popup">
-    <div id="popupBg" onclick="closePopup()"/>
+    <div id="popupBg" onclick="closePopup()"></div>
     <div id="message"></div>
 </div>
 

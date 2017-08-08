@@ -71,9 +71,9 @@ public class Statistics {
         for (Player player: inputPlayer) {
             PlayerData playerData = new PlayerData(player);
             players.add(playerData);
-            //if (player == currentPlayer) {
+            if (player == currentPlayer) {
                 this.currentPlayer = playerData;
-            //}
+            }
         }
         letters = new ArrayList<>();
         for (GameDataFromXml.DataLetter letter: gd.getKupa()) {

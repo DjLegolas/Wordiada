@@ -1,6 +1,9 @@
-var refreshRate = 300; //miliseconds
+var refreshRate = 300; //milliseconds
 
-var diceValue;
+diceValue = 0;
+tryNumber = 1;
+selectedWord = "";
+showWord = false;
 
 $(document).ready(function () {
     $.ajaxSetup({cache: false});
@@ -10,37 +13,17 @@ $(document).ready(function () {
     $('#visitorsTable').hide();
 
     $('#buttonQuit').on("click", ajaxQuitGame);
-    // $('.boardBtn').on("click", ajaxBoardBtnClicked);
     $('#buttonDice').on("click", ajaxThrowDice);
     $('#buttonShowTiles').on("click", ajaxShowTiles);
+    $('#buttonMakeMove').on("click", ajaxCheckWord);
 
     ajaxGamesDetailsAndPlayers();
-    GamesDeatilsAndPlayers = setInterval(ajaxGamesDetailsAndPlayers, refreshRate);
+    GamesDetailsAndPlayers = setInterval(ajaxGamesDetailsAndPlayers, refreshRate);
 
     getBoard($('#board'));
 
     realPlayer();
 });
-
-function ajaxBoardBtnClicked(btnClicked) {
-
-    var actionType = "doMove";
-    $.ajax({
-        url: "gamingRoom",
-        data: {
-            "row": btnClicked.currentTarget.getAttribute("row"),
-            "column": btnClicked.currentTarget.getAttribute("column"),
-            "ActionType": actionType
-        },
-        success:function (gameData){
-            var gameInfo = gameData[0];
-            var board = gameData[1];
-            if(gameInfo.m_ErrorFound) {
-                openPopup(gameInfo.m_ErrorMsg)
-            }
-        }
-    });
-}
 
 function ajaxGameDone() {
 
@@ -50,9 +33,9 @@ function ajaxGameDone() {
         data: {
             "ActionType": actionType
         },
-        success:function (gameData){
-            if(gameData.m_FinishAllRound === true) {
-                announceWinner(gameData);
+        success:function (response){
+            if(response["isEnded"] === true) {
+                announceWinner(response["data"]);
             }
         }
     });
@@ -72,7 +55,7 @@ function announceWinner (gameDetails) {
                var playersList = $('<div><p>' + declareTie + '</p><br></div>');
 
                gameDetails.m_Players.forEach(function (player) {
-                   $('<p> </p> <br>').text(player.m_Name + '   ' + player.m_Score).appendTo(playersList);
+                   $('<p></p><br>').text(player.m_Name + '   ' + player.m_Score).appendTo(playersList);
                });
 
                openPopup(playersList);
@@ -83,7 +66,7 @@ function announceWinner (gameDetails) {
        $('#GameAction').hide();
        $('#GameInfo').hide();
        $('#buttonQuit').val("Back To Lobby");
-       clearInterval(GamesDeatilsAndPlayers);
+       clearInterval(GamesDetailsAndPlayers);
    }
 }
 
@@ -157,13 +140,6 @@ function ajaxGamesDetailsAndPlayers() {
             else {
                 updateBoard_(board);
             }
-
-            /*
-            if(gameDone && !gameDoneHappened) {
-                gameDoneHappened = true;
-                announceWinner(gameDetails);
-            }
-            */
         }
     });
 }
@@ -192,13 +168,13 @@ function refreshPlayerList(players, PlayerFromSession) {
     });
 }
 
-function refreshGameDetails(gameDetails, PlayerFromSesion) {
+function refreshGameDetails(gameDetails, PlayerFromSession) {
 
-    $('#loggedinUser').text("Welcome " + PlayerFromSesion);
-    $('#lableGameTitle').text(gameDetails.gameTitle);
-    $('#lableCurrentPlayer').text(gameDetails.currentPlayer.player['name']);
-    $('#lableCurrentMove').text( gameDetails.numOfTurns);
-
+    $('#loggedInUser').text("Welcome " + PlayerFromSession);
+    $('#labelGameTitle').text(gameDetails.gameTitle);
+    $('#labelCurrentPlayer').text(gameDetails.currentPlayer.player['name']);
+    $('#labelCurrentMove').text(gameDetails.numOfTurns);
+    $("#labelCurrentTry").text(tryNumber);
 }
 
 function ajaxQuitGame() {
@@ -226,10 +202,15 @@ function ajaxThrowDice() {
         data: {
             "ActionType": actionType
         },
-        success: function (data) {
-            diceValue = data;
-            openPopup("Dice value is: " + diceValue);
-            list = [];
+        success: function (response) {
+            if (response.canPlay) {
+                diceValue = response.data;
+                openPopup("Dice value is: " + diceValue);
+                selectedTilesList = [];
+            }
+            else {
+                openPopup(response.message);
+            }
         },
         error: function (data) {
             console.log(data);
@@ -244,18 +225,82 @@ function ajaxShowTiles() {
         url: "gamingRoom",
         data: {
             "ActionType": actionType,
-            "TilesList": JSON.stringify(list)
+            "TilesList": JSON.stringify(selectedTilesList)
         },
-        success: function (data) {
-            if (data[0] === true) {
-                list = [];
-                //ajaxBoard();
-            }
-            else if (data[1] === false) {
-                openPopup("You chose too many tiles! you need to choose only " + diceValue + " tiles \n\nTry again.");
+        success: function (response) {
+            if (response.canPlay) {
+                var data = response.data;
+                if (data[0] === true) {
+                    selectedTilesList = [];
+                    showWord = true;
+                    tryNumber = 1;
+                }
+                else if (data[1] === false) {
+                    openPopup("You chose too many tiles! you need to choose only " + diceValue + " tiles \n\nTry again.");
+                }
+                else {
+                    openPopup("You have selected at least one tile out of bounds!");
+                }
             }
             else {
-                openPopup("You have selected at least one tile out of bounds!");
+                openPopup(response.message);
+            }
+        },
+        error: function (data) {
+            console.log(data);
+        }
+    });
+}
+
+function ajaxCheckWord() {
+    var actionType = "CheckWord";
+
+    if (selectedTilesList.length < 2) {
+        openPopup("You need to select at least 2 tiles");
+        return;
+    }
+
+    $.ajax({
+        url: "gamingRoom",
+        data: {
+            "ActionType": actionType,
+            "Word": selectedWord,
+            "TryNumber": tryNumber,
+            "TilesList": JSON.stringify(selectedTilesList)
+        },
+        success: function (response) {
+            if (response.canPlay) {
+                var data = response.data;
+                var message;
+                switch (data) {
+                    case "CORRECT":
+                        message = "Well done! your word \"" + selectedWord + "\" is correct!!!";
+                        selectedTilesList = [];
+                        showWord = false;
+                        break;
+                    case "WRONG":
+                        message = "Uhh.. the word \"" + selectedWord + "\" is wrong!!!\nTry again.";
+                        tryNumber++;
+                        break;
+                    case "WRONG_CANT_RETRY":
+                        message = "Uhh.. The word \"" + selectedWord + "\" is Wrong.\nThat was your last try..";
+                        selectedTilesList = [];
+                        showWord = false;
+                        break;
+                    case "CHARS_NOT_PRESENT":
+                        message = "Oops.. you enter INVALID chars!";
+                        tryNumber++;
+                        break;
+                    case "TRIES_DEPLETED":
+                        message = "Oops.. you have got No more tries!!";
+                        selectedTilesList = [];
+                        showWord = false;
+                        break;
+                }
+                openPopup(message);
+            }
+            else {
+                openPopup(response.message);
             }
         },
         error: function (data) {
@@ -275,7 +320,6 @@ function ajaxIsGameStarted() {
         success: function (isGameStarted) {
             if (isGameStarted === true) {
                 openPopup("Game Started!");
-
                 clearInterval(startGame);
                 $('#GameInfo').fadeIn(200);
                 gameDone = setInterval(ajaxGameDone, refreshRate);
@@ -296,5 +340,6 @@ function openPopup(msg) {
 }
 
 function closePopup() {
+    $("#message").html("");
     $("#popup").hide();
 }

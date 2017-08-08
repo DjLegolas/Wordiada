@@ -71,7 +71,7 @@ public class Board {
         Cell(String _sign, byte _score, boolean _isShown) {
             isShown = _isShown;
             sign = _sign;
-            score = score;
+            score = _score;
         }
     }
 

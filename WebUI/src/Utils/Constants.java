@@ -31,12 +31,14 @@ public class Constants  {
     public static final String JOIN_AS_VISITOR="joinGameVisitor";
 
     // game room servlet
-    public static final String DO_MOVE = "doMove";
     public static final String GAME_STATUS = "GameStatus";
     public static final String EXIT_GAME = "ExitGame";
     public static final String THROW_DICE = "ThrowDice";
     public static final String UPDATE_BOARD = "UpdateBoard";
     public static final String TILES_LIST = "TilesList";
+    public static final String CHECK_WORD = "CheckWord";
+    public static final String WORD = "Word";
+    public static final String TRY_NUMBER = "TryNumber";
 
     //public static final String INITIALIZE = "Initialize";
     public static final String IS_GAME_STARTED = "isGameStarted";

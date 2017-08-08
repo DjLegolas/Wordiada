@@ -1,7 +1,7 @@
 .HumanIcon{
     height: 40px;
     width: 40px;
-    background: url("../../../../לימודים/IdeaProjects/Wordiada/WebUI/web/images/user.ico") no-repeat top left;
+    background: url("../images/user.ico") no-repeat top left;
     background-size: 40px 40px;
     display: inline-block;
     vertical-align: middle;
@@ -10,7 +10,7 @@
 .MachineIcon{
     height: 40px;
     width: 40px;
-    background: url("../../../../לימודים/IdeaProjects/Wordiada/WebUI/web/images/robot.png") no-repeat top left;
+    background: url("../images/robot.png") no-repeat top left;
     background-size: 40px 40px;
     display: inline-block;
     vertical-align: middle;

@@ -1,4 +1,4 @@
-list = [];
+selectedTilesList = [];
 function getShowBoard(table){
 
     var actionType = "getShowBoard";
@@ -38,7 +38,7 @@ function getBoard(table) {
     });
 }
 
-function createBoard(theBoard,table,actionType) {
+function createBoard(theBoard, table, actionType) {
     $('#board').empty();
     console.log("board create");
 
@@ -51,28 +51,28 @@ function createBoardButtons(board, table, action) {
     var columns = board.length;
     var rows = board.length;
 
-    for (var row = 0; row < rows; row++) {
+    for (var row = 1; row <= rows; row++) {
 
         //A <tr> element contains one or more <th> or <td> elements.
         var tr = document.createElement('tr');
-        for (var column = 0; column < columns; column++) {
+        for (var column = 1; column <= columns; column++) {
 
             //Standard cells - contains data (created with the <td> element)
             var td = document.createElement('td');
             setRowCol(td, row, column);
 
             var btn = document.createElement("button");
-            setRowCol(btn, row + 1, column + 1);
+            setRowCol(btn, row, column);
             $(btn).addClass("boardBtn");
             $(btn).attr("id", "buttonBoard" + row + "_" + column);
             if(action !== "getShowBoard") {
                 setButtonOnClickFunc(btn, row, column);
+                var boardBtn = board[row - 1][column - 1];
+
+                setButtonColor(boardBtn , btn);
+                setButtonSymbol(boardBtn , btn);
             }
 
-            var boardBtn = board[row][column];
-
-            setButtonColor(boardBtn , btn);
-            setButtonSymbol(boardBtn , btn);
 
             td.appendChild(btn);
             tr.appendChild(td);
@@ -127,32 +127,35 @@ function setButtonSymbol(buttonObject, btn){
 
 function addToList(btnClicked) {
     var btn = btnClicked.currentTarget;
-    list.push([btn.getAttribute("row"), btn.getAttribute("column")]);
-    btn.classList.remove("greyBtn");
-    btn.classList.add("blueBtn");
-    btn.onclick(removeFromList);
+    var row = btn.getAttribute("row");
+    var col = btn.getAttribute("column");
+    selectedTilesList.push([btn.getAttribute("row"), btn.getAttribute("column")]);
+    setButtonOnClickFunc(btn, row, col);
+    if (showWord) {
+        buildWord();
+    }
 }
 
 function removeFromList(btnClicked) {
     var btn = btnClicked.currentTarget;
-    var loc = [btn.getAttribute("row"), btn.getAttribute("column")];
-    var index = indexOf(list, btn.getAttribute("row"), btn.getAttribute("column"));
-    if (index >= 0) {
-        list.removeChild(index);
-        btn.classList.remove("blueBtn");
-        btn.classList.add("greyBtn");
+    var row = btn.getAttribute("row");
+    var col = btn.getAttribute("column");
+    var index = indexOf(selectedTilesList, row, col);
+    selectedTilesList.splice(index, 1);
+    setButtonOnClickFunc(btn, row, col);
+    if (showWord) {
+        buildWord();
     }
-    btn.onclick = addToList;
 }
 
 function updateBoard_(board) {
     var columns = board.length;
     var rows = board.length;
 
-    for (var row = 0; row < rows; row++) {
-        for (var column = 0; column < columns; column++) {
+    for (var row = 1; row <= rows; row++) {
+        for (var column = 1; column <= columns; column++) {
             var btn = document.getElementById("buttonBoard" + row + "_" + column);
-            var boardBtn = board[row][column];
+            var boardBtn = board[row - 1][column - 1];
             setButtonSymbol(boardBtn, btn);
             setButtonOnClickFunc(btn, row, column);
         }
@@ -160,8 +163,10 @@ function updateBoard_(board) {
 }
 
 function indexOf(list, row, col) {
-    for (var i = 0; i < list.length; i++) {
-        if (list[i][0] === row + 1 && list[i][1] === col + 1) {
+    row = row.toString();
+    col = col.toString();
+    for (var i = 0; i < selectedTilesList.length; i++) {
+        if (list[i][0] === row && list[i][1] === col) {
             return i;
         }
     }
@@ -169,10 +174,32 @@ function indexOf(list, row, col) {
 }
 
 function setButtonOnClickFunc(btn, row, column) {
-    if (indexOf(list, row, column) >= 0) {
-        $(btn).on("click", removeFromList);
+    if (indexOf(selectedTilesList, row, column) >= 0) {
+        btn.classList.remove("greyBtn");
+        btn.classList.add("blueBtn");
+        $(btn).off("click").on("click", removeFromList);
     }
     else {
-        $(btn).on("click", addToList);
+        btn.classList.remove("blueBtn");
+        btn.classList.add("greyBtn");
+        $(btn).off("click").on("click", addToList);
     }
+}
+
+function buildWord() {
+    selectedWord = "";
+    var toRemove = [];
+    selectedTilesList.forEach(function (val, index) {
+        var char = $("#buttonBoard" + val[0] + "_" + val[1]).text()[0];
+        if (char === undefined || char === '') {
+            toRemove.push(index);
+        }
+        else {
+            selectedWord += char;
+        }
+    });
+    $("#labelSelectedWord").text(selectedWord);
+    toRemove.forEach(function (index) {
+        selectedTilesList.splice(index, 1);
+    });
 }
