@@ -11,8 +11,6 @@ $(document).ready(function () {
     ajaxUsersAndGameList();
     setInterval(ajaxUsersAndGameList, refreshRate);
 
-    //$('#joinGameButton').on("click", joinGame);
-    //$('#showBoard').on("click",openPopupWithBoard);
     $('#buttonLogOut').on("click", logOut);
 
     $('#xmlSelectionButton').on("click", function (event) {
@@ -153,7 +151,7 @@ function refreshGameList(games) {
             gameStatus = "Not Available"
         }
         var dictName = gameValue.dictName;
-        var lettersAmount = gameValue.lettersAmount;
+        var leftBoxTiles = gameValue.leftBoxTiles;
 
 
         $('<th>' + gameKey + '</th>').appendTo(gameList);
@@ -163,7 +161,7 @@ function refreshGameList(games) {
         $('<th>' + bordSize + '</th>').appendTo(gameList);
         $('<th>' + gameStatus + '</th>').appendTo(gameList);
         $('<th>' + dictName + '</th>').appendTo(gameList);
-        $('<th>' + lettersAmount + '</th>').appendTo(gameList);
+        $('<th>' + leftBoxTiles + '</th>').appendTo(gameList);
 
         gameList.appendTo($("#gameTable"));
 
@@ -181,7 +179,7 @@ function refreshUsersList(users){
     $.each(users || [], function(index, user) {
         // console.log("Adding user #" + index + ": " + name);
         var icon;
-        if(user.m_PlayerType === 'Human') {
+        if(user.playerType === 'HUMAN') {
             icon = "<span class='HumanIcon'></span>"
         }
         else {
@@ -189,7 +187,7 @@ function refreshUsersList(users){
         }
 
         var userList = $('<tr class="active"> </tr>');
-        $('<th>' + user.m_Name + '</th>').appendTo(userList);
+        $('<th>' + user.name + '</th>').appendTo(userList);
         $('<th>' + icon + '</th>').appendTo(userList);
         userList.appendTo($("#usersTable"));
     });

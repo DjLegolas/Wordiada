@@ -69,7 +69,6 @@ function createBoardButtons(board, table, action) {
                 setButtonOnClickFunc(btn, row, column);
                 var boardBtn = board[row - 1][column - 1];
 
-                setButtonColor(boardBtn , btn);
                 setButtonSymbol(boardBtn , btn);
             }
 
@@ -85,35 +84,6 @@ function createBoardButtons(board, table, action) {
 function setRowCol(elm, row, col){
     elm.setAttribute("column",col);
     elm.setAttribute("row",row);
-}
-
-function setButtonColor(buttonObject, btn){
-
-    switch(buttonObject.m_Color) {
-        case "BLACK":
-            $(btn).addClass("blackBtn");
-            break;
-        case "BLUE":
-            $(btn).addClass("blueBtn");
-            break;
-        case "RED":
-            $(btn).addClass("redBtn");
-            break;
-        case "GREEN":
-            $(btn).addClass("greenBtn");
-            break;
-        case "MAGENTA":
-            $(btn).addClass("mangentaBtn");
-            break;
-        case "ORANGE":
-            $(btn).addClass("orangeBtn");
-            break;
-        case "PURPLE":
-            $(btn).addClass("purpleBtn");
-            break;
-        default:
-            $(btn).addClass("greyBtn");
-    }
 }
 
 function setButtonSymbol(buttonObject, btn){

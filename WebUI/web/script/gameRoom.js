@@ -43,26 +43,23 @@ function ajaxGameDone() {
 
 function announceWinner (gameDetails) {
 
-   if  (gameDetails.m_FinishAllRound === true){
+   if  (gameDetails.isGameActive === true){
        clearInterval(gameDone);
 
-       if (gameDetails.m_TechnicalVictory === true) {
-           openPopup(gameDetails.m_ErrorMsg);
-       } else {
-           if(gameDetails.m_WinnerName === undefined) {
+       if(gameDetails.winnerName === undefined) {
 
-               var declareTie= "It's a tie. The players points are:";
-               var playersList = $('<div><p>' + declareTie + '</p><br></div>');
+           var declareTie= "It's a tie. The players points are:";
+           var playersList = $('<div><p>' + declareTie + '</p><br></div>');
 
-               gameDetails.m_Players.forEach(function (player) {
-                   $('<p></p><br>').text(player.m_Name + '   ' + player.m_Score).appendTo(playersList);
-               });
+           gameDetails.players.forEach(function (player) {
+               $('<p></p><br>').text(player.player['name'] + '   ' + player.player['score']).appendTo(playersList);
+           });
 
-               openPopup(playersList);
-           }
-           else
-               openPopup(gameDetails.m_WinnerName + " is the winner!!!");
+           openPopup(playersList);
        }
+       else
+           openPopup(gameDetails.winnerName + " is the winner!!!");
+
        $('#GameAction').hide();
        $('#GameInfo').hide();
        $('#buttonQuit').val("Back To Lobby");
@@ -144,35 +141,122 @@ function ajaxGamesDetailsAndPlayers() {
     });
 }
 
-function refreshPlayerList(players, PlayerFromSession) {
-    $("#playingUsersTable").empty();
-    $.each(players || [], function (index, user) {
-        var icon;
-        if (user.m_PlayerType === 'Human') {
-            icon = "<span class='HumanIcon'></span>"
-        }
-        else {
-            icon = "<span class='MachineIcon'></span>"
-        }
+function ajaxGetUserWords(event) {
+    var clickedBtn = event.currentTarget;
+    var userName = clickedBtn.getAttribute("userName");
+    var actionType = "UserWords";
 
-        var userList = $('<tr></tr>');
-        $('<th>' + user['name'] + '</th>').appendTo(userList);
-        $('<th>' + icon + '</th>').appendTo(userList);
-        $('<th>' + user.m_Color + '</th>').appendTo(userList);
-        $('<th>' + user['score'] + '</th>').appendTo(userList);
-        userList.appendTo($("#playingUsersTable"));
-
-        if (PlayerFromSession === user['name']) {
-            userList.addClass('success');
+    $.ajax({
+        url: "gamingRoom",
+        data: {
+            "ActionType": actionType,
+            "username": userName
+        },
+        success: function (words) {
+            if (words.length > 0) {
+                var wordsTable = $('<table class="table" ></table>');
+                var wordsTableHead = $('<thead></thead>');
+                var body = $('<tr></tr>');
+                $('<th>Word</th>').appendTo(body);
+                $('<th style="width: 30%">Value</th>').appendTo(body);
+                $('<th style="width: 30%">Segment</th>').appendTo(body);
+                body.appendTo(wordsTableHead);
+                var wordsTableBody = $('<tbody></tbody>');
+                words.forEach(function (word) {
+                    var wordsList = $('<tr></tr>');
+                    $('<th>' + word.word + '</th>').appendTo(wordsList);
+                    $('<th>' + word.baseScore + '</th>').appendTo(wordsList);
+                    var seg = 0;
+                    switch (word.freqSegment) {
+                        case "COMMON":
+                            seg = 1;
+                            break;
+                        case "LESS_COMMON":
+                            seg = 2;
+                            break;
+                        case "RARE":
+                            seg = 3;
+                            break;
+                    }
+                    $('<th>' + seg + '</th>').appendTo(wordsList);
+                    wordsList.appendTo(wordsTableBody);
+                });
+                wordsTableHead.appendTo(wordsTable);
+                wordsTableBody.appendTo(wordsTable);
+                openPopup(wordsTable);
+            }
+            else {
+                openPopup(userName + " have no words yet!");
+            }
+        },
+        error: function (data) {
+            console.log(data);
         }
     });
+}
+
+function refreshPlayerList(players, PlayerFromSession) {
+    if ($("#playingUsersTable").children().length < players.length) {
+        $("#playingUsersTable").empty();
+        $.each(players || [], function (index, user) {
+            var icon;
+            if (user['type'] === 'HUMAN') {
+                icon = "<span class='HumanIcon'></span>"
+            }
+            else {
+                icon = "<span class='MachineIcon'></span>"
+            }
+
+            var btnWords = document.createElement("button");
+            btnWords.setAttribute("userName", user['name']);
+            btnWords.innerText = "Words";
+            $(btnWords).on("click", ajaxGetUserWords);
+
+            var userList = $('<tr id="user_' + user['name'] + '"></tr>');
+            $('<th>' + user['name'] + '</th>').appendTo(userList);
+            $('<th>' + icon + '</th>').appendTo(userList);
+            $('<th id="score">' + user['score'] + '</th>').appendTo(userList);
+            var btnLoc = $('<th></th>');
+            $(btnWords).appendTo(btnLoc);
+            $(btnLoc).appendTo(userList);
+            userList.appendTo($("#playingUsersTable"));
+
+            if (PlayerFromSession === user['name']) {
+                userList.addClass('success');
+            }
+        });
+    }
+    else {
+        $.each(players || [], function (index, user) {
+            $('#user_' + user['name]'] + ' #score').text(user['score']);
+            if (user['isRetired'] === true) {
+                var userTr = $('#user_' + user['name']);
+                if (!userTr.hasClass('danger')) {
+                    openPopup("Player " + user['name'] + ' retired!');
+                }
+                $(userTr).addClass('danger');
+            }
+        });
+    }
 }
 
 function refreshGameDetails(gameDetails, PlayerFromSession) {
 
     $('#loggedInUser').text("Welcome " + PlayerFromSession);
     $('#labelGameTitle').text(gameDetails.gameTitle);
-    $('#labelCurrentPlayer').text(gameDetails.currentPlayer.player['name']);
+    if (gameDetails.currentPlayer !== undefined) {
+        var playerName = gameDetails.currentPlayer.player['name'];
+        var sameUser = playerName !== $('#labelCurrentPlayer').text();
+        if (sameUser) {
+            //openPopup("It's now " + playerName + "'s turn!");
+        }
+        if (sameUser || $('#labelCurrentMove').text() !== gameDetails.numOfTurns) {
+            if (gameDetails.currentPlayer.player['type'] === "COMPUTER") {
+                ajaxRunComputer();
+            }
+        }
+        $('#labelCurrentPlayer').text(gameDetails.currentPlayer.player['name']);
+    }
     $('#labelCurrentMove').text(gameDetails.numOfTurns);
     $("#labelCurrentTry").text(tryNumber);
 }
@@ -191,6 +275,18 @@ function ajaxQuitGame() {
         error: function (data) {
             console.log(data);
         }
+    });
+}
+
+function ajaxRunComputer() {
+    var actionType = "RunComputer";
+
+    $.ajax({
+        url: "gamingRoom",
+        data: {
+            "ActionType": actionType
+        },
+        success: function() {}
     });
 }
 

@@ -1,6 +1,6 @@
 package Utils;
 
-import SharedStructures.PlayerData;
+import engine.PlayerData;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;

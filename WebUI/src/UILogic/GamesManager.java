@@ -1,8 +1,8 @@
 package UILogic;
 
 
+import engine.ComputerTask;
 import engine.GameEngine;
-import shared.GameInfo;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -10,32 +10,33 @@ import java.util.Map;
 
 public class GamesManager {
 
-    private final Map<String, GameInfo> gamesInfoMap;
     private final Map<String, GameEngine> gamesMap;
+    private final Map<String, ComputerTask> computersMap;
 
     public GamesManager()
     {
-        gamesInfoMap = new HashMap<>();
         gamesMap = new HashMap<>();
+        computersMap = new HashMap<>();
     }
 
     // return error or null if all good
-    public String addNewGame(InputStream xmlFile, InputStream dictFile, String userNameFromSession)
+    public String addNewGame(InputStream xmlFile, InputStream dictFile, String dictFileName, String userNameFromSession)
     {
         String gameLoaded;
 
         synchronized (this) {
-            gameLoaded = loadXML(xmlFile, dictFile,  userNameFromSession);
+            gameLoaded = loadXML(xmlFile, dictFile, dictFileName,  userNameFromSession);
         }
         return gameLoaded;
     }
 
-    private String loadXML(InputStream xmlStream, InputStream dictStream, String userNameFromSession) {
+    private String loadXML(InputStream xmlStream, InputStream dictStream, String dictFileName, String userNameFromSession) {
         GameEngine gameEngine = new GameEngine();
         String res = "success";
         try {
-            gameEngine.loadXml(xmlStream, dictStream, userNameFromSession);
+            gameEngine.loadXml(xmlStream, dictStream, dictFileName, userNameFromSession);
             gamesMap.put(gameEngine.getGameTitle(), gameEngine);
+            computersMap.put(gameEngine.getGameTitle(), null);
         }
         catch(Exception e){
             res =  e.getMessage();
@@ -43,8 +44,8 @@ public class GamesManager {
         return res;
     }
 
-    public Map<String, GameInfo> getGamesInfosMap() {
-        return gamesInfoMap;
+    public Map<String, ComputerTask> getComputersMap() {
+        return computersMap;
     }
 
     public Map<String, GameEngine> getGamesMap() {
@@ -56,9 +57,8 @@ public class GamesManager {
         return gamesMap.get(gameTitleToJoin);
     }
 
-    public GameInfo getSpecificGameInfo(String gameTitleToJoin)
+    public ComputerTask getSpecificComputer(String gameTitleToJoin)
     {
-        return gamesInfoMap.get(gameTitleToJoin);
+        return computersMap.get(gameTitleToJoin);
     }
-    //endregion
 }

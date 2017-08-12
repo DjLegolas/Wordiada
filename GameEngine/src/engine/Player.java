@@ -74,7 +74,7 @@ public class Player {
         this.isRetired = true;
     }
 
-    boolean isComputer() {
+     public boolean isComputer() {
         return type == Type.COMPUTER;
     }
 

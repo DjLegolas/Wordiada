@@ -39,6 +39,8 @@ public class Constants  {
     public static final String CHECK_WORD = "CheckWord";
     public static final String WORD = "Word";
     public static final String TRY_NUMBER = "TryNumber";
+    public static final String USER_WORDS = "UserWords";
+    public static final String RUN_COMPUTER = "RunComputer";
 
     //public static final String INITIALIZE = "Initialize";
     public static final String IS_GAME_STARTED = "isGameStarted";

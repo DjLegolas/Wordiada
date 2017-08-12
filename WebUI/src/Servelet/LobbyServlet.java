@@ -5,7 +5,7 @@ import UILogic.UserManager;
 import com.google.gson.Gson;
 import engine.GameEngine;
 import engine.Statistics;
-import SharedStructures.PlayerData;
+import engine.PlayerData;
 import Utils.Constants;
 import Utils.ServletUtils;
 import Utils.SessionUtils;
@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.*;
 
 @WebServlet(name = "LobbyServlet", urlPatterns = {"/lobby"})
@@ -133,10 +134,11 @@ public class LobbyServlet extends HttpServlet {
         Part myPart = request.getPart(Constants.XML_FILE);
         InputStream xmlFile = myPart.getInputStream();
         myPart = request.getPart(Constants.DICT_FILE);
+        String dictFileName = Paths.get(myPart.getSubmittedFileName()).getFileName().toString();
         InputStream dictFile = myPart.getInputStream();
         GamesManager gamesManager = ServletUtils.getGamesManager(getServletContext());
         PlayerData userFromSession = SessionUtils.getLoginUser(request);
-        String result = gamesManager.addNewGame(xmlFile, dictFile, userFromSession.getName());
+        String result = gamesManager.addNewGame(xmlFile, dictFile, dictFileName, userFromSession.getName());
 
         Gson gson = new Gson();
 

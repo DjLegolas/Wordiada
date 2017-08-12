@@ -9,6 +9,7 @@ public class Statistics {
     private List<PlayerData> players ;
     private List<Letter> letters;
     private PlayerData currentPlayer;
+    private String winnerName;
     private int numOfTurns;
     private int leftBoxTiles;
     private long playTime;
@@ -21,7 +22,6 @@ public class Statistics {
     private String organizer;
     private String dictName;
     private int lettersAmount;
-
 
     public class PlayerData {
         private Player player;
@@ -65,7 +65,7 @@ public class Statistics {
         }
     }
 
-    Statistics(boolean isStarted, GameDataFromXml gd, String organizer, Player currentPlayer, List<Player> inputPlayer, long playTime, int turnsPlayed){
+    Statistics(boolean isStarted, GameDataFromXml gd, String organizer, Player currentPlayer, List<Player> inputPlayer, long playTime, int turnsPlayed, Player winner){
         players = new ArrayList<>();
         this.currentPlayer = null;
         for (Player player: inputPlayer) {
@@ -73,6 +73,9 @@ public class Statistics {
             players.add(playerData);
             if (player == currentPlayer) {
                 this.currentPlayer = playerData;
+            }
+            if (player == winner) {
+                this.winnerName = playerData.player.getName();
             }
         }
         letters = new ArrayList<>();
@@ -140,5 +143,25 @@ public class Statistics {
 
     public char[][] getBoard() {
         return board;
+    }
+
+    public PlayerData getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public String getWinnerName() {
+        return winnerName;
+    }
+
+    public String getOrganizer() {
+        return organizer;
+    }
+
+    public String getDictName() {
+        return dictName;
+    }
+
+    public int getLettersAmount() {
+        return lettersAmount;
     }
 }

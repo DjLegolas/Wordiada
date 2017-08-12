@@ -20,6 +20,7 @@ public class Dictionary {
         private float frequency;
         private FreqSegment freqSegment;
         private int score = 0;
+        private int baseScore = 0;
 
         public Word(String word) {
             this.word = word;
@@ -37,6 +38,23 @@ public class Dictionary {
 
         int getScore() {
             return score;
+        }
+
+        int getBaseScore() {
+            return baseScore;
+        }
+
+        int getSegmentScore () {
+            switch (freqSegment) {
+                case COMMON:
+                    return 1;
+                case LESS_COMMON:
+                    return 2;
+                case RARE:
+                    return 3;
+                default:
+                    return 0;
+            }
         }
 
         public String getWord() {
@@ -171,32 +189,18 @@ public class Dictionary {
         }
     }
 
-    private int getSegmentScore(String strWord) {
-        Word word = words.get(strWord);
-        switch (word.freqSegment){
-            case COMMON:
-                return 1;
-            case LESS_COMMON:
-                return 2;
-            case RARE:
-                return 3;
-            default:
-                return 0;
-        }
-    }
-
     void calcWordsScore(List<Letter> letters) {
         for (Map.Entry<String, Word> entry: words.entrySet()) {
             Word word = entry.getValue();
             for(Character ch: entry.getKey().toCharArray()) {
                 for (Letter letter : letters) {
                     if (letter.getSign().get(0).equals(ch.toString())) {
-                        word.score += letter.getScore();
+                        word.baseScore += letter.getScore();
                         break;
                     }
                 }
             }
-            word.score *= getSegmentScore(entry.getKey());
+            word.score = word.baseScore * word.getSegmentScore();
         }
     }
 

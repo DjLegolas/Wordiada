@@ -1,7 +1,7 @@
 <component name="ArtifactManager">
-  <artifact type="exploded-war" build-on-make="true" name="WebUI:war exploded">
-    <output-path>$PROJECT_DIR$/out/artifacts/WebUI_war_exploded</output-path>
-    <root id="root">
+  <artifact type="war" build-on-make="true" name="WebUI:war">
+    <output-path>$PROJECT_DIR$/out/artifacts/WebUI_war</output-path>
+    <root id="archive" name="Wordiada.war">
       <element id="javaee-facet-resources" facet="WebUI/web/Web" />
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
@@ -11,6 +11,9 @@
           <element id="artifact" artifact-name="WordiadaEngine:jar" />
           <element id="library" level="project" name="com.google.code.gson:gson:2.8.1" />
         </element>
+      </element>
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/WebUI/META-INF/MANIFEST.MF" />
       </element>
     </root>
   </artifact>

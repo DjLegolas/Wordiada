@@ -1,7 +1,7 @@
 package Servelet;
 
 import UILogic.UserManager;
-import SharedStructures.PlayerData;
+import engine.PlayerData;
 import Utils.Constants;
 import Utils.ServletUtils;
 import Utils.SessionUtils;

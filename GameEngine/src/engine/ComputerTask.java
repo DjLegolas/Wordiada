@@ -1,15 +1,15 @@
 package engine;
 
 import engine.exceptions.OutOfBoardBoundariesException;
-import javafx.concurrent.Task;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class ComputerTask extends Task<Boolean> {
-    private static final short SLEEP_TIME = 500;
+
+public class ComputerTask implements Runnable {
+    private static final short SLEEP_TIME = 0;
 
     private Player player;
     private GameEngine gameEngine;
@@ -38,25 +38,21 @@ public class ComputerTask extends Task<Boolean> {
     }
 
     @Override
-    protected Boolean call() {
+    public void run() {
+        gameEngine.isGameEnded();
         tryNumber = 1;
         getDiceValue();
         selectTilesToShow();
         GameEngine.WordCheck result;
         int maxRetries = gameEngine.getMaxRetries() + 1;
-        updateProgress(0, maxRetries);
         do {
             result = buildWord();
             tryNumber++;
-            updateProgress(tryNumber, maxRetries);
         } while(result == GameEngine.WordCheck.WRONG || result == GameEngine.WordCheck.CHARS_NOT_PRESENT);
 
         if (result == GameEngine.WordCheck.CORRECT) {
-            updateMessage("The word " + currentSelectedWord + " is CORRECT!");
             sleepForAWhile(SLEEP_TIME * 2);
         }
-
-        return result == GameEngine.WordCheck.CORRECT;
     }
 
     private static void sleepForAWhile(long sleepTime) {
@@ -70,22 +66,18 @@ public class ComputerTask extends Task<Boolean> {
     }
 
     private void getDiceValue() {
-        updateMessage("Getting dice value...");
         sleepForAWhile(SLEEP_TIME);
         diceValue = gameEngine.getDiceValue();
-        updateMessage("Dice value is: " + diceValue + ".");
         sleepForAWhile(SLEEP_TIME);
     }
 
     private void selectTilesToShow() {
         selectedPoints.clear();
-        updateMessage("Selecting " + diceValue + " tiles to show...");
         sleepForAWhile(SLEEP_TIME);
         List<Board.Point> points = gameEngine.getUnShownPoints();
         List<int[]> selectedPoints = new ArrayList<>();
         Random random = new Random();
         for (int i = 0; i < diceValue; i++) {
-            updateProgress(i + 1, diceValue);
             int[] p = new int[2];
             do {
                 Board.Point point = points.get(random.nextInt(points.size()));
@@ -101,13 +93,11 @@ public class ComputerTask extends Task<Boolean> {
         } catch (OutOfBoardBoundariesException e) {
             e.printStackTrace();
         }
-        updateMessage("Selection completed.");
         sleepForAWhile(SLEEP_TIME);
     }
 
     private GameEngine.WordCheck buildWord() {
         String tryNumberStr = "Try number: "+ tryNumber + "\n";
-        updateMessage(tryNumberStr +"Building a word...");
         sleepForAWhile(SLEEP_TIME);
         char[][] board = gameEngine.getBoard();
         StringBuilder word = new StringBuilder();
@@ -130,9 +120,7 @@ public class ComputerTask extends Task<Boolean> {
         }
         currentSelectedWord = word.toString();
         selectedPoints = selectedChars;
-        updateMessage(tryNumberStr + "The word is \"" + word + "\"");
         sleepForAWhile(SLEEP_TIME);
         return gameEngine.isWordValidWithCoordinates(word.toString(), tryNumber, selectedChars);
     }
-
 }

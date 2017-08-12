@@ -10,7 +10,6 @@ import engine.exceptions.*;
 
 import engine.jaxb.schema.generated.*;
 import engine.jaxb.schema.generated.Player;
-import logic.Game;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -171,12 +170,13 @@ public class GameDataFromXml {
         initWinType();
     }
 
-    void initializeDataFromXml(InputStream xmlStream, InputStream dictStream)
+    void initializeDataFromXml(InputStream xmlStream, InputStream dictStream, String dictFileName)
             throws WrongPathException, NotValidXmlFileException, DictionaryNotFoundException, WinTypeException,
             NotXmlFileException, BoardSizeException, DuplicateLetterException, NotEnoughLettersException,
             NumberOfPlayersException, DuplicatePlayerIdException, NoTitleException {
 
         setData(xmlStream, null, dictStream);
+        this.dictFileName = dictFileName;
     }
 
     void resetBoard() {
@@ -186,6 +186,7 @@ public class GameDataFromXml {
             initBoard();
         }
         catch (Exception e) {
+            boolean b = true;
         }
     }
 
@@ -209,11 +210,13 @@ public class GameDataFromXml {
     private void buildDataLetters(Structure struct) throws DuplicateLetterException {
         // creates list of data letters
         double totalFreq = 0;
+        letters.clear();
         for (int i = 0; i < struct.getLetters().getLetter().size(); i++) {
             this.letters.add(i, new DataLetter(struct.getLetters().getLetter().get(i)));
             totalFreq += letters.get(i).getLetter().getFrequency();
         }
 
+        totalAmountOfLetters = 0;
         for (DataLetter letter : letters) {
             double freq = letter.getLetter().getFrequency();
             letter.setAmount((int) Math.ceil(Math.ceil(freq / totalFreq * 100) / 100 * struct.getLetters().getTargetDeckSize()));

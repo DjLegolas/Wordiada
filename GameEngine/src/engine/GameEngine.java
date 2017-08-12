@@ -17,13 +17,15 @@ import javafx.util.Pair;
 public class GameEngine {
 
     private Player currentPlayer;
+    private Player winner;
     private int nextPlayerNumber = 1;
     private int numOfPlayers;
     private List<Player> players;
     private List<GameDataFromXml> gdfx = new ArrayList<>();
     private GameDataFromXml currentGameData;
     private boolean isGameStarted = false;
-    private int diceValue;
+    private boolean isGameEnded = false;
+    private int diceValue = 0;
     private long startTime;
     private int numberOfTurns = 0;
     private int tryNumber;
@@ -109,12 +111,12 @@ public class GameEngine {
         gdfx.add(gd);
     }
 
-    public void loadXml(InputStream file, InputStream dictFile, String userNameFromSession)
+    public void loadXml(InputStream file, InputStream dictFile, String dictFileName, String userNameFromSession)
             throws WrongPathException, DictionaryNotFoundException, BoardSizeException, NotXmlFileException,
             DuplicateLetterException, NotValidXmlFileException, WinTypeException, NotEnoughLettersException,
             NumberOfPlayersException, DuplicatePlayerIdException, NoTitleException {
         GameDataFromXml gd = new GameDataFromXml();
-        gd.initializeDataFromXml(file, dictFile);
+        gd.initializeDataFromXml(file, dictFile, dictFileName);
         uploaderName = userNameFromSession;
         gdfx.add(gd);
         players = new ArrayList<>();
@@ -142,6 +144,10 @@ public class GameEngine {
     }
 
     public void reset() {
+        currentPlayer = winner = null;
+        players.clear();
+        isGameStarted = false;
+        isGameEnded = false;
         currentGameData.resetBoard();
     }
 
@@ -176,6 +182,7 @@ public class GameEngine {
 
     public void startGame() {
         isGameStarted = true;
+        isGameEnded = false;
         currentGameData =  gdfx.get(gdfx.size() - 1);
         players = getPlayersList();
         numOfPlayers = players.size();
@@ -184,6 +191,7 @@ public class GameEngine {
         numberOfTurns = 0;
         pointerForTurnData = -1;
         turnData.clear();
+        diceValue = 0;
         startTime = System.currentTimeMillis();
     }
 
@@ -208,8 +216,10 @@ public class GameEngine {
     }
 
     public int getDiceValue() {
-        Random random = new Random();
-        diceValue = random.nextInt(currentGameData.getNumOfCubeWigs() - 1) + 2;
+        if (diceValue == 0) {
+            Random random = new Random();
+            diceValue = random.nextInt(currentGameData.getNumOfCubeWigs() - 1) + 2;
+        }
         return diceValue;
     }
 
@@ -264,6 +274,7 @@ public class GameEngine {
                 saveTheTurn(selectedPoints);
                 currentGameData.getBoard().removePointsFromBoard(selectedPoints);
                 numberOfTurns++;
+                diceValue = 0;
                 return WordCheck.CORRECT;
             }
             tryNumber++;
@@ -286,13 +297,17 @@ public class GameEngine {
         } while (currentPlayer.isRetired());
         numberOfTurns++;
         tryNumber = 1;
+        diceValue = 0;
     }
 
     public Statistics getStatistics() {
-        if (isGameStarted) {
-            return new Statistics(isGameStarted, currentGameData, uploaderName, currentPlayer, players, System.currentTimeMillis() - startTime, numberOfTurns + 1);
+        if (isGameEnded) {
+            return new Statistics(isGameStarted, currentGameData, uploaderName, currentPlayer, players, System.currentTimeMillis() - startTime, numberOfTurns + 1, winner);
         }
-        return new Statistics(isGameStarted, gdfx.get(gdfx.size() - 1), uploaderName, null, getPlayersList(), 0, 0);
+        if (isGameStarted) {
+            return new Statistics(true, currentGameData, uploaderName, currentPlayer, players, System.currentTimeMillis() - startTime, numberOfTurns + 1, null);
+        }
+        return new Statistics(false, gdfx.get(gdfx.size() - 1), uploaderName, null, getPlayersList(), 0, 0, null);
     }
 
     public List<Board.Point> getUnShownPoints(){
@@ -300,7 +315,7 @@ public class GameEngine {
             for(int row = 0; row <currentGameData.getBoard().getBoardSize(); row++){
                 for(int col = 0; col < currentGameData.getBoard().getBoardSize(); col++){
                     if(!(currentGameData.getBoard().getBoardFullDetails()[row][col].isShown)) {
-                        Point p = new Board.Point (row+1,col+1);
+                        Point p = new Board.Point (col+1,row+1);
                         unShownPoints.add(p);
                     }
                 }
@@ -310,11 +325,33 @@ public class GameEngine {
 
     public boolean isGameEnded() {
         //if no more left cards in kupa and all the tails in the board are shown
-        if ((numOfPlayers < 2 || currentGameData.getBoard().getKupaAmount() == 0) || (getUnShownPoints().isEmpty())) {
-            isGameStarted = false;
-            return true;
+        if (isGameEnded || (numOfPlayers < 2 || currentGameData.getBoard().getKupaAmount() == 0) ||
+                (diceValue == 0 && getUnShownPoints().isEmpty())) {
+            if (!isGameEnded) {
+                setWinner();
+                isGameEnded = true;
+            }
         }
-        return false;
+        return isGameEnded;
+    }
+
+    private void setWinner() {
+        winner = null;
+        if (numOfPlayers < 2) {
+            for (Player player: players) {
+                if (!player.isRetired()) {
+                    winner = player;
+                    break;
+                }
+            }
+        }
+        else {
+            List<Player> players = new ArrayList<>(this.players);
+            players.sort((player1, player2) -> (int) (player1.getScore() - player2.getScore()));
+            if (players.get(players.size() - 1).getScore() > players.get(players.size() - 2).getScore()) {
+                winner = players.get(players.size() - 1);
+            }
+        }
     }
 
     public boolean isGameEnded(boolean allTilesShown) {
@@ -324,7 +361,6 @@ public class GameEngine {
         }
         return false;
     }
-
 
     public String getWinnerName(boolean userEnd) {
         Player winner = null;
@@ -388,8 +424,17 @@ public class GameEngine {
         return currentGameData;
     }
 
+    public Set<Dictionary.Word> getPlayerWords(String playerName) {
+        for (Player player: players) {
+            if (player.getName().equals(playerName)) {
+                return player.getWords().keySet();
+            }
+        }
+        return null;
+    }
 
     public Map<String, Pair<Integer, Integer>> getPlayerWords(int playerId) {
+        // word, amount, score
         Map<String, Pair<Integer, Integer>> words = new HashMap<>();
         List<Player> players = isGameEnded() ? turnData.get(pointerForTurnData).players : this.players;
         for (Player player: players) {
@@ -406,8 +451,11 @@ public class GameEngine {
     private boolean doRetire(Player retiredPlayer) {
         retiredPlayer.retire();
         numOfPlayers--;
-        if (numOfPlayers < 2) {
-            isGameStarted = false;
+        if (numOfPlayers == 0) {
+            reset();
+            return false;
+        }
+        else if (numOfPlayers < 2) {
             return false;
         }
         if (retiredPlayer == currentPlayer){
